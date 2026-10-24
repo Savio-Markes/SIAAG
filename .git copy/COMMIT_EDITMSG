@@ -1,0 +1,70 @@
+
+# Please enter the commit message for your changes. Lines starting
+# with '#' will be ignored, and an empty message aborts the commit.
+#
+# On branch main
+# Your branch is up to date with 'origin/main'.
+#
+# Changes to be committed:
+#	new file:   app/static/css/app.css
+#	new file:   app/static/css/components.css
+#	new file:   app/static/css/forms.css
+#	new file:   app/static/css/layout.css
+#	new file:   app/static/css/responsive.css
+#	new file:   app/static/e.txt
+#	new file:   app/static/img/favicon.ico
+#	new file:   app/static/img/logo.svg
+#	new file:   app/static/js/app.js
+#	new file:   app/static/js/confirmations.js
+#	new file:   app/static/js/filters.js
+#	new file:   app/static/js/forms.js
+#	new file:   app/templates/activities/detail.html
+#	new file:   app/templates/activities/form.html
+#	new file:   app/templates/activities/list.html
+#	new file:   app/templates/assets/detail.html
+#	new file:   app/templates/assets/form.html
+#	new file:   app/templates/assets/list.html
+#	new file:   app/templates/assets/maintenance_form.html
+#	new file:   app/templates/classes/detail.html
+#	new file:   app/templates/classes/form.html
+#	new file:   app/templates/classes/list.html
+#	new file:   app/templates/errors/403.html
+#	new file:   app/templates/errors/404.html
+#	new file:   app/templates/errors/500.html
+#	new file:   app/templates/inventory/list.html
+#	new file:   app/templates/inventory/movement_form.html
+#	new file:   app/templates/inventory/movements.html
+#	new file:   app/templates/inventory/product_form.html
+#	new file:   app/templates/reports/access_history.html
+#	new file:   app/templates/reports/activities.html
+#	new file:   app/templates/reports/index.html
+#	new file:   app/templates/reports/inventory.html
+#	new file:   app/templates/research/detail.html
+#	new file:   app/templates/research/form.html
+#	new file:   app/templates/research/list.html
+#	new file:   app/templates/veterinary/detail.html
+#	new file:   app/templates/veterinary/form.html
+#	new file:   app/templates/veterinary/history.html
+#	new file:   app/templates/veterinary/list.html
+#	new file:   database/migrations/README.md
+#	new file:   database/schema.sql
+#	new file:   database/seed.sql
+#	new file:   instance/.gitkeep
+#	new file:   scripts/backup_db.py
+#	new file:   scripts/create_coordinator.py
+#	new file:   scripts/init_db.py
+#	new file:   scripts/restore_db.py
+#	new file:   scripts/seed_demo.py
+#	new file:   tests/conftest.py
+#	new file:   tests/test_activities.py
+#	new file:   tests/test_animals.py
+#	new file:   tests/test_assets.py
+#	new file:   tests/test_auth.py
+#	new file:   tests/test_classes.py
+#	new file:   tests/test_dashboard.py
+#	new file:   tests/test_inventory.py
+#	new file:   tests/test_permissions.py
+#	new file:   tests/test_reports.py
+#	new file:   tests/test_research.py
+#	new file:   tests/test_veterinary.py
+#
