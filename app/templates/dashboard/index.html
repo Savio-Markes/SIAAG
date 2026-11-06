@@ -1,0 +1,283 @@
+
+{% extends "base.html" %}
+
+{% block title %}Dashboard | SIAAG{% endblock %}
+
+{% block page_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+{% endblock %}
+
+{% block content %}
+
+<div class="dashboard">
+
+    <!-- Título da página -->
+    <div class="dashboard-heading">
+        <div>
+            <h1 class="page-title">Painel principal</h1>
+            <p class="page-description">
+                Acompanhe as informações da administração agropecuária.
+            </p>
+        </div>
+    </div>
+
+
+    <!-- INDICADORES -->
+    <section class="dashboard-section">
+
+        <div class="section-heading">
+            <h2>Visão geral</h2>
+        </div>
+
+        <div class="dashboard-cards">
+
+            <article class="dashboard-card">
+                <div class="card-icon">🐄</div>
+                <div class="card-information">
+                    <span>Animais ativos</span>
+                    <strong>{{ dashboard.active_animals if dashboard is defined else "—" }}</strong>
+                </div>
+            </article>
+
+            <article class="dashboard-card">
+                <div class="card-icon">📦</div>
+                <div class="card-information">
+                    <span>Produtos em estoque</span>
+                    <strong>{{ dashboard.inventory_products if dashboard is defined else "—" }}</strong>
+                </div>
+            </article>
+
+            <article class="dashboard-card">
+                <div class="card-icon">📋</div>
+                <div class="card-information">
+                    <span>Atividades pendentes</span>
+                    <strong>{{ dashboard.pending_activities if dashboard is defined else "—" }}</strong>
+                </div>
+            </article>
+
+            <article class="dashboard-card">
+                <div class="card-icon">🎓</div>
+                <div class="card-information">
+                    <span>Próximas aulas práticas</span>
+                    <strong>{{ dashboard.upcoming_classes if dashboard is defined else "—" }}</strong>
+                </div>
+            </article>
+
+            <article class="dashboard-card">
+                <div class="card-icon">🔧</div>
+                <div class="card-information">
+                    <span>Patrimônios em manutenção</span>
+                    <strong>{{ dashboard.assets_maintenance if dashboard is defined else "—" }}</strong>
+                </div>
+            </article>
+
+        </div>
+
+    </section>
+
+
+    <!-- ALERTAS E ATIVIDADES -->
+    <section class="dashboard-section">
+
+        <div class="dashboard-columns">
+
+            <!-- Alertas de estoque -->
+            <div class="dashboard-panel">
+
+                <div class="panel-heading">
+                    <h2>Alertas de estoque</h2>
+                    <a href="{{ url_for('estoque') if false else '#' }}">
+                        Ver detalhes
+                    </a>
+                </div>
+
+                <div class="panel-content">
+
+                    {% if dashboard is defined and dashboard.stock_alerts %}
+                        {% for alert in dashboard.stock_alerts %}
+                            <div class="alert-item">
+                                <span class="alert-indicator"></span>
+                                <div>
+                                    <strong>{{ alert.name }}</strong>
+                                    <p>{{ alert.message }}</p>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    {% else %}
+                        <div class="empty-state">
+                            <p>Nenhum alerta de estoque disponível.</p>
+                        </div>
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+
+            <!-- Produtos próximos do vencimento -->
+            <div class="dashboard-panel">
+
+                <div class="panel-heading">
+                    <h2>Produtos próximos do vencimento</h2>
+                </div>
+
+                <div class="panel-content">
+
+                    {% if dashboard is defined and dashboard.expiring_products %}
+                        {% for product in dashboard.expiring_products %}
+                            <div class="information-item">
+                                <strong>{{ product.name }}</strong>
+                                <span>{{ product.expiration_date }}</span>
+                            </div>
+                        {% endfor %}
+                    {% else %}
+                        <div class="empty-state">
+                            <p>Nenhum produto próximo do vencimento.</p>
+                        </div>
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- MOVIMENTAÇÕES E ATIVIDADES -->
+    <section class="dashboard-section">
+
+        <div class="dashboard-columns">
+
+            <!-- Atividades recentes -->
+            <div class="dashboard-panel">
+
+                <div class="panel-heading">
+                    <h2>Atividades recentes</h2>
+                </div>
+
+                <div class="panel-content">
+
+                    {% if dashboard is defined and dashboard.recent_activities %}
+                        {% for activity in dashboard.recent_activities %}
+                            <div class="information-item">
+                                <div>
+                                    <strong>{{ activity.name }}</strong>
+                                    <p>{{ activity.description }}</p>
+                                </div>
+                                <span>{{ activity.date }}</span>
+                            </div>
+                        {% endfor %}
+                    {% else %}
+                        <div class="empty-state">
+                            <p>Nenhuma atividade recente disponível.</p>
+                        </div>
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+
+            <!-- Movimentações recentes -->
+            <div class="dashboard-panel">
+
+                <div class="panel-heading">
+                    <h2>Movimentações recentes</h2>
+                </div>
+
+                <div class="panel-content">
+
+                    {% if dashboard is defined and dashboard.recent_movements %}
+                        {% for movement in dashboard.recent_movements %}
+                            <div class="information-item">
+                                <div>
+                                    <strong>{{ movement.name }}</strong>
+                                    <p>{{ movement.description }}</p>
+                                </div>
+                                <span>{{ movement.date }}</span>
+                            </div>
+                        {% endfor %}
+                    {% else %}
+                        <div class="empty-state">
+                            <p>Nenhuma movimentação recente disponível.</p>
+                        </div>
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- SITUAÇÃO DOS ANIMAIS -->
+    <section class="dashboard-section">
+
+        <div class="dashboard-panel">
+
+            <div class="panel-heading">
+                <h2>Situação dos animais</h2>
+            </div>
+
+            <div class="panel-content">
+
+                {% if dashboard is defined and dashboard.animal_status %}
+                    {% for status in dashboard.animal_status %}
+                        <div class="information-item">
+                            <strong>{{ status.name }}</strong>
+                            <span>{{ status.quantity }}</span>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="empty-state">
+                        <p>Informações sobre os animais indisponíveis.</p>
+                    </div>
+                {% endif %}
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- ATALHOS -->
+    <section class="dashboard-section">
+
+        <div class="section-heading">
+            <h2>Acesso rápido</h2>
+            <p>Acesse os principais módulos do sistema.</p>
+        </div>
+
+        <div class="quick-actions">
+
+            {% if menu_items is defined %}
+                {% for item in menu_items %}
+                    {% if item.id in ['animals', 'inventory', 'activities', 'veterinary', 'assets'] %}
+                        <a href="{{ item.url }}" class="quick-action">
+                            <span>{{ item.icon|default('➜') }}</span>
+                            <strong>{{ item.label }}</strong>
+                        </a>
+                    {% endif %}
+                {% endfor %}
+            {% else %}
+                <div class="empty-state">
+                    <p>Os atalhos serão exibidos conforme as permissões do usuário.</p>
+                </div>
+            {% endif %}
+
+        </div>
+
+    </section>
+
+</div>
+
+{% endblock %}
+
+{% block page_js %}
+<script src="{{ url_for('static', filename='js/main.js') }}" defer></script>
+{% endblock %}

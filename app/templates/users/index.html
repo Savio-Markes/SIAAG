@@ -1,0 +1,51 @@
+
+{% extends "base.html" %}
+
+{% block title %}Usuários | SIAAG{% endblock %}
+
+{% block content %}
+<section class="page-header">
+    <div>
+        <h1>Usuários</h1>
+        <p>Gerenciamento dos usuários e acessos ao SIAAG.</p>
+    </div>
+</section>
+
+<section class="content-panel">
+    <div class="panel-header">
+        <div>
+            <h2>Usuários cadastrados</h2>
+            <p>Consulte os usuários registrados no sistema.</p>
+        </div>
+    </div>
+
+    {% if usuarios %}
+    <div class="table-responsive">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    {% for campo in campos_usuarios %}
+                    <th>{{ campo.label }}</th>
+                    {% endfor %}
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for usuario in usuarios %}
+                <tr>
+                    {% for campo in campos_usuarios %}
+                    <td>{{ usuario[campo.key] }}</td>
+                    {% endfor %}
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div class="empty-state">
+        <h3>Nenhum usuário cadastrado</h3>
+        <p>Os usuários aparecerão aqui quando forem disponibilizados pelo sistema.</p>
+    </div>
+    {% endif %}
+</section>
+{% endblock %}

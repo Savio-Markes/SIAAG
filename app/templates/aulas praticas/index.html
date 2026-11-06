@@ -1,0 +1,51 @@
+
+{% extends "base.html" %}
+
+{% block title %}Aulas Práticas | SIAAG{% endblock %}
+
+{% block content %}
+<section class="page-header">
+    <div>
+        <h1>Aulas Práticas</h1>
+        <p>Organização e acompanhamento das aulas práticas da Fazenda Escola.</p>
+    </div>
+</section>
+
+<section class="content-panel">
+    <div class="panel-header">
+        <div>
+            <h2>Aulas cadastradas</h2>
+            <p>Consulte as aulas práticas registradas no sistema.</p>
+        </div>
+    </div>
+
+    {% if aulas %}
+    <div class="table-responsive">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    {% for campo in campos_aulas %}
+                    <th>{{ campo.label }}</th>
+                    {% endfor %}
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for aula in aulas %}
+                <tr>
+                    {% for campo in campos_aulas %}
+                    <td>{{ aula[campo.key] }}</td>
+                    {% endfor %}
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div class="empty-state">
+        <h3>Nenhuma aula cadastrada</h3>
+        <p>As aulas aparecerão aqui quando forem disponibilizadas pelo sistema.</p>
+    </div>
+    {% endif %}
+</section>
+{% endblock %}

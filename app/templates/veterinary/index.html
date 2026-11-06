@@ -1,0 +1,51 @@
+
+{% extends "base.html" %}
+
+{% block title %}Veterinária | SIAAG{% endblock %}
+
+{% block content %}
+<section class="page-header">
+    <div>
+        <h1>Atendimentos Veterinários</h1>
+        <p>Registro e acompanhamento dos atendimentos dos animais.</p>
+    </div>
+</section>
+
+<section class="content-panel">
+    <div class="panel-header">
+        <div>
+            <h2>Atendimentos registrados</h2>
+            <p>Consulte os atendimentos veterinários cadastrados no sistema.</p>
+        </div>
+    </div>
+
+    {% if atendimentos %}
+    <div class="table-responsive">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    {% for campo in campos_atendimentos %}
+                    <th>{{ campo.label }}</th>
+                    {% endfor %}
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for atendimento in atendimentos %}
+                <tr>
+                    {% for campo in campos_atendimentos %}
+                    <td>{{ atendimento[campo.key] }}</td>
+                    {% endfor %}
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div class="empty-state">
+        <h3>Nenhum atendimento registrado</h3>
+        <p>Os atendimentos aparecerão aqui quando forem disponibilizados pelo sistema.</p>
+    </div>
+    {% endif %}
+</section>
+{% endblock %}

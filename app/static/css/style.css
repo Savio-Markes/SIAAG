@@ -1,0 +1,548 @@
+
+/* ========================================
+   SIAAG - ESTILOS GERAIS
+   Identidade visual e estrutura do sistema
+======================================== */
+
+/* 1. CONFIGURAÇÕES GERAIS */
+
+:root {
+    --verde-principal: #176b3a;
+    --verde-escuro: #104d2b;
+    --verde-claro: #e8f3ec;
+
+    --fundo: #f4f6f4;
+    --branco: #ffffff;
+
+    --texto: #26332b;
+    --texto-secundario: #6b776f;
+
+    --borda: #dfe6e1;
+    --vermelho: #c0392b;
+
+    --sombra: 0 2px 10px rgba(0, 0, 0, 0.05);
+
+    --largura-sidebar: 250px;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, Helvetica, sans-serif;
+    background: var(--fundo);
+    color: var(--texto);
+    min-height: 100vh;
+}
+
+a {
+    color: inherit;
+    text-decoration: none;
+}
+
+button,
+input,
+select,
+textarea {
+    font: inherit;
+}
+
+/* 2. ESTRUTURA PRINCIPAL */
+
+.app-layout {
+    min-height: 100vh;
+}
+
+.sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: var(--largura-sidebar);
+    height: 100vh;
+    background: var(--verde-escuro);
+    color: var(--branco);
+    display: flex;
+    flex-direction: column;
+    z-index: 1000;
+    transition: transform 0.3s ease;
+}
+
+.main-area {
+    margin-left: var(--largura-sidebar);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* 3. MARCA DO SISTEMA */
+
+.sidebar-brand {
+    min-height: 90px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 20px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.brand-mark {
+    width: 45px;
+    height: 45px;
+    border-radius: 10px;
+    background: var(--branco);
+    color: var(--verde-principal);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 17px;
+}
+
+.brand-name {
+    font-size: 21px;
+    font-weight: bold;
+    letter-spacing: 1px;
+}
+
+.brand-description {
+    font-size: 11px;
+    color: #c9dfd0;
+    margin-top: 4px;
+}
+
+/* 4. MENU LATERAL */
+
+.sidebar-menu {
+    flex: 1;
+    padding: 20px 12px;
+    overflow-y: auto;
+}
+
+.menu-link {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 13px 14px;
+    margin-bottom: 5px;
+    border-radius: 7px;
+    color: #e2eee6;
+    font-size: 14px;
+    transition: 0.2s;
+}
+
+.menu-link:hover {
+    background: rgba(255, 255, 255, 0.12);
+    color: var(--branco);
+}
+
+.menu-link.active {
+    background: #ffffff;
+    color: var(--verde-escuro);
+    font-weight: bold;
+}
+
+.menu-icon {
+    width: 20px;
+    text-align: center;
+}
+
+/* 5. RODAPÉ DA SIDEBAR */
+
+.sidebar-footer {
+    padding: 15px;
+    border-top: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.logout-button {
+    width: 100%;
+    border: none;
+    background: transparent;
+    color: #ffffff;
+    padding: 12px;
+    border-radius: 7px;
+    text-align: left;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.logout-button:hover {
+    background: rgba(255, 255, 255, 0.12);
+}
+
+/* 6. CABEÇALHO */
+
+.topbar {
+    min-height: 85px;
+    background: var(--branco);
+    border-bottom: 1px solid var(--borda);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 15px 30px;
+}
+
+.institution-name {
+    font-size: 13px;
+    font-weight: bold;
+    color: var(--verde-escuro);
+    text-transform: uppercase;
+}
+
+.institution-campus {
+    font-size: 12px;
+    color: var(--texto-secundario);
+    margin-top: 5px;
+}
+
+.user-info {
+    text-align: right;
+}
+
+.user-name {
+    font-size: 14px;
+    font-weight: bold;
+}
+
+.user-role {
+    font-size: 12px;
+    color: var(--texto-secundario);
+    margin-top: 4px;
+}
+
+/* 7. CONTEÚDO DAS PÁGINAS */
+
+.page-content {
+    width: 100%;
+    max-width: 1600px;
+    margin: 0 auto;
+    padding: 30px;
+    flex: 1;
+}
+
+.page-title {
+    font-size: 25px;
+    font-weight: bold;
+    color: var(--verde-escuro);
+    margin-bottom: 8px;
+}
+
+.page-description {
+    color: var(--texto-secundario);
+    font-size: 14px;
+    margin-bottom: 25px;
+}
+
+/* 8. MENSAGENS DO FLASK */
+
+.flash-container {
+    padding: 15px 30px 0;
+}
+
+.flash-message {
+    padding: 13px 16px;
+    margin-bottom: 10px;
+    border-radius: 7px;
+    font-size: 14px;
+}
+
+.flash-success {
+    background: #e5f5e9;
+    color: #176b3a;
+    border: 1px solid #b8dfc4;
+}
+
+.flash-error,
+.flash-danger {
+    background: #fdebea;
+    color: #a93226;
+    border: 1px solid #f5c6c2;
+}
+
+.flash-warning {
+    background: #fff5dc;
+    color: #856404;
+    border: 1px solid #f0dfaa;
+}
+
+.flash-info {
+    background: #e8f1fb;
+    color: #24527a;
+    border: 1px solid #c5d9ef;
+}
+
+/* 9. BOTÕES PADRÃO */
+
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 11px 18px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: bold;
+    transition: 0.2s;
+}
+
+.btn-primary {
+    background: var(--verde-principal);
+    color: var(--branco);
+}
+
+.btn-primary:hover {
+    background: var(--verde-escuro);
+}
+
+.btn-secondary {
+    background: #e9eeea;
+    color: var(--texto);
+}
+
+.btn-danger {
+    background: var(--vermelho);
+    color: var(--branco);
+}
+
+/* 10. FORMULÁRIOS */
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+    margin-bottom: 18px;
+}
+
+.form-group label {
+    font-size: 14px;
+    font-weight: bold;
+}
+
+.form-control {
+    width: 100%;
+    min-height: 43px;
+    padding: 10px 12px;
+    border: 1px solid var(--borda);
+    border-radius: 6px;
+    background: var(--branco);
+    color: var(--texto);
+    outline: none;
+}
+
+.form-control:focus {
+    border-color: var(--verde-principal);
+    box-shadow: 0 0 0 3px rgba(23, 107, 58, 0.10);
+}
+
+/* 11. ESTADOS VAZIOS */
+
+.empty-state {
+    padding: 35px 20px;
+    text-align: center;
+    color: var(--texto-secundario);
+    background: var(--branco);
+    border: 1px dashed var(--borda);
+    border-radius: 8px;
+}
+
+.empty-state p {
+    font-size: 14px;
+}
+
+/* 12. MENU MOBILE */
+
+.menu-toggle {
+    display: none;
+    border: none;
+    background: transparent;
+    color: var(--verde-escuro);
+    font-size: 24px;
+    cursor: pointer;
+}
+
+.sidebar-overlay {
+    display: none;
+}
+
+/* 13. RESPONSIVIDADE */
+
+@media (max-width: 900px) {
+    .sidebar {
+        transform: translateX(-100%);
+    }
+
+    .sidebar.open {
+        transform: translateX(0);
+    }
+
+    .main-area {
+        margin-left: 0;
+    }
+
+    .menu-toggle {
+        display: block;
+    }
+
+    .sidebar-overlay.active {
+        display: block;
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.45);
+        z-index: 999;
+    }
+
+    .topbar {
+        padding: 15px 20px;
+    }
+
+    .page-content {
+        padding: 22px 20px;
+    }
+}
+
+@media (max-width: 600px) {
+    .topbar {
+        min-height: 75px;
+        gap: 10px;
+    }
+
+    .institution-name {
+        font-size: 11px;
+    }
+
+    .institution-campus {
+        font-size: 10px;
+    }
+
+    .user-info {
+        display: none;
+    }
+
+    .page-content {
+        padding: 20px 15px;
+    }
+
+    .page-title {
+        font-size: 21px;
+    }
+
+    .flash-container {
+        padding: 12px 15px 0;
+    }
+}
+
+/* ========================================
+   COMPONENTES DOS MÓDULOS
+======================================== */
+
+.content-panel {
+    background: #ffffff;
+    border: 1px solid #e5e9e5;
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 24px;
+}
+
+.panel-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 22px;
+}
+
+.panel-header h2 {
+    color: #234b35;
+    font-size: 20px;
+    margin-bottom: 6px;
+}
+
+.panel-header p {
+    color: #718078;
+    font-size: 14px;
+}
+
+.table-responsive {
+    width: 100%;
+    overflow-x: auto;
+}
+
+.data-table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 600px;
+}
+
+.data-table th,
+.data-table td {
+    padding: 14px 16px;
+    text-align: left;
+    border-bottom: 1px solid #e8ede9;
+    font-size: 14px;
+}
+
+.data-table th {
+    background: #f3f7f4;
+    color: #234b35;
+    font-weight: 600;
+}
+
+.data-table td {
+    color: #46554b;
+}
+
+.data-table tbody tr:hover {
+    background: #f8faf8;
+}
+
+.empty-state {
+    text-align: center;
+    padding: 45px 20px;
+    background: #f8faf8;
+    border-radius: 10px;
+}
+
+.empty-state h3 {
+    color: #234b35;
+    font-size: 18px;
+    margin-bottom: 10px;
+}
+
+.empty-state p {
+    color: #718078;
+    font-size: 14px;
+}
+
+.page-header {
+    margin-bottom: 25px;
+}
+
+.page-header h1 {
+    color: #234b35;
+    font-size: 26px;
+    margin-bottom: 8px;
+}
+
+.page-header p {
+    color: #718078;
+    font-size: 14px;
+}
+
+@media (max-width: 768px) {
+    .content-panel {
+        padding: 16px;
+    }
+
+    .panel-header {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .page-header h1 {
+        font-size: 22px;
+    }
+}

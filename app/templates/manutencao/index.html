@@ -1,0 +1,51 @@
+
+{% extends "base.html" %}
+
+{% block title %}Manutenção | SIAAG{% endblock %}
+
+{% block content %}
+<section class="page-header">
+    <div>
+        <h1>Manutenção</h1>
+        <p>Controle e acompanhamento das manutenções da Fazenda Escola.</p>
+    </div>
+</section>
+
+<section class="content-panel">
+    <div class="panel-header">
+        <div>
+            <h2>Manutenções registradas</h2>
+            <p>Consulte os registros de manutenção dos bens e equipamentos.</p>
+        </div>
+    </div>
+
+    {% if manutencoes %}
+    <div class="table-responsive">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    {% for campo in campos_manutencoes %}
+                    <th>{{ campo.label }}</th>
+                    {% endfor %}
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for manutencao in manutencoes %}
+                <tr>
+                    {% for campo in campos_manutencoes %}
+                    <td>{{ manutencao[campo.key] }}</td>
+                    {% endfor %}
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div class="empty-state">
+        <h3>Nenhuma manutenção registrada</h3>
+        <p>Os registros aparecerão aqui quando forem disponibilizados pelo sistema.</p>
+    </div>
+    {% endif %}
+</section>
+{% endblock %}

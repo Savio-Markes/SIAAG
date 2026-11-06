@@ -1,0 +1,51 @@
+
+{% extends "base.html" %}
+
+{% block title %}Patrimônio | SIAAG{% endblock %}
+
+{% block content %}
+<section class="page-header">
+    <div>
+        <h1>Patrimônio</h1>
+        <p>Gerenciamento dos bens e equipamentos da Fazenda Escola.</p>
+    </div>
+</section>
+
+<section class="content-panel">
+    <div class="panel-header">
+        <div>
+            <h2>Bens cadastrados</h2>
+            <p>Consulte os registros patrimoniais do sistema.</p>
+        </div>
+    </div>
+
+    {% if patrimonios %}
+    <div class="table-responsive">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    {% for campo in campos_patrimonio %}
+                    <th>{{ campo.label }}</th>
+                    {% endfor %}
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for patrimonio in patrimonios %}
+                <tr>
+                    {% for campo in campos_patrimonio %}
+                    <td>{{ patrimonio[campo.key] }}</td>
+                    {% endfor %}
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div class="empty-state">
+        <h3>Nenhum bem cadastrado</h3>
+        <p>Os registros patrimoniais aparecerão aqui quando forem disponibilizados pelo sistema.</p>
+    </div>
+    {% endif %}
+</section>
+{% endblock %}

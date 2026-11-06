@@ -1,0 +1,188 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta name="description" content="Sistema Integrado de Administração Agropecuária - IFPI Campus Paulistana">
+
+    <title>{% block title %}SIAAG | IFPI{% endblock %}</title>
+
+    <!-- CSS principal -->
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/style.css') }}">
+
+    <!-- CSS específico de cada página -->
+    {% block page_css %}{% endblock %}
+</head>
+
+<body class="app-body">
+
+    <div class="app-shell">
+
+        <!-- MENU LATERAL -->
+        <aside class="sidebar" id="sidebar">
+
+            <a class="brand" href="/dashboard">
+                <span class="brand-mark">S</span>
+
+                <span class="brand-copy">
+                    <strong>SIAAG</strong>
+                    <small>IFPI · Campus Paulistana</small>
+                </span>
+            </a>
+
+            <div class="sidebar-label">
+                MENU PRINCIPAL
+            </div>
+
+            <nav class="side-nav">
+
+                {% for item in menu_items|default([], true) %}
+
+                    {% if item.url is defined and item.url %}
+
+                    <a class="nav-link
+                       {% if active_page|default('') == item.id|default('') %}
+                       is-active
+                       {% endif %}"
+                       href="{{ item.url }}">
+
+                        {% if item.icon is defined %}
+                            <span class="nav-icon" aria-hidden="true">
+                                {{ item.icon }}
+                            </span>
+                        {% endif %}
+
+                        <span>{{ item.label }}</span>
+
+                    </a>
+
+                    {% endif %}
+
+                {% endfor %}
+
+            </nav>
+
+            <!-- USUÁRIO E LOGOUT -->
+            <div class="sidebar-bottom">
+
+                <div class="user-summary">
+
+                    <span class="user-avatar">
+                        {{ (current_user_name|default('U', true))[:1]|upper }}
+                    </span>
+
+                    <span class="user-copy">
+                        <strong>
+                            {{ current_user_name|default('Usuário', true) }}
+                        </strong>
+
+                        <small>
+                            {{ current_user_role|default('Acesso ao sistema', true) }}
+                        </small>
+                    </span>
+
+                </div>
+
+                <form action="/logout" method="POST">
+
+                    <button class="logout-button" type="submit">
+                        ↪ Encerrar sessão
+                    </button>
+
+                </form>
+
+            </div>
+
+        </aside>
+
+        <!-- CONTEÚDO PRINCIPAL -->
+        <div class="app-content">
+
+            <!-- CABEÇALHO -->
+            <header class="topbar">
+
+                <button
+                    class="menu-toggle"
+                    id="menu-toggle"
+                    type="button"
+                    aria-label="Abrir ou fechar menu"
+                    aria-controls="sidebar"
+                    aria-expanded="false">
+
+                    ☰
+
+                </button>
+
+                <div class="topbar-title">
+
+                    <span>INSTITUTO FEDERAL DO PIAUÍ</span>
+
+                    <strong>
+                        Campus Paulistana · SIAAG
+                    </strong>
+
+                </div>
+
+                <div class="topbar-user">
+                    {{ current_user_name|default('Usuário', true) }}
+                </div>
+
+            </header>
+
+            <!-- ÁREA DAS PÁGINAS -->
+            <main class="page-content">
+
+                <!-- MENSAGENS DO FLASK -->
+                {% with messages = get_flashed_messages(with_categories=true) %}
+
+                    {% if messages %}
+
+                        <div class="flash-list" aria-live="polite">
+
+                            {% for category, message in messages %}
+
+                                <div class="flash-message flash-{{ category }}"
+                                     role="alert">
+
+                                    {{ message }}
+
+                                </div>
+
+                            {% endfor %}
+
+                        </div>
+
+                    {% endif %}
+
+                {% endwith %}
+
+                <!-- CONTEÚDO DE CADA PÁGINA -->
+                {% block content %}{% endblock %}
+
+            </main>
+
+            <!-- RODAPÉ -->
+            <footer class="app-footer">
+
+                SIAAG · Sistema Integrado de Administração Agropecuária
+
+            </footer>
+
+        </div>
+
+    </div>
+
+    <!-- JAVASCRIPT PRINCIPAL -->
+    <script
+        src="{{ url_for('static', filename='js/main.js') }}"
+        defer>
+    </script>
+
+    <!-- JAVASCRIPT ESPECÍFICO DE CADA PÁGINA -->
+    {% block page_js %}{% endblock %}
+
+</body>
+</html>

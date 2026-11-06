@@ -1,0 +1,51 @@
+
+{% extends "base.html" %}
+
+{% block title %}Pesquisas | SIAAG{% endblock %}
+
+{% block content %}
+<section class="page-header">
+    <div>
+        <h1>Pesquisas</h1>
+        <p>Gerenciamento das pesquisas desenvolvidas na Fazenda Escola.</p>
+    </div>
+</section>
+
+<section class="content-panel">
+    <div class="panel-header">
+        <div>
+            <h2>Pesquisas cadastradas</h2>
+            <p>Consulte os projetos de pesquisa registrados no sistema.</p>
+        </div>
+    </div>
+
+    {% if pesquisas %}
+    <div class="table-responsive">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    {% for campo in campos_pesquisas %}
+                    <th>{{ campo.label }}</th>
+                    {% endfor %}
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for pesquisa in pesquisas %}
+                <tr>
+                    {% for campo in campos_pesquisas %}
+                    <td>{{ pesquisa[campo.key] }}</td>
+                    {% endfor %}
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div class="empty-state">
+        <h3>Nenhuma pesquisa cadastrada</h3>
+        <p>Os projetos aparecerão aqui quando forem disponibilizados pelo sistema.</p>
+    </div>
+    {% endif %}
+</section>
+{% endblock %}
