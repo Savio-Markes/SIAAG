@@ -1,3 +1,5 @@
+# Desenvolvido por: Fábio Barbosa
+
 from flask import Flask
 
 from config import Config
@@ -12,7 +14,9 @@ def create_app():
 
     # Registro dos módulos
     from app.auth.routes import auth_bp
+    from app.dashboard.routes import dashboard_bp
 
     app.register_blueprint(auth_bp)
+    app.register_blueprint(dashboard_bp)
 
     return app
