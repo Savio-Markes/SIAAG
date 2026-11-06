@@ -1,4 +1,3 @@
-
 from flask import Flask
 
 from config import Config
@@ -10,5 +9,10 @@ def create_app():
     app.config.from_object(Config)
 
     app.teardown_appcontext(close_db)
+
+    # Registro dos módulos
+    from app.auth.routes import auth_bp
+
+    app.register_blueprint(auth_bp)
 
     return app
