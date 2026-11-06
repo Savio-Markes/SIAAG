@@ -1,4 +1,3 @@
-# Desenvolvido por: Fábio Barbosa
 
 from datetime import date, datetime
 
@@ -17,21 +16,13 @@ def validar_dados_animal(dados, atualizacao=False):
         raise AnimalServiceError("Dados do animal inválidos.")
 
     if not atualizacao:
-        identificacao = dados.get("identificacao")
-        especie = dados.get("especie")
-        situacao = dados.get("situacao")
-
-        if not identificacao or not str(identificacao).strip():
-            raise AnimalServiceError("A identificação é obrigatória.")
-
-        if not especie or not str(especie).strip():
-            raise AnimalServiceError("A espécie é obrigatória.")
-
-        if not situacao or not str(situacao).strip():
-            raise AnimalServiceError("A situação é obrigatória.")
+        for campo in ("nome", "especie", "situacao"):
+            if not dados.get(campo) or not str(dados[campo]).strip():
+                raise AnimalServiceError(
+                    f"O campo {campo} é obrigatório."
+                )
 
     campos_texto = (
-        "identificacao",
         "nome",
         "especie",
         "raca",
@@ -49,8 +40,7 @@ def validar_dados_animal(dados, atualizacao=False):
     if "nascimento" in dados and dados["nascimento"]:
         try:
             nascimento = datetime.strptime(
-                str(dados["nascimento"]),
-                "%Y-%m-%d"
+                str(dados["nascimento"]), "%Y-%m-%d"
             ).date()
         except ValueError:
             raise AnimalServiceError(
@@ -62,17 +52,22 @@ def validar_dados_animal(dados, atualizacao=False):
                 "A data de nascimento não pode ser futura."
             )
 
-    for campo in ("data_entrada",):
-        if campo in dados and dados[campo]:
-            try:
-                datetime.strptime(str(dados[campo]), "%Y-%m-%d")
-            except ValueError:
-                raise AnimalServiceError(
-                    f"A data de {campo.replace('_', ' ')} é inválida."
-                )
+    if "data_entrada" in dados and dados["data_entrada"]:
+        try:
+            datetime.strptime(
+                str(dados["data_entrada"]), "%Y-%m-%d"
+            )
+        except ValueError:
+            raise AnimalServiceError(
+                "A data de entrada é inválida."
+            )
 
-    if "ativo" in dados and dados["ativo"] not in (0, 1, False, True):
-        raise AnimalServiceError("O estado de atividade é inválido.")
+    if "ativo" in dados and dados["ativo"] not in (
+        0, 1, False, True
+    ):
+        raise AnimalServiceError(
+            "O estado de atividade é inválido."
+        )
 
     return dados
 
@@ -109,15 +104,6 @@ def cadastrar_animal(dados, criado_por):
 
     dados = validar_dados_animal(dados)
 
-    existente = animal_repository.buscar_animal_por_identificacao(
-        dados["identificacao"]
-    )
-
-    if existente:
-        raise AnimalServiceError(
-            "Já existe um animal com essa identificação."
-        )
-
     return animal_repository.criar_animal(
         dados=dados,
         criado_por=criado_por
@@ -125,7 +111,7 @@ def cadastrar_animal(dados, criado_por):
 
 
 def editar_animal(animal_id, dados):
-    """Valida e atualiza os dados de um animal."""
+    """Valida e atualiza os dados cadastrais."""
 
     buscar_animal(animal_id)
 
@@ -133,16 +119,6 @@ def editar_animal(animal_id, dados):
         dados,
         atualizacao=True
     )
-
-    if "identificacao" in dados and dados["identificacao"]:
-        existente = animal_repository.buscar_animal_por_identificacao(
-            dados["identificacao"]
-        )
-
-        if existente and existente["id"] != animal_id:
-            raise AnimalServiceError(
-                "Essa identificação já pertence a outro animal."
-            )
 
     atualizado = animal_repository.atualizar_animal(
         animal_id,

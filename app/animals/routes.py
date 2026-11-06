@@ -22,7 +22,7 @@ def listar():
 
     try:
         filtros = {
-            "identificacao": request.args.get("identificacao", "").strip(),
+            "nome": request.args.get("nome", "").strip(),
             "especie": request.args.get("especie", "").strip(),
             "situacao": request.args.get("situacao", "").strip()
         }
