@@ -1,8 +1,11 @@
+
 # Desenvolvido por: Fábio Barbosa
 
 from functools import wraps
 
 from flask import session, redirect, url_for, flash
+
+from app.auth.permission_service import verificar_permissao_usuario
 
 
 # Códigos de permissões utilizados pelo SIAAG.
@@ -33,11 +36,14 @@ PERMISSOES = {
 
 
 def possui_permissao(codigo):
-    """Verifica se a sessão possui determinada permissão."""
+    """Consulta no banco se o usuário possui determinada permissão."""
 
-    permissoes_usuario = session.get("permissoes", [])
+    usuario_id = session.get("usuario_id")
 
-    return codigo in permissoes_usuario
+    if not usuario_id or codigo not in PERMISSOES:
+        return False
+
+    return verificar_permissao_usuario(usuario_id, codigo)
 
 
 def permission_required(codigo):
@@ -48,14 +54,8 @@ def permission_required(codigo):
         def decorated_view(*args, **kwargs):
 
             if "usuario_id" not in session:
-                flash(
-                    "Faça login para acessar o sistema.",
-                    "erro"
-                )
+                flash("Faça login para acessar o sistema.", "erro")
                 return redirect(url_for("auth.login"))
-
-            if codigo not in PERMISSOES:
-                return "Permissão inválida.", 403
 
             if not possui_permissao(codigo):
                 return "Acesso não autorizado.", 403
