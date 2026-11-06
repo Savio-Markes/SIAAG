@@ -1,7 +1,9 @@
+# Desenvolvido por: Fábio Barbosa
 
 from flask import Flask
+
 from config import Config
-from app.database import close_db
+from app.extensions import close_db
 
 
 def create_app():
@@ -12,11 +14,9 @@ def create_app():
 
     # Registro dos módulos
     from app.auth.routes import auth_bp
-    @app.route("/")
-    def inicio():
-        return "SIAAG — Servidor funcionando!"
+    from app.dashboard.routes import dashboard_bp
 
-    # app.register_blueprint(auth_bp)
-    # Registre os demais módulos aqui quando necessário.
+    app.register_blueprint(auth_bp)
+    app.register_blueprint(dashboard_bp)
 
     return app
