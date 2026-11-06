@@ -1,15 +1,12 @@
-# Sávio — 06/11/2026
+# Desenvolvido por: Fábio Barbosa
 
 import pymysql
 from flask import current_app, g
-from flask_sqlalchemy import SQLAlchemy
-from flask_migrate import Migrate
-
-db = SQLAlchemy()
-migrate = Migrate()
 
 
 def get_db():
+    """Obtém ou cria a conexão com o banco MySQL."""
+
     if "db" not in g:
         g.db = pymysql.connect(
             host=current_app.config["MYSQL_HOST"],
@@ -18,13 +15,15 @@ def get_db():
             password=current_app.config["MYSQL_PASSWORD"],
             database=current_app.config["MYSQL_DATABASE"],
             charset="utf8mb4",
-            cursorclass=pymysql.cursors.DictCursor,
+            cursorclass=pymysql.cursors.DictCursor
         )
 
     return g.db
 
 
 def close_db(error=None):
+    """Encerra a conexão com o banco ao finalizar a requisição."""
+
     connection = g.pop("db", None)
 
     if connection is not None and connection.open:
