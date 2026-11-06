@@ -1,0 +1,375 @@
+
+/* ==================================================
+   SIAAG - TELA DE LOGIN
+   IFPI CAMPUS PAULISTANA
+================================================== */
+
+/* Variáveis visuais da tela */
+:root {
+    --login-green: #176b45;
+    --login-green-dark: #105336;
+    --login-green-light: #eaf4ed;
+    --login-text: #26372d;
+    --login-muted: #718078;
+    --login-border: #dce6df;
+    --login-background: #f1f5f2;
+    --login-white: #ffffff;
+    --login-error: #a72d2d;
+}
+
+/* Fundo */
+.login-page {
+    min-height: 100vh;
+    margin: 0;
+    padding: 32px 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background:
+        radial-gradient(
+            circle at 10% 15%,
+            rgba(39, 116, 73, 0.10),
+            transparent 32%
+        ),
+        radial-gradient(
+            circle at 90% 85%,
+            rgba(39, 116, 73, 0.08),
+            transparent 30%
+        ),
+        var(--login-background);
+    color: var(--login-text);
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+/* Área central */
+.login-main {
+    width: 100%;
+    max-width: 440px;
+    margin: auto;
+}
+
+/* Cartão */
+.login-card {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 34px 38px 28px;
+    background: var(--login-white);
+    border: 1px solid rgba(20, 80, 48, 0.08);
+    border-top: 5px solid var(--login-green);
+    border-radius: 14px;
+    box-shadow: 0 15px 45px rgba(28, 65, 42, 0.10);
+}
+
+/* Identificação institucional */
+.login-institution {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    padding-bottom: 22px;
+    border-bottom: 1px solid var(--login-border);
+}
+
+.login-institution-mark {
+    width: 43px;
+    height: 43px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid var(--login-green);
+    border-radius: 7px;
+    color: var(--login-green);
+    font-size: 15px;
+    font-weight: 800;
+    letter-spacing: -1px;
+}
+
+.login-institution-text {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    color: var(--login-green-dark);
+}
+
+.login-institution-text span {
+    font-size: 9px;
+    letter-spacing: 2px;
+    font-weight: 700;
+}
+
+.login-institution-text strong {
+    font-size: 19px;
+    letter-spacing: 1px;
+}
+
+.login-institution-text small {
+    color: var(--login-muted);
+    font-size: 11px;
+}
+
+/* Marca SIAAG */
+.login-brand {
+    text-align: center;
+    padding-top: 25px;
+}
+
+.login-logo {
+    display: block;
+    width: 112px;
+    height: 95px;
+    object-fit: contain;
+    margin: 0 auto 8px;
+}
+
+.login-brand h1 {
+    margin: 0;
+    color: var(--login-green);
+    font-size: 32px;
+    font-weight: 800;
+    letter-spacing: 4px;
+}
+
+.login-subtitle {
+    max-width: 290px;
+    margin: 7px auto 0;
+    color: var(--login-muted);
+    font-size: 11px;
+    line-height: 1.5;
+}
+
+/* Boas-vindas */
+.login-welcome {
+    margin: 27px 0 25px;
+    text-align: center;
+}
+
+.login-welcome h2 {
+    margin: 0 0 9px;
+    color: var(--login-text);
+    font-size: 21px;
+    font-weight: 700;
+}
+
+.login-welcome p {
+    max-width: 320px;
+    margin: 0 auto;
+    color: var(--login-muted);
+    font-size: 13px;
+    line-height: 1.6;
+}
+
+/* Formulário */
+.login-form {
+    width: 100%;
+}
+
+.login-field {
+    margin-bottom: 19px;
+}
+
+.login-field label {
+    display: block;
+    margin-bottom: 8px;
+    color: var(--login-text);
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.login-field input {
+    width: 100%;
+    height: 48px;
+    box-sizing: border-box;
+    padding: 0 14px;
+    border: 1px solid var(--login-border);
+    border-radius: 7px;
+    outline: none;
+    background: #fcfdfc;
+    color: var(--login-text);
+    font-size: 13px;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.login-field input::placeholder {
+    color: #9aa69e;
+}
+
+.login-field input:focus {
+    border-color: var(--login-green);
+    box-shadow: 0 0 0 3px rgba(23, 107, 69, 0.12);
+}
+
+/* Campo de senha */
+.login-password-wrapper {
+    position: relative;
+}
+
+.login-password-wrapper input {
+    padding-right: 85px;
+}
+
+.login-password-toggle {
+    position: absolute;
+    top: 50%;
+    right: 13px;
+    transform: translateY(-50%);
+    padding: 5px 0;
+    border: none;
+    background: transparent;
+    color: var(--login-green);
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.login-password-toggle:hover {
+    color: var(--login-green-dark);
+    text-decoration: underline;
+}
+
+/* Mensagem de validação */
+.login-validation-message {
+    min-height: 16px;
+    margin: -5px 0 12px;
+    color: var(--login-error);
+    font-size: 12px;
+    line-height: 1.4;
+}
+
+.login-validation-message:empty {
+    display: none;
+}
+
+/* Mensagens do Flask */
+.login-alert {
+    margin-bottom: 18px;
+    padding: 12px 13px;
+    border-radius: 7px;
+    font-size: 12px;
+    line-height: 1.5;
+}
+
+.login-alert-error,
+.login-alert-danger {
+    border: 1px solid #f0caca;
+    background: #fff1f1;
+    color: var(--login-error);
+}
+
+.login-alert-success {
+    border: 1px solid #cce6d3;
+    background: #eff9f1;
+    color: #21683c;
+}
+
+.login-alert-warning {
+    border: 1px solid #f0dfb5;
+    background: #fff8e8;
+    color: #765718;
+}
+
+/* Botão de entrada */
+.login-submit {
+    width: 100%;
+    min-height: 49px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    padding: 0 17px;
+    border: none;
+    border-radius: 7px;
+    background: var(--login-green);
+    color: var(--login-white);
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.2s;
+}
+
+.login-submit:hover {
+    background: var(--login-green-dark);
+}
+
+.login-submit:active {
+    transform: translateY(1px);
+}
+
+.login-submit:focus-visible,
+.login-password-toggle:focus-visible {
+    outline: 3px solid rgba(23, 107, 69, 0.25);
+    outline-offset: 3px;
+}
+
+.login-submit-arrow {
+    font-size: 19px;
+    line-height: 1;
+}
+
+/* Rodapé */
+.login-footer {
+    margin-top: 26px;
+    padding-top: 18px;
+    border-top: 1px solid var(--login-border);
+    text-align: center;
+}
+
+.login-footer > span {
+    color: var(--login-green-dark);
+    font-size: 11px;
+    font-weight: 700;
+}
+
+.login-footer p {
+    margin: 6px 0;
+    color: var(--login-muted);
+    font-size: 10px;
+}
+
+.login-footer small {
+    color: #929d95;
+    font-size: 10px;
+}
+
+/* Responsividade: celular */
+@media (max-width: 480px) {
+
+    .login-page {
+        padding: 18px 12px;
+    }
+
+    .login-card {
+        padding: 27px 22px 23px;
+        border-radius: 11px;
+    }
+
+    .login-logo {
+        width: 96px;
+        height: 82px;
+    }
+
+    .login-brand h1 {
+        font-size: 28px;
+    }
+
+    .login-welcome h2 {
+        font-size: 19px;
+    }
+
+    .login-welcome p {
+        font-size: 12px;
+    }
+
+}
+
+/* Telas muito pequenas */
+@media (max-width: 340px) {
+
+    .login-card {
+        padding: 23px 16px;
+    }
+
+    .login-institution-text strong {
+        font-size: 16px;
+    }
+
+}

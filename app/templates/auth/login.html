@@ -1,0 +1,184 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta name="description" content="Acesso ao Sistema Integrado de Administração Agropecuária do IFPI Campus Paulistana.">
+
+    <title>Login | SIAAG - IFPI</title>
+
+    <!-- Estilos principais do sistema -->
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/app.css') }}">
+</head>
+
+<body class="login-page">
+
+    <main class="login-main">
+
+        <section class="login-card" aria-labelledby="login-title">
+
+            <!-- Identificação institucional -->
+            <header class="login-institution">
+
+                <div class="login-institution-mark">
+                    IF
+                </div>
+
+                <div class="login-institution-text">
+                    <span>INSTITUTO FEDERAL</span>
+                    <strong>PIAUÍ</strong>
+                    <small>Campus Paulistana</small>
+                </div>
+
+            </header>
+
+            <!-- Identidade do SIAAG -->
+            <div class="login-brand">
+
+                <img
+                    src="{{ url_for('static', filename='img/siaag-logo.png') }}"
+                    alt="Logo do Sistema SIAAG"
+                    class="login-logo"
+                >
+
+                <h1 id="login-title">SIAAG</h1>
+
+                <p class="login-subtitle">
+                    Sistema Integrado de Administração Agropecuária
+                </p>
+
+            </div>
+
+            <!-- Boas-vindas -->
+            <div class="login-welcome">
+
+                <h2>Bem-vindo(a) ao SIAAG!</h2>
+
+                <p>
+                    Acesse sua conta para acompanhar e gerenciar
+                    as atividades da Fazenda Escola.
+                </p>
+
+            </div>
+
+            <!-- Mensagens enviadas pelo Flask -->
+            {% with mensagens = get_flashed_messages(with_categories=true) %}
+                {% if mensagens %}
+                    {% for categoria, mensagem in mensagens %}
+                        <div
+                            class="login-alert login-alert-{{ categoria }}"
+                            role="alert"
+                        >
+                            {{ mensagem }}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+
+            <!-- Formulário de autenticação -->
+            <form
+                id="login-form"
+                class="login-form"
+                action="{{ url_for('auth.login') }}"
+                method="POST"
+                novalidate
+            >
+
+                <div class="login-field">
+
+                    <label for="login">
+                        Login ou e-mail
+                    </label>
+
+                    <input
+                        type="text"
+                        id="login"
+                        name="login"
+                        placeholder="Digite seu login ou e-mail"
+                        autocomplete="username"
+                        required
+                        autofocus
+                    >
+
+                </div>
+
+                <div class="login-field">
+
+                    <label for="senha">
+                        Senha
+                    </label>
+
+                    <div class="login-password-wrapper">
+
+                        <input
+                            type="password"
+                            id="senha"
+                            name="senha"
+                            placeholder="Digite sua senha"
+                            autocomplete="current-password"
+                            required
+                        >
+
+                        <button
+                            type="button"
+                            id="toggle-password"
+                            class="login-password-toggle"
+                            aria-label="Mostrar senha"
+                            aria-pressed="false"
+                        >
+                            Mostrar
+                        </button>
+
+                    </div>
+
+                </div>
+
+                <!-- Erro de preenchimento no navegador -->
+                <p
+                    id="login-validation-message"
+                    class="login-validation-message"
+                    role="alert"
+                    aria-live="polite"
+                ></p>
+
+                <button
+                    type="submit"
+                    id="login-submit"
+                    class="login-submit"
+                >
+                    <span>Entrar no sistema</span>
+                    <span class="login-submit-arrow" aria-hidden="true">
+                        →
+                    </span>
+                </button>
+
+            </form>
+
+            <!-- Rodapé -->
+            <footer class="login-footer">
+
+                <span>IFPI — Campus Paulistana</span>
+
+                <p>
+                    Sistema Integrado de Administração Agropecuária
+                </p>
+
+                <small>
+                    Acesso destinado aos usuários autorizados.
+                </small>
+
+            </footer>
+
+        </section>
+
+    </main>
+
+    <!-- JavaScript principal do sistema -->
+    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+
+</body>
+</html>
