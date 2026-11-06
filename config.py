@@ -9,6 +9,7 @@ load_dotenv()
 
 class Config:
 
+    SECRET_KEY = os.environ.get("SECRET_KEY") or "siaag-chave-desenvolvimento"
     MYSQL_HOST = os.environ.get("MYSQL_HOST", "localhost")
     MYSQL_PORT = int(os.environ.get("MYSQL_PORT", "3306"))
     MYSQL_USER = os.environ.get("MYSQL_USER", "root")

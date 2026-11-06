@@ -17,9 +17,11 @@ def create_app():
     from app.auth.routes import auth_bp
     from app.dashboard.routes import dashboard_bp
     from app.users.routes import users_bp
+    from app.animals.routes import animals_bp
 
     app.register_blueprint(auth_bp)
     app.register_blueprint(dashboard_bp)
     app.register_blueprint(users_bp)
+    app.register_blueprint(animals_bp)
 
     return app
