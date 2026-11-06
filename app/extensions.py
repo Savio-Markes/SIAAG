@@ -1,5 +1,12 @@
+# Sávio — 06/11/2026
+
 import pymysql
 from flask import current_app, g
+from flask_sqlalchemy import SQLAlchemy
+from flask_migrate import Migrate
+
+db = SQLAlchemy()
+migrate = Migrate()
 
 
 def get_db():
@@ -11,14 +18,14 @@ def get_db():
             password=current_app.config["MYSQL_PASSWORD"],
             database=current_app.config["MYSQL_DATABASE"],
             charset="utf8mb4",
-            cursorclass=pymysql.cursors.DictCursor
+            cursorclass=pymysql.cursors.DictCursor,
         )
 
     return g.db
 
 
 def close_db(error=None):
-    db = g.pop("db", None)
+    connection = g.pop("db", None)
 
-    if db is not None and db.open:
-        db.close()
+    if connection is not None and connection.open:
+        connection.close()
