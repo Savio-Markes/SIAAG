@@ -1,8 +1,12 @@
+# Desenvolvido por: Fábio Barbosa
+
 import pymysql
 from flask import current_app, g
 
 
 def get_db():
+    """Obtém ou cria a conexão com o banco MySQL."""
+
     if "db" not in g:
         g.db = pymysql.connect(
             host=current_app.config["MYSQL_HOST"],
@@ -18,7 +22,9 @@ def get_db():
 
 
 def close_db(error=None):
-    db = g.pop("db", None)
+    """Encerra a conexão com o banco ao finalizar a requisição."""
 
-    if db is not None and db.open:
-        db.close()
+    connection = g.pop("db", None)
+
+    if connection is not None and connection.open:
+        connection.close()
