@@ -36,7 +36,9 @@ function mostrarFeedback(elemento, mensagem, tipo = "sucesso") {
 
     const titulo = document.createElement("strong");
     titulo.className = "feedback-title";
-    titulo.textContent = erro ? "Atenção: verifique os dados" : "Operação concluída";
+    titulo.textContent = erro
+        ? "Atenção: verifique os dados"
+        : "Operação concluída";
 
     const descricao = document.createElement("p");
     descricao.className = "feedback-description";
@@ -53,7 +55,19 @@ function mostrarFeedback(elemento, mensagem, tipo = "sucesso") {
     elemento.setAttribute("role", erro ? "alert" : "status");
     elemento.setAttribute("aria-live", erro ? "assertive" : "polite");
     elemento.setAttribute("aria-atomic", "true");
+
+    // Sobe a página até o feedback nos formulários de cadastro.
+    if (
+        elemento.id === "animal-form-feedback" ||
+        elemento.id === "patrimonio-form-feedback"
+    ) {
+        elemento.scrollIntoView({
+            behavior: "smooth",
+            block: "center"
+        });
+    }
 }
+
 
 function limparFeedback(elemento) {
     if (!elemento) return;
@@ -78,6 +92,7 @@ function prepararFormulario(formulario) {
     return Object.fromEntries(new FormData(formulario));
 }
 
+
 function validarFormulario(formulario, feedback) {
     if (!formulario.checkValidity()) {
         formulario.reportValidity();
@@ -93,6 +108,7 @@ function validarFormulario(formulario, feedback) {
 
     return true;
 }
+
 
 function converterData(valor) {
     if (!valor) return null;
@@ -117,6 +133,7 @@ function converterData(valor) {
     data.setHours(0, 0, 0, 0);
     return data;
 }
+
 
 function obterHoje() {
     const hoje = new Date();

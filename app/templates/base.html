@@ -8,18 +8,11 @@
 
     <title>{% block title %}SIAAG{% endblock %}</title>
 
-    <link
-        rel="stylesheet"
-        href="{{ url_for('static', filename='css/app.css') }}"
-    >
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/app.css') }}">
 
     {% block page_css %}{% endblock %}
 
-    <script
-        src="{{ url_for('static', filename='js/app.js') }}"
-        defer
-    ></script>
-
+    <script src="{{ url_for('static', filename='js/app.js') }}" defer></script>
     {% block page_js %}{% endblock %}
 </head>
 
@@ -28,11 +21,14 @@
 
         <aside class="sidebar" aria-label="Navegação principal">
             <div class="sidebar-brand">
-                <img
-                    src="{{ url_for('static', filename='img/logo-siaag.png') }}"
-                    alt="Logo do SIAAG"
-                    class="sidebar-logo"
-                >
+
+                <div class="sidebar-logo-area">
+                    <img
+                        src="{{ url_for('static', filename='img/logo.jpeg') }}"
+                        alt="Logo do SIAAG"
+                        class="sidebar-logo"
+                    >
+                </div>
 
                 <div class="sidebar-brand-text">
                     <strong>SIAAG</strong>
@@ -49,7 +45,6 @@
                             Animais
                         </a>
                     </li>
-
                     <li>
                         <a href="/patrimonio/novo" class="navigation-link">
                             Patrimônio
@@ -62,17 +57,12 @@
         <div class="app-main">
             <header class="app-header">
                 <div class="header-content">
-                    <p class="header-institution">
-                        IFPI — Campus Paulistana
-                    </p>
-                    <h1 class="header-title">
-                        Fazenda Escola
-                    </h1>
+                    <p class="header-institution">IFPI — Campus Paulistana</p>
+                    <h1 class="header-title">Fazenda Escola</h1>
                 </div>
             </header>
 
             <main class="main-content" id="conteudo-principal" tabindex="-1">
-
                 <section
                     class="global-messages"
                     aria-label="Mensagens do sistema"
@@ -92,15 +82,11 @@
                     {% endwith %}
                 </section>
 
-                {% block content %}
-                {% endblock %}
-
+                {% block content %}{% endblock %}
             </main>
 
             <footer class="app-footer">
-                <p>
-                    SIAAG — Sistema Integrado de Administração Agropecuária
-                </p>
+                <p>SIAAG — Sistema Integrado de Administração Agropecuária</p>
                 <p>IFPI — Campus Paulistana</p>
             </footer>
         </div>
