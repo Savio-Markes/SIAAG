@@ -20,10 +20,14 @@
 </head>
 
 <body>
+
     <main class="login-page">
+
         <section class="login-container" aria-labelledby="login-title">
 
+            <!-- Cabeçalho institucional -->
             <header class="login-header">
+
                 <img
                     src="{{ url_for('static', filename='img/logo-siaag.png') }}"
                     alt="Logo do SIAAG"
@@ -39,40 +43,62 @@
                 <p class="login-institution">
                     IFPI — Campus Paulistana
                 </p>
+
             </header>
 
+
+            <!-- Área de autenticação -->
             <section class="login-content">
+
                 <h2>Acessar o sistema</h2>
 
-                <p>Informe suas credenciais para continuar.</p>
+                <p>
+                    Informe suas credenciais para continuar.
+                </p>
 
+
+                <!-- Mensagens de erro e confirmação -->
                 <div
                     class="login-messages"
                     aria-live="polite"
                     aria-atomic="true"
                 >
+
                     {% with mensagens = get_flashed_messages(with_categories=true) %}
+
                         {% if mensagens %}
+
                             {% for categoria, mensagem in mensagens %}
+
                                 <div
-                                    class="message message-error"
+                                    class="message {{ 'message-success' if categoria == 'success' else 'message-error' }}"
                                     role="alert"
                                 >
                                     {{ mensagem }}
                                 </div>
+
                             {% endfor %}
+
                         {% endif %}
+
                     {% endwith %}
+
                 </div>
 
+
+                <!-- Formulário de login -->
                 <form
                     id="login-form"
                     class="login-form"
                     action="{{ url_for('auth.login') }}"
                     method="POST"
                 >
+
                     <div class="form-field">
-                        <label for="login">Matrícula</label>
+
+                        <label for="login">
+                            Matrícula
+                        </label>
 
                         <input
                             type="text"
@@ -82,10 +108,15 @@
                             placeholder="Digite sua matrícula"
                             required
                         >
+
                     </div>
 
+
                     <div class="form-field">
-                        <label for="senha">Senha</label>
+
+                        <label for="senha">
+                            Senha
+                        </label>
 
                         <input
                             type="password"
@@ -95,7 +126,9 @@
                             placeholder="Digite sua senha"
                             required
                         >
+
                     </div>
+
 
                     <button
                         type="submit"
@@ -103,16 +136,28 @@
                     >
                         Entrar
                     </button>
+
                 </form>
+
             </section>
 
+
+            <!-- Rodapé -->
             <footer class="login-footer">
+
                 <p>
                     Acesso restrito aos usuários autorizados.
                 </p>
+
+                <p>
+                    SIAAG — IFPI Campus Paulistana
+                </p>
+
             </footer>
 
         </section>
+
     </main>
+
 </body>
 </html>
