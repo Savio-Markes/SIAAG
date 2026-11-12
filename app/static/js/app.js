@@ -7,15 +7,23 @@ document.addEventListener("DOMContentLoaded", () => {
     inicializarCadastroAnimal();
     inicializarCadastroPatrimonio();
     inicializarCancelamentos();
+
+    console.log("SIAAG: JavaScript carregado com sucesso.");
 });
 
 
 // FUNÇÕES AUXILIARES
 
 function mostrarFeedback(elemento, mensagem, tipo) {
-    if (!elemento) return;
+    if (!elemento) {
+        console.error("Elemento de feedback não encontrado.");
+        return;
+    }
 
     elemento.textContent = mensagem;
+    elemento.hidden = false;
+    elemento.setAttribute("role", tipo === "erro" ? "alert" : "status");
+
     elemento.classList.remove("is-error", "is-success");
     elemento.classList.add(
         tipo === "erro" ? "is-error" : "is-success"
@@ -30,7 +38,6 @@ function limparFeedback(elemento) {
 }
 
 function prepararFormulario(formulario) {
-    // Remove espaços extras dos campos de texto.
     formulario.querySelectorAll(
         'input[type="text"], textarea'
     ).forEach(campo => {
@@ -108,6 +115,8 @@ function inicializarLogin() {
             "Dados recebidos! A autenticação ainda não está integrada.",
             "sucesso"
         );
+
+        formulario.reset();
     });
 }
 
@@ -175,6 +184,8 @@ function inicializarCadastroAnimal() {
             "Cadastro validado! Dados recebidos, sem gravação no banco.",
             "sucesso"
         );
+
+        formulario.reset();
     });
 }
 
@@ -222,6 +233,8 @@ function inicializarCadastroPatrimonio() {
             "Cadastro validado! Dados recebidos, sem gravação no banco.",
             "sucesso"
         );
+
+        formulario.reset();
     });
 }
 
@@ -241,9 +254,9 @@ function inicializarCancelamentos() {
 
             formulario.reset();
 
-            const feedback = formulario.querySelector(
-                ".form-feedback"
-            );
+            const feedback = formulario
+                .closest(".content-panel")
+                ?.querySelector(".form-feedback");
 
             limparFeedback(feedback);
         });
