@@ -1,0 +1,229 @@
+
+/* =====================================
+   SIAAG — LOGIN
+   IFPI CAMPUS PAULISTANA
+   ===================================== */
+
+:root {
+    --primary: #245c38;
+    --primary-dark: #19452b;
+    --primary-light: #eaf3ec;
+    --background: #f4f7f4;
+    --surface: #ffffff;
+    --text: #26352a;
+    --muted: #718075;
+    --border: #e0e8e1;
+    --danger: #a52e28;
+    --danger-bg: #fff0ee;
+    --success: #216b3a;
+    --success-bg: #eaf7ed;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: "Segoe UI", Arial, sans-serif;
+    background: var(--background);
+    color: var(--text);
+    min-height: 100vh;
+    line-height: 1.6;
+}
+
+button, input, select, textarea {
+    font: inherit;
+}
+
+.login-page {
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 25px 15px;
+    background: linear-gradient(135deg, #e9f1e9, #f5f8f4, #e3ede3);
+}
+
+.login-container {
+    width: 100%;
+    max-width: 440px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    overflow: hidden;
+    box-shadow: 0 12px 40px rgba(30,75,43,.10);
+    animation: aparecer .4s ease;
+}
+
+@keyframes aparecer {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.login-header {
+    text-align: center;
+    padding: 38px 25px 30px;
+    background: linear-gradient(145deg, var(--primary-dark), var(--primary));
+    color: white;
+}
+
+.login-logo {
+    display: block;
+    width: 95px;
+    height: 95px;
+    object-fit: contain;
+    margin: 0 auto 12px;
+}
+
+.login-header h1 {
+    font-size: 30px;
+    font-weight: 800;
+    letter-spacing: 2px;
+}
+
+.login-description {
+    font-size: 13px;
+    margin-top: 7px;
+    opacity: .9;
+}
+
+.login-institution {
+    display: inline-block;
+    margin-top: 16px;
+    padding: 5px 14px;
+    font-size: 12px;
+    border: 1px solid rgba(255,255,255,.3);
+    border-radius: 30px;
+}
+
+.login-content {
+    padding: 30px;
+}
+
+.login-content h2 {
+    color: var(--primary-dark);
+    font-size: 21px;
+    margin-bottom: 5px;
+}
+
+.login-content > p {
+    color: var(--muted);
+    font-size: 13px;
+    margin-bottom: 25px;
+}
+
+.login-form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.form-field {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+}
+
+.form-field label {
+    font-size: 13px;
+    font-weight: 600;
+    color: #34483a;
+}
+
+.form-field input {
+    width: 100%;
+    min-height: 46px;
+    padding: 11px 13px;
+    border: 1px solid #d9e3da;
+    border-radius: 8px;
+    outline: none;
+    color: var(--text);
+    background: white;
+    font-size: 14px;
+    transition: .2s;
+}
+
+.form-field input:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(36,92,56,.11);
+}
+
+.form-field input::placeholder {
+    color: #a2aea4;
+}
+
+.button-primary {
+    min-height: 46px;
+    padding: 11px 22px;
+    border: 1px solid var(--primary);
+    border-radius: 8px;
+    background: var(--primary);
+    color: white;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: .2s;
+}
+
+.button-primary:hover {
+    background: var(--primary-dark);
+    border-color: var(--primary-dark);
+    box-shadow: 0 4px 12px rgba(36,92,56,.18);
+}
+
+.login-submit {
+    width: 100%;
+    margin-top: 5px;
+}
+
+.login-footer {
+    text-align: center;
+    padding: 16px;
+    border-top: 1px solid var(--border);
+    background: #fafcf9;
+}
+
+.login-footer p {
+    color: var(--muted);
+    font-size: 12px;
+}
+
+/* Mensagens de autenticação */
+
+.login-messages {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.login-messages:empty {
+    display: none;
+}
+
+.login-messages .message {
+    padding: 13px 16px;
+    margin: 0;
+    border-radius: 8px;
+    font-size: 13px;
+    line-height: 1.6;
+}
+
+.login-messages .message-error {
+    color: var(--danger);
+    background: var(--danger-bg);
+    border: 1px solid #f0c3bf;
+    border-left: 4px solid #cf493e;
+}
+
+/* Responsividade */
+
+@media (max-width: 600px) {
+    .login-page { padding: 15px 10px; }
+    .login-header { padding: 28px 18px 24px; }
+    .login-logo { width: 78px; height: 78px; }
+    .login-header h1 { font-size: 26px; }
+    .login-content { padding: 24px 20px; }
+}
