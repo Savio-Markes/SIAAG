@@ -1,7 +1,8 @@
 
 # Desenvolvido por: Fábio Barbosa
 
-from flask import Flask
+from datetime import date
+from flask import Flask, render_template
 
 from config import Config
 from app.extensions import close_db
@@ -23,5 +24,18 @@ def create_app():
     app.register_blueprint(dashboard_bp)
     app.register_blueprint(users_bp)
     app.register_blueprint(animals_bp)
+
+    # ROTAS TEMPORÁRIAS PARA TESTE DOS FORMULÁRIOS
+
+    @app.route("/animais/novo", methods=["GET"])
+    def formulario_animal():
+        return render_template(
+            "animals/form.html",
+            hoje=date.today().isoformat()
+        )
+
+    @app.route("/patrimonio/novo", methods=["GET"])
+    def formulario_patrimonio():
+        return render_template("assets/form.html")
 
     return app

@@ -49,6 +49,7 @@
                 <div
                     class="login-messages"
                     aria-live="polite"
+                    aria-atomic="true"
                 >
                     {% with mensagens = get_flashed_messages(with_categories=true) %}
                         {% if mensagens %}
@@ -67,18 +68,18 @@
                 <form
                     id="login-form"
                     class="login-form"
-                    action="/login"
+                    action="{{ url_for('auth.login') }}"
                     method="POST"
                 >
                     <div class="form-field">
-                        <label for="login">Login ou e-mail</label>
+                        <label for="login">Matrícula</label>
 
                         <input
                             type="text"
                             id="login"
                             name="login"
                             autocomplete="username"
-                            placeholder="Digite seu login ou e-mail"
+                            placeholder="Digite sua matrícula"
                             required
                         >
                     </div>
