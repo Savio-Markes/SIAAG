@@ -1,4 +1,6 @@
 
+# Desenvolvido por: Fábio Barbosa
+
 from app.extensions import get_db
 
 
@@ -10,6 +12,7 @@ def listar_animais(filtros=None, limite=50, deslocamento=0):
     consulta = """
         SELECT
             id,
+            identificacao,
             nome,
             especie,
             raca,
@@ -30,9 +33,9 @@ def listar_animais(filtros=None, limite=50, deslocamento=0):
 
     parametros = []
 
-    if filtros.get("nome"):
-        consulta += " AND nome LIKE %s"
-        parametros.append(f"%{filtros['nome']}%")
+    if filtros.get("identificacao"):
+        consulta += " AND identificacao LIKE %s"
+        parametros.append(f"%{filtros['identificacao']}%")
 
     if filtros.get("especie"):
         consulta += " AND especie = %s"
@@ -72,11 +75,29 @@ def buscar_animal_por_id(animal_id):
         return cursor.fetchone()
 
 
+def buscar_animal_por_identificacao(identificacao):
+    """Busca um animal pela identificação."""
+
+    consulta = """
+        SELECT *
+        FROM animais
+        WHERE identificacao = %s
+        LIMIT 1
+    """
+
+    conexao = get_db()
+
+    with conexao.cursor() as cursor:
+        cursor.execute(consulta, (identificacao,))
+        return cursor.fetchone()
+
+
 def criar_animal(dados, criado_por):
     """Insere um novo animal no banco de dados."""
 
     consulta = """
         INSERT INTO animais (
+            identificacao,
             nome,
             especie,
             raca,
@@ -92,12 +113,13 @@ def criar_animal(dados, criado_por):
             atualizado_em
         ) VALUES (
             %s, %s, %s, %s, %s, %s, %s,
-            %s, %s, %s, %s, NOW(), NOW()
+            %s, %s, %s, %s, %s, NOW(), NOW()
         )
     """
 
     parametros = (
-        dados["nome"],
+        dados["identificacao"],
+        dados.get("nome"),
         dados["especie"],
         dados.get("raca"),
         dados.get("sexo"),
@@ -129,6 +151,7 @@ def atualizar_animal(animal_id, dados):
     """Atualiza os dados cadastrais do animal."""
 
     campos_permitidos = (
+        "identificacao",
         "nome",
         "especie",
         "raca",

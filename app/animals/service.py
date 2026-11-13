@@ -1,4 +1,6 @@
 
+# Desenvolvido por: Fábio Barbosa
+
 from datetime import date, datetime
 
 from app.repositories import animal_repository
@@ -15,14 +17,17 @@ def validar_dados_animal(dados, atualizacao=False):
     if not isinstance(dados, dict):
         raise AnimalServiceError("Dados do animal inválidos.")
 
+    campos_obrigatorios = ("identificacao", "especie", "situacao")
+
     if not atualizacao:
-        for campo in ("nome", "especie", "situacao"):
+        for campo in campos_obrigatorios:
             if not dados.get(campo) or not str(dados[campo]).strip():
                 raise AnimalServiceError(
                     f"O campo {campo} é obrigatório."
                 )
 
     campos_texto = (
+        "identificacao",
         "nome",
         "especie",
         "raca",
@@ -34,8 +39,14 @@ def validar_dados_animal(dados, atualizacao=False):
     )
 
     for campo in campos_texto:
-        if campo in dados and isinstance(dados[campo], str):
-            dados[campo] = dados[campo].strip() or None
+        if campo in dados and dados[campo] is not None:
+            dados[campo] = str(dados[campo]).strip() or None
+
+    if atualizacao and "identificacao" in dados:
+        if not dados["identificacao"]:
+            raise AnimalServiceError(
+                "O campo identificacao não pode ser vazio."
+            )
 
     if "nascimento" in dados and dados["nascimento"]:
         try:
@@ -72,6 +83,22 @@ def validar_dados_animal(dados, atualizacao=False):
     return dados
 
 
+def validar_identificacao_unica(identificacao, animal_id=None):
+    """Verifica se a identificação já pertence a outro animal."""
+
+    animal_existente = (
+        animal_repository.buscar_animal_por_identificacao(
+            identificacao
+        )
+    )
+
+    if animal_existente:
+        if animal_id is None or animal_existente["id"] != animal_id:
+            raise AnimalServiceError(
+                "Já existe um animal cadastrado com essa identificação."
+            )
+
+
 def listar_animais(filtros=None, limite=50, deslocamento=0):
     """Lista animais com filtros e paginação."""
 
@@ -104,6 +131,8 @@ def cadastrar_animal(dados, criado_por):
 
     dados = validar_dados_animal(dados)
 
+    validar_identificacao_unica(dados["identificacao"])
+
     return animal_repository.criar_animal(
         dados=dados,
         criado_por=criado_por
@@ -119,6 +148,12 @@ def editar_animal(animal_id, dados):
         dados,
         atualizacao=True
     )
+
+    if "identificacao" in dados:
+        validar_identificacao_unica(
+            dados["identificacao"],
+            animal_id=animal_id
+        )
 
     atualizado = animal_repository.atualizar_animal(
         animal_id,
