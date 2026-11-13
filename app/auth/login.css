@@ -1,0 +1,411 @@
+
+/* ================================================
+   SIAAG - TELA DE LOGIN
+   Identidade visual institucional
+   ================================================ */
+
+/* Estrutura geral */
+
+.login-body {
+    min-height: 100vh;
+    background: #f1f4f1;
+    color: var(--text, #26352a);
+    font-family: "Segoe UI", Arial, sans-serif;
+}
+
+.login-body .login-page {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    padding: 35px 20px;
+    background:
+        radial-gradient(
+            circle at top left,
+            rgba(36, 92, 56, 0.09),
+            transparent 38%
+        ),
+        #f1f4f1;
+}
+
+/* Cartão principal */
+
+.login-body .login-container {
+    width: 100%;
+    max-width: 455px;
+    overflow: hidden;
+    background: #ffffff;
+    border: 1px solid #e0e8e1;
+    border-radius: 16px;
+    box-shadow: 0 12px 40px rgba(31, 68, 42, 0.09);
+}
+
+/* Cabeçalho institucional */
+
+.login-body .login-header {
+    padding: 34px 30px 27px;
+    text-align: center;
+    background: #ffffff;
+    border-bottom: 1px solid #e8eee9;
+}
+
+.login-body .login-logo-area {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    min-height: 105px;
+    margin-bottom: 13px;
+}
+
+.login-body .login-logo {
+    display: block;
+    width: 215px;
+    max-width: 100%;
+    height: 100px;
+    object-fit: contain;
+}
+
+.login-body .login-system-name {
+    display: block;
+    color: #245c38;
+    font-size: 29px;
+    font-weight: 800;
+    letter-spacing: 3px;
+}
+
+.login-body .login-description {
+    max-width: 320px;
+    margin: 7px auto 0;
+    color: #718075;
+    font-size: 12px;
+    line-height: 1.6;
+}
+
+.login-body .login-institution {
+    display: inline-block;
+    margin-top: 15px;
+    padding: 6px 14px;
+    color: #245c38;
+    background: #eaf3ec;
+    border: 1px solid #dceade;
+    border-radius: 30px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.3px;
+}
+
+/* Conteúdo do formulário */
+
+.login-body .login-content {
+    padding: 30px 34px 34px;
+}
+
+.login-body .login-heading {
+    margin-bottom: 26px;
+}
+
+.login-body .login-heading h1 {
+    margin: 0 0 7px;
+    color: #19452b;
+    font-size: 24px;
+    font-weight: 750;
+    letter-spacing: -0.5px;
+}
+
+.login-body .login-heading p {
+    margin: 0;
+    color: #718075;
+    font-size: 13px;
+    line-height: 1.6;
+}
+
+/* Campos */
+
+.login-body .login-form {
+    display: flex;
+    flex-direction: column;
+    gap: 21px;
+}
+
+.login-body .login-field {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.login-body .login-field label {
+    color: #34483a;
+    font-size: 13px;
+    font-weight: 650;
+}
+
+.login-body .login-input-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    min-height: 49px;
+    padding: 0 13px;
+    background: #ffffff;
+    border: 1px solid #dce5dd;
+    border-radius: 9px;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.login-body .login-input-wrapper:focus-within {
+    border-color: #245c38;
+    box-shadow: 0 0 0 3px rgba(36, 92, 56, 0.10);
+}
+
+.login-body .login-input-icon {
+    display: flex;
+    flex: 0 0 19px;
+    align-items: center;
+    justify-content: center;
+    color: #718075;
+}
+
+.login-body .login-input-icon svg {
+    display: block;
+    width: 19px;
+    height: 19px;
+}
+
+.login-body .login-input-wrapper input {
+    width: 100%;
+    min-width: 0;
+    height: 47px;
+    padding: 0;
+    color: #26352a;
+    background: transparent;
+    border: none;
+    outline: none;
+    font-size: 13px;
+}
+
+.login-body .login-input-wrapper input::placeholder {
+    color: #a0aaa2;
+}
+
+/* Exibir / ocultar senha */
+
+.login-body .login-password-toggle {
+    flex-shrink: 0;
+    padding: 6px;
+    color: #245c38;
+    background: transparent;
+    border: none;
+    border-radius: 5px;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.login-body .login-password-toggle:hover {
+    color: #19452b;
+    background: #eaf3ec;
+}
+
+.login-body .login-password-toggle:focus-visible {
+    outline: 2px solid #245c38;
+    outline-offset: 2px;
+}
+
+/* Botão entrar */
+
+.login-body .login-submit {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    min-height: 49px;
+    margin-top: 5px;
+    padding: 12px 18px;
+    color: #ffffff;
+    background: #245c38;
+    border: 1px solid #245c38;
+    border-radius: 9px;
+    box-shadow: 0 4px 10px rgba(36, 92, 56, 0.13);
+    font-size: 14px;
+    font-weight: 700;
+    transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.login-body .login-submit:hover:not(:disabled) {
+    background: #19452b;
+    transform: translateY(-1px);
+}
+
+.login-body .login-submit:focus-visible {
+    outline: 3px solid rgba(36, 92, 56, 0.25);
+    outline-offset: 3px;
+}
+
+.login-body .login-submit:disabled {
+    opacity: 0.75;
+    cursor: not-allowed;
+    transform: none;
+}
+
+/* Carregamento */
+
+.login-body .login-loading {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+.login-body .login-spinner {
+    width: 17px;
+    height: 17px;
+    border: 2px solid rgba(255, 255, 255, 0.4);
+    border-top-color: #ffffff;
+    border-radius: 50%;
+    animation: login-spin 0.7s linear infinite;
+}
+
+@keyframes login-spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* Mensagens */
+
+.login-body .login-feedback,
+.login-body .login-server-message {
+    margin-bottom: 19px;
+    padding: 12px 14px;
+    border-radius: 8px;
+    font-size: 12px;
+    line-height: 1.6;
+}
+
+.login-body .login-feedback:not([hidden]) {
+    display: block;
+}
+
+.login-body .login-feedback,
+.login-body .login-server-message--error {
+    color: #8c2925;
+    background: #fff0ee;
+    border: 1px solid #f0d0cc;
+}
+
+.login-body .login-server-message--success {
+    color: #216b3a;
+    background: #eaf7ed;
+    border: 1px solid #d2ead7;
+}
+
+/* Rodapé */
+
+.login-body .login-footer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+    padding: 19px 20px;
+    background: #fafcf9;
+    border-top: 1px solid #e8eee9;
+}
+
+.login-body .login-footer-indicator {
+    width: 7px;
+    height: 7px;
+    margin-bottom: 3px;
+    background: #29964b;
+    border-radius: 50%;
+}
+
+.login-body .login-footer p {
+    margin: 0;
+    color: #849087;
+    font-size: 11px;
+    text-align: center;
+}
+
+/* Ocultação acessível */
+
+.login-body [hidden] {
+    display: none !important;
+}
+
+/* Responsividade: tablets */
+
+@media (max-width: 768px) {
+    .login-body .login-page {
+        padding: 25px 18px;
+    }
+
+    .login-body .login-container {
+        max-width: 430px;
+    }
+}
+
+/* Responsividade: celulares */
+
+@media (max-width: 480px) {
+    .login-body .login-page {
+        align-items: center;
+        padding: 18px 13px;
+    }
+
+    .login-body .login-container {
+        border-radius: 12px;
+    }
+
+    .login-body .login-header {
+        padding: 26px 20px 22px;
+    }
+
+    .login-body .login-logo {
+        width: 190px;
+        height: 88px;
+    }
+
+    .login-body .login-system-name {
+        font-size: 25px;
+    }
+
+    .login-body .login-content {
+        padding: 25px 21px 28px;
+    }
+
+    .login-body .login-heading h1 {
+        font-size: 22px;
+    }
+
+    .login-body .login-footer {
+        padding: 17px 12px;
+    }
+}
+
+/* Telas pequenas */
+
+@media (max-width: 350px) {
+    .login-body .login-content {
+        padding-right: 16px;
+        padding-left: 16px;
+    }
+
+    .login-body .login-input-wrapper {
+        gap: 7px;
+        padding: 0 9px;
+    }
+
+    .login-body .login-password-toggle {
+        font-size: 11px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .login-body *,
+    .login-body *::before,
+    .login-body *::after {
+        scroll-behavior: auto !important;
+        animation-duration: 0.01ms !important;
+        transition-duration: 0.01ms !important;
+    }
+}

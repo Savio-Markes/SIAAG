@@ -4,17 +4,44 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Acesso ao Sistema Integrado de Administração Agropecuária">
+
+    <meta
+        name="description"
+        content="Acesso institucional ao Sistema Integrado de Administração Agropecuária do IFPI."
+    >
+
+    <meta name="theme-color" content="#245c38">
+
     <title>Entrar | SIAAG</title>
 
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/app.css') }}">
-    <script src="{{ url_for('static', filename='js/app.js') }}" defer></script>
+    <!-- Design system principal -->
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='css/app.css') }}"
+    >
+
+    <!-- Estilos exclusivos da autenticação -->
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='css/auth/login.css') }}"
+    >
+
+    <!-- JavaScript exclusivo do login -->
+    <script
+        src="{{ url_for('static', filename='js/auth/login.js') }}"
+        defer
+    ></script>
 </head>
-<body>
+
+<body class="login-body">
+
     <main class="login-page">
+
         <section class="login-container" aria-labelledby="login-title">
 
+            <!-- Identidade institucional -->
             <header class="login-header">
+
                 <div class="login-logo-area">
                     <img
                         src="{{ url_for('static', filename='img/logo.jpg') }}"
@@ -23,7 +50,7 @@
                     >
                 </div>
 
-                
+                <span class="login-system-name">SIAAG</span>
 
                 <p class="login-description">
                     Sistema Integrado de Administração Agropecuária
@@ -32,73 +59,189 @@
                 <p class="login-institution">
                     IFPI — Campus Paulistana
                 </p>
+
             </header>
 
+            <!-- Formulário -->
             <section class="login-content">
-                <h2>Acessar o sistema</h2>
-                <p>Informe suas credenciais para continuar.</p>
 
-                <div
-                    class="login-messages"
-                    aria-live="polite"
-                    aria-atomic="true"
-                >
-                    {% with mensagens = get_flashed_messages(with_categories=true) %}
-                        {% if mensagens %}
-                            {% for categoria, mensagem in mensagens %}
-                                <div
-                                    class="message {{ 'message-success' if categoria == 'success' else 'message-error' }}"
-                                    role="alert"
-                                >
-                                    {{ mensagem }}
-                                </div>
-                            {% endfor %}
-                        {% endif %}
-                    {% endwith %}
+                <div class="login-heading">
+                    <h1 id="login-title">Bem-vindo(a)!</h1>
+
+                    <p>
+                        Acesse sua conta para continuar no sistema
+                        de administração agropecuária.
+                    </p>
                 </div>
 
+                <!-- Feedback do servidor e da comunicação -->
+                <div
+                    class="login-feedback"
+                    id="loginFeedback"
+                    role="alert"
+                    aria-live="assertive"
+                    aria-atomic="true"
+                    hidden
+                ></div>
+
+                {% with mensagens = get_flashed_messages(with_categories=true) %}
+                    {% if mensagens %}
+                        {% for categoria, mensagem in mensagens %}
+                            <div
+                                class="login-server-message
+                                {{ 'login-server-message--success' if categoria == 'sucesso' else 'login-server-message--error' }}"
+                                role="alert"
+                            >
+                                {{ mensagem }}
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+                {% endwith %}
+
                 <form
-                    id="login-form"
+                    id="loginForm"
                     class="login-form"
                     action="{{ url_for('auth.login') }}"
                     method="POST"
+                    data-login-url="{{ url_for('auth.login') }}"
                 >
-                    <div class="form-field">
-                        <label for="login">Matrícula</label>
-                        <input
-                            type="text"
-                            id="login"
-                            name="login"
-                            autocomplete="username"
-                            placeholder="Digite sua matrícula"
-                            required
-                        >
+
+                    <!-- Login institucional -->
+                    <div class="login-field">
+
+                        <label for="login">
+                            Login ou e-mail
+                        </label>
+
+                        <div class="login-input-wrapper">
+
+                            <span class="login-input-icon" aria-hidden="true">
+                                <svg viewBox="0 0 24 24" fill="none">
+                                    <path
+                                        d="M20 21V19C20 16.8 18.2 15 16 15H8C5.8 15 4 16.8 4 19V21"
+                                        stroke="currentColor"
+                                        stroke-width="1.7"
+                                        stroke-linecap="round"
+                                    />
+                                    <circle
+                                        cx="12"
+                                        cy="7"
+                                        r="4"
+                                        stroke="currentColor"
+                                        stroke-width="1.7"
+                                    />
+                                </svg>
+                            </span>
+
+                            <input
+                                type="text"
+                                id="login"
+                                name="login"
+                                placeholder="Digite seu login"
+                                autocomplete="username"
+                                maxlength="100"
+                                required
+                                autofocus
+                            >
+
+                        </div>
+
                     </div>
 
-                    <div class="form-field">
-                        <label for="senha">Senha</label>
-                        <input
-                            type="password"
-                            id="senha"
-                            name="senha"
-                            autocomplete="current-password"
-                            placeholder="Digite sua senha"
-                            required
-                        >
+                    <!-- Senha -->
+                    <div class="login-field">
+
+                        <label for="senha">
+                            Senha
+                        </label>
+
+                        <div class="login-input-wrapper">
+
+                            <span class="login-input-icon" aria-hidden="true">
+                                <svg viewBox="0 0 24 24" fill="none">
+                                    <rect
+                                        x="4"
+                                        y="10"
+                                        width="16"
+                                        height="11"
+                                        rx="2"
+                                        stroke="currentColor"
+                                        stroke-width="1.7"
+                                    />
+                                    <path
+                                        d="M8 10V7A4 4 0 0 1 16 7V10"
+                                        stroke="currentColor"
+                                        stroke-width="1.7"
+                                        stroke-linecap="round"
+                                    />
+                                </svg>
+                            </span>
+
+                            <input
+                                type="password"
+                                id="senha"
+                                name="senha"
+                                placeholder="Digite sua senha"
+                                autocomplete="current-password"
+                                required
+                            >
+
+                            <button
+                                type="button"
+                                class="login-password-toggle"
+                                id="togglePassword"
+                                aria-label="Exibir senha"
+                                aria-pressed="false"
+                            >
+                                Exibir
+                            </button>
+
+                        </div>
+
                     </div>
 
-                    <button type="submit" class="button-primary login-submit">
-                        Entrar
+                    <!-- Botão de autenticação -->
+                    <button
+                        type="submit"
+                        class="login-submit"
+                        id="loginSubmit"
+                    >
+
+                        <span class="login-submit-text" id="loginSubmitText">
+                            Entrar no sistema
+                        </span>
+
+                        <span
+                            class="login-loading"
+                            id="loginLoading"
+                            hidden
+                        >
+                            <span class="login-spinner" aria-hidden="true"></span>
+                            Autenticando...
+                        </span>
+
                     </button>
+
                 </form>
+
             </section>
 
+            <!-- Rodapé -->
             <footer class="login-footer">
+
+                <span class="login-footer-indicator" aria-hidden="true"></span>
+
                 <p>Acesso restrito aos usuários autorizados.</p>
-                <p>SIAAG — IFPI Campus Paulistana</p>
+
+                <p>
+                    SIAAG — IFPI Campus Paulistana
+                </p>
+
             </footer>
 
         </section>
+
     </main>
+
 </body>
 </html>
