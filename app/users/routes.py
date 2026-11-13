@@ -4,6 +4,8 @@
 from flask import Blueprint, jsonify, request, session
 
 from app.permissions import permission_required
+from app.users.service import listar_usuarios
+
 from app.auth.permission_service import (
     listar_permissoes_usuario,
     conceder_permissao_usuario,
@@ -14,7 +16,19 @@ from app.auth.permission_service import (
 users_bp = Blueprint("users", __name__, url_prefix="/usuarios")
 
 
-# Rotas administrativas de gerenciamento de permissões.
+# Rotas administrativas de gerenciamento de usuários e permissões.
+
+
+@users_bp.route("/", methods=["GET"])
+@permission_required("usuarios.visualizar")
+def listar():
+    """Lista os usuários cadastrados."""
+
+    usuarios = listar_usuarios()
+
+    return jsonify({
+        "usuarios": usuarios
+    }), 200
 
 
 @users_bp.route("/<int:usuario_id>/permissoes", methods=["GET"])

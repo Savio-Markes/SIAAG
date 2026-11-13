@@ -1,3 +1,4 @@
+
 # Desenvolvido por: Fábio Barbosa
 
 from app.extensions import get_db
@@ -22,3 +23,20 @@ def buscar_por_login(login):
         )
 
         return cursor.fetchone()
+
+
+def listar_usuarios():
+    """Lista os usuários cadastrados, sem expor suas senhas."""
+
+    conexao = get_db()
+
+    with conexao.cursor() as cursor:
+        cursor.execute(
+            """
+            SELECT id, nome, login, funcao_referencia, ativo
+            FROM usuarios
+            ORDER BY nome ASC
+            """
+        )
+
+        return cursor.fetchall()
