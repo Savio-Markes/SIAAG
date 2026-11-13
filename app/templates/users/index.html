@@ -1,51 +1,125 @@
 
 {% extends "base.html" %}
 
-{% block title %}Usuários | SIAAG{% endblock %}
+{% block page_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/users.css') }}">
+{% endblock %}
 
 {% block content %}
-<section class="page-header">
-    <div>
-        <h1>Usuários</h1>
-        <p>Gerenciamento dos usuários e acessos ao SIAAG.</p>
-    </div>
-</section>
 
-<section class="content-panel">
-    <div class="panel-header">
-        <div>
-            <h2>Usuários cadastrados</h2>
-            <p>Consulte os usuários registrados no sistema.</p>
+<main class="users-page">
+
+    <!-- Cabeçalho da página -->
+    <header class="users-header">
+        <div class="users-header__text">
+            <h1>Gerenciamento de Usuários</h1>
+            <p>
+                Gerencie os usuários do SIAAG, consulte suas situações
+                e organize o acesso ao sistema.
+            </p>
         </div>
-    </div>
 
-    {% if usuarios %}
-    <div class="table-responsive">
-        <table class="data-table">
-            <thead>
-                <tr>
-                    {% for campo in campos_usuarios %}
-                    <th>{{ campo.label }}</th>
-                    {% endfor %}
-                </tr>
-            </thead>
+        <button type="button" class="users-button users-button--primary"
+                id="btnNovoUsuario" disabled
+                title="Aguardando a implementação da rota de cadastro">
+            <span aria-hidden="true">+</span>
+            Novo usuário
+        </button>
+    </header>
 
-            <tbody>
-                {% for usuario in usuarios %}
-                <tr>
-                    {% for campo in campos_usuarios %}
-                    <td>{{ usuario[campo.key] }}</td>
-                    {% endfor %}
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </div>
-    {% else %}
-    <div class="empty-state">
-        <h3>Nenhum usuário cadastrado</h3>
-        <p>Os usuários aparecerão aqui quando forem disponibilizados pelo sistema.</p>
-    </div>
-    {% endif %}
-</section>
+    <!-- Conteúdo principal -->
+    <section class="users-panel" aria-labelledby="users-list-title">
+
+        <div class="users-panel__header">
+            <div>
+                <h2 id="users-list-title">Usuários cadastrados</h2>
+                <p>Consulte e gerencie os acessos ao sistema.</p>
+            </div>
+        </div>
+
+        <!-- Pesquisa -->
+        <div class="users-toolbar">
+            <div class="users-search">
+                <label for="campoPesquisa">Pesquisar usuário</label>
+
+                <div class="users-search__input">
+                    <span aria-hidden="true">⌕</span>
+                    <input
+                        type="search"
+                        id="campoPesquisa"
+                        name="pesquisa"
+                        placeholder="Buscar por nome ou login..."
+                        autocomplete="off"
+                        aria-label="Buscar usuário por nome ou login"
+                    >
+                </div>
+            </div>
+        </div>
+
+        <!-- Carregamento -->
+        <div class="users-feedback users-feedback--loading"
+             id="usersLoading"
+             role="status"
+             hidden>
+            <span class="users-spinner" aria-hidden="true"></span>
+            <p>Carregando usuários...</p>
+        </div>
+
+        <!-- Erro -->
+        <div class="users-feedback users-feedback--error"
+             id="usersError"
+             role="alert"
+             hidden>
+            <strong>Não foi possível carregar os usuários.</strong>
+            <p>Verifique a conexão com o servidor e tente novamente.</p>
+            <button type="button" id="btnTentarNovamente"
+                    class="users-button users-button--secondary">
+                Tentar novamente
+            </button>
+        </div>
+
+        <!-- Tabela -->
+        <div class="users-table-container" id="usersTableContainer">
+            <table class="users-table">
+                <thead>
+                    <tr>
+                        <th scope="col">Nome</th>
+                        <th scope="col">Login</th>
+                        <th scope="col">Função</th>
+                        <th scope="col">Situação</th>
+                        <th scope="col">Ações</th>
+                    </tr>
+                </thead>
+
+                <tbody id="usersTableBody">
+                    <!-- Os usuários serão inseridos aqui após a integração com o backend. -->
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Estado vazio -->
+        <div class="users-empty" id="usersEmpty">
+            <div class="users-empty__icon" aria-hidden="true">♙</div>
+            <h3>Nenhum usuário carregado</h3>
+            <p>
+                A listagem será exibida aqui quando a integração
+                com o serviço de usuários estiver disponível.
+            </p>
+        </div>
+
+        <!-- Resultado da pesquisa -->
+        <div class="users-empty" id="usersSearchEmpty" hidden>
+            <div class="users-empty__icon" aria-hidden="true">⌕</div>
+            <h3>Nenhum resultado encontrado</h3>
+            <p>Não encontramos usuários com esse nome ou login.</p>
+        </div>
+
+    </section>
+
+</main>
+
+{% endblock %}
+
+{% block page_js %}
+<script src="{{ url_for('static', filename='js/users.js') }}" defer></script>
 {% endblock %}

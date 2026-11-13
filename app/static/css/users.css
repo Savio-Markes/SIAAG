@@ -1,0 +1,432 @@
+
+/* =========================================
+   SIAAG - GERENCIAMENTO DE USUÁRIOS
+   ========================================= */
+
+.users-page {
+    width: 100%;
+    max-width: 1500px;
+    margin: 0 auto;
+    padding: 24px;
+    color: var(--text, #26352a);
+}
+
+/* Cabeçalho */
+
+.users-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+    margin-bottom: 28px;
+}
+
+.users-header__text h1 {
+    margin: 0 0 8px;
+    color: var(--text, #26352a);
+    font-size: 28px;
+    font-weight: 700;
+}
+
+.users-header__text p {
+    margin: 0;
+    color: var(--muted, #718075);
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+/* Botões */
+
+.users-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 9px;
+    min-height: 42px;
+    padding: 10px 18px;
+    border: 1px solid transparent;
+    border-radius: var(--radius, 10px);
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s ease, border-color 0.2s ease,
+                transform 0.2s ease;
+}
+
+.users-button:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+}
+
+.users-button--primary {
+    color: #fff;
+    background: var(--primary, #245c38);
+}
+
+.users-button--primary:not(:disabled):hover {
+    background: var(--primary-dark, #19452b);
+    transform: translateY(-1px);
+}
+
+.users-button--primary span {
+    font-size: 21px;
+    line-height: 1;
+}
+
+.users-button--secondary {
+    color: var(--primary, #245c38);
+    background: #fff;
+    border-color: var(--border, #e0e8e1);
+}
+
+.users-button--secondary:hover {
+    background: var(--primary-light, #eaf3ec);
+}
+
+/* Painel principal */
+
+.users-panel {
+    overflow: hidden;
+    background: var(--surface, #fff);
+    border: 1px solid var(--border, #e0e8e1);
+    border-radius: var(--radius, 10px);
+    box-shadow: var(--shadow, 0 4px 18px rgba(31, 68, 42, 0.06));
+}
+
+.users-panel__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 22px 24px;
+    border-bottom: 1px solid var(--border, #e0e8e1);
+}
+
+.users-panel__header h2 {
+    margin: 0 0 5px;
+    font-size: 17px;
+    font-weight: 700;
+}
+
+.users-panel__header p {
+    margin: 0;
+    color: var(--muted, #718075);
+    font-size: 13px;
+}
+
+/* Pesquisa */
+
+.users-toolbar {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 20px;
+    padding: 20px 24px;
+}
+
+.users-search {
+    width: 100%;
+    max-width: 420px;
+}
+
+.users-search label {
+    display: block;
+    margin-bottom: 8px;
+    color: var(--text, #26352a);
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.users-search__input {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-height: 44px;
+    padding: 0 13px;
+    border: 1px solid var(--border, #e0e8e1);
+    border-radius: 8px;
+    background: #fff;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.users-search__input:focus-within {
+    border-color: var(--primary, #245c38);
+    box-shadow: 0 0 0 3px rgba(36, 92, 56, 0.10);
+}
+
+.users-search__input span {
+    color: var(--muted, #718075);
+    font-size: 22px;
+}
+
+.users-search__input input {
+    width: 100%;
+    min-width: 0;
+    padding: 11px 0;
+    border: none;
+    outline: none;
+    color: var(--text, #26352a);
+    background: transparent;
+    font: inherit;
+    font-size: 13px;
+}
+
+.users-search__input input::placeholder {
+    color: #9aa59c;
+}
+
+/* Tabela */
+
+.users-table-container {
+    width: 100%;
+    overflow-x: auto;
+}
+
+.users-table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+}
+
+.users-table thead {
+    background: #f7f9f7;
+}
+
+.users-table th {
+    padding: 15px 20px;
+    color: var(--muted, #718075);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    white-space: nowrap;
+    border-top: 1px solid var(--border, #e0e8e1);
+    border-bottom: 1px solid var(--border, #e0e8e1);
+}
+
+.users-table td {
+    padding: 17px 20px;
+    color: var(--text, #26352a);
+    font-size: 13px;
+    border-bottom: 1px solid var(--border, #e0e8e1);
+    vertical-align: middle;
+}
+
+.users-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.users-table tbody tr:hover {
+    background: #fafcfb;
+}
+
+/* Identificação do usuário */
+
+.user-name {
+    font-weight: 600;
+}
+
+.user-login {
+    color: var(--muted, #718075);
+}
+
+/* Situação */
+
+.user-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 6px 10px;
+    border-radius: 30px;
+    font-size: 11px;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.user-status::before {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    content: "";
+}
+
+.user-status--active {
+    color: var(--success, #216b3a);
+    background: var(--success-bg, #eaf7ed);
+}
+
+.user-status--active::before {
+    background: #29964b;
+}
+
+.user-status--blocked {
+    color: var(--danger, #a52e28);
+    background: var(--danger-bg, #fff0ee);
+}
+
+.user-status--blocked::before {
+    background: #c4423b;
+}
+
+/* Ações */
+
+.users-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    white-space: nowrap;
+}
+
+.users-action {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 32px;
+    padding: 6px 10px;
+    border: 1px solid var(--border, #e0e8e1);
+    border-radius: 7px;
+    color: var(--primary, #245c38);
+    background: #fff;
+    font-size: 11px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
+
+.users-action:hover:not(:disabled) {
+    background: var(--primary-light, #eaf3ec);
+}
+
+.users-action:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* Estados de carregamento, erro e lista vazia */
+
+.users-feedback,
+.users-empty {
+    padding: 42px 24px;
+    text-align: center;
+}
+
+.users-feedback p,
+.users-empty p {
+    margin: 8px 0 0;
+    color: var(--muted, #718075);
+    font-size: 13px;
+    line-height: 1.6;
+}
+
+.users-empty h3,
+.users-feedback strong {
+    display: block;
+    margin: 12px 0 0;
+    color: var(--text, #26352a);
+    font-size: 15px;
+    font-weight: 700;
+}
+
+.users-empty__icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 54px;
+    height: 54px;
+    margin: 0 auto;
+    border-radius: 50%;
+    color: var(--primary, #245c38);
+    background: var(--primary-light, #eaf3ec);
+    font-size: 27px;
+}
+
+.users-feedback--error {
+    color: var(--danger, #a52e28);
+}
+
+.users-feedback--error strong {
+    color: var(--danger, #a52e28);
+}
+
+.users-feedback--error .users-button {
+    margin-top: 18px;
+}
+
+.users-spinner {
+    display: inline-block;
+    width: 28px;
+    height: 28px;
+    border: 3px solid var(--border, #e0e8e1);
+    border-top-color: var(--primary, #245c38);
+    border-radius: 50%;
+    animation: users-spin 0.8s linear infinite;
+}
+
+@keyframes users-spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* Atributo hidden */
+
+.users-page [hidden] {
+    display: none !important;
+}
+
+/* Acessibilidade */
+
+.users-button:focus-visible,
+.users-action:focus-visible,
+.users-search__input:focus-within {
+    outline: 2px solid var(--primary, #245c38);
+    outline-offset: 2px;
+}
+
+/* Responsividade */
+
+@media (max-width: 900px) {
+    .users-page {
+        padding: 20px;
+    }
+
+    .users-header {
+        align-items: flex-start;
+    }
+
+    .users-table {
+        min-width: 750px;
+    }
+}
+
+@media (max-width: 600px) {
+    .users-page {
+        padding: 14px;
+    }
+
+    .users-header {
+        flex-direction: column;
+        gap: 16px;
+    }
+
+    .users-header__text h1 {
+        font-size: 23px;
+    }
+
+    .users-header .users-button {
+        width: 100%;
+    }
+
+    .users-panel__header,
+    .users-toolbar {
+        padding: 17px;
+    }
+
+    .users-search {
+        max-width: none;
+    }
+
+    .users-empty,
+    .users-feedback {
+        padding: 32px 18px;
+    }
+}
