@@ -22,7 +22,9 @@ def listar():
 
     try:
         filtros = {
-            "nome": request.args.get("nome", "").strip(),
+            "identificacao": request.args.get(
+                "identificacao", ""
+            ).strip(),
             "especie": request.args.get("especie", "").strip(),
             "situacao": request.args.get("situacao", "").strip()
         }
@@ -156,3 +158,4 @@ def inativar(animal_id):
             "sucesso": False,
             "mensagem": str(erro)
         }), status
+
