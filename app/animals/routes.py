@@ -5,7 +5,9 @@ from flask import (
     Blueprint,
     request,
     jsonify,
-    session
+    session,
+    render_template,
+    abort
 )
 
 from app.permissions import permission_required
@@ -14,6 +16,64 @@ from app.animals import service as animal_service
 
 animals_bp = Blueprint("animals", __name__, url_prefix="/animais")
 
+
+# ============================================================
+# PÁGINAS HTML
+# ============================================================
+
+@animals_bp.route("/painel", methods=["GET"])
+@permission_required("animais.visualizar")
+def painel():
+    """Exibe a página principal de gerenciamento de animais."""
+
+    return render_template("animals/index.html")
+
+
+@animals_bp.route("/novo", methods=["GET"])
+@permission_required("animais.criar")
+def novo():
+    """Exibe o formulário de cadastro de animais."""
+
+    return render_template("animals/form.html")
+
+
+@animals_bp.route("/<int:animal_id>/painel", methods=["GET"])
+@permission_required("animais.visualizar")
+def ficha(animal_id):
+    """Exibe a ficha detalhada de um animal."""
+
+    try:
+        animal = animal_service.buscar_animal(animal_id)
+
+        return render_template(
+            "animals/detail.html",
+            animal=animal
+        )
+
+    except animal_service.AnimalServiceError:
+        abort(404)
+
+
+@animals_bp.route("/<int:animal_id>/editar", methods=["GET"])
+@permission_required("animais.editar")
+def editar_pagina(animal_id):
+    """Exibe o formulário de edição de um animal."""
+
+    try:
+        animal = animal_service.buscar_animal(animal_id)
+
+        return render_template(
+            "animals/edit.html",
+            animal=animal
+        )
+
+    except animal_service.AnimalServiceError:
+        abort(404)
+
+
+# ============================================================
+# API — ANIMAIS
+# ============================================================
 
 @animals_bp.route("/", methods=["GET"])
 @permission_required("animais.visualizar")
@@ -130,7 +190,11 @@ def editar(animal_id):
         }), 200
 
     except animal_service.AnimalServiceError as erro:
-        status = 404 if str(erro) == "Animal não encontrado." else 400
+        status = (
+            404
+            if str(erro) == "Animal não encontrado."
+            else 400
+        )
 
         return jsonify({
             "sucesso": False,
@@ -152,10 +216,13 @@ def inativar(animal_id):
         }), 200
 
     except animal_service.AnimalServiceError as erro:
-        status = 404 if str(erro) == "Animal não encontrado." else 400
+        status = (
+            404
+            if str(erro) == "Animal não encontrado."
+            else 400
+        )
 
         return jsonify({
             "sucesso": False,
             "mensagem": str(erro)
         }), status
-
