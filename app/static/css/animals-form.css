@@ -1,0 +1,292 @@
+
+/* =========================================
+   SIAAG - FORMULÁRIO DE ANIMAIS
+========================================= */
+
+.animal-form-page {
+    width: 100%;
+    max-width: 1150px;
+    margin: 0 auto;
+    padding: 28px;
+    color: var(--text, #26352a);
+}
+
+/* CABEÇALHO */
+
+.animal-form-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+    margin-bottom: 26px;
+}
+
+.animal-form-subtitle {
+    display: inline-block;
+    margin-bottom: 8px;
+    color: var(--primary, #245c38);
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 1.2px;
+}
+
+.animal-form-header h1 {
+    margin: 0;
+    color: var(--text, #26352a);
+    font-size: 28px;
+    font-weight: 700;
+}
+
+.animal-form-header p {
+    margin: 8px 0 0;
+    color: var(--muted, #718075);
+    font-size: 14px;
+}
+
+.animal-back-link {
+    color: var(--primary, #245c38);
+    font-size: 13px;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.animal-back-link:hover {
+    text-decoration: underline;
+}
+
+/* CARTÃO */
+
+.animal-form-card {
+    overflow: hidden;
+    border: 1px solid var(--border, #e0e8e1);
+    border-radius: 12px;
+    background: var(--surface, #fff);
+    box-shadow: var(--shadow, 0 4px 18px rgba(31, 68, 42, 0.06));
+}
+
+.animal-form-card-header {
+    padding: 23px 26px;
+    border-bottom: 1px solid var(--border, #e0e8e1);
+}
+
+.animal-form-card-header h2 {
+    margin: 0;
+    color: var(--text, #26352a);
+    font-size: 18px;
+    font-weight: 700;
+}
+
+.animal-form-card-header p {
+    margin: 7px 0 0;
+    color: var(--muted, #718075);
+    font-size: 13px;
+}
+
+/* FORMULÁRIO */
+
+#animalDataForm {
+    padding: 26px;
+}
+
+.animal-form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 22px;
+}
+
+.animal-field {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    min-width: 0;
+}
+
+.animal-field-full {
+    grid-column: 1 / -1;
+}
+
+.animal-field label {
+    color: var(--text, #26352a);
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.animal-field input,
+.animal-field textarea,
+.animal-field select {
+    width: 100%;
+    min-height: 44px;
+    padding: 11px 13px;
+    border: 1px solid var(--border, #e0e8e1);
+    border-radius: 8px;
+    background: #fff;
+    color: var(--text, #26352a);
+    font-family: inherit;
+    font-size: 13px;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.animal-field textarea {
+    min-height: 110px;
+    resize: vertical;
+    line-height: 1.5;
+}
+
+.animal-field input::placeholder,
+.animal-field textarea::placeholder {
+    color: #9aa69c;
+}
+
+.animal-field input:focus,
+.animal-field textarea:focus,
+.animal-field select:focus {
+    border-color: var(--primary, #245c38);
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(36, 92, 56, 0.09);
+}
+
+.animal-field input:invalid:not(:placeholder-shown) {
+    border-color: var(--danger, #a52e28);
+}
+
+.animal-field small {
+    color: var(--muted, #718075);
+    font-size: 11px;
+}
+
+/* FEEDBACK */
+
+.animal-form-feedback {
+    margin-bottom: 22px;
+    padding: 13px 16px;
+    border: 1px solid var(--border, #e0e8e1);
+    border-radius: 8px;
+    background: var(--primary-light, #eaf3ec);
+    color: var(--text, #26352a);
+    font-size: 13px;
+    line-height: 1.5;
+}
+
+.animal-form-feedback[hidden] {
+    display: none;
+}
+
+.animal-form-feedback.error {
+    border-color: #f0c5c1;
+    background: var(--danger-bg, #fff0ee);
+    color: var(--danger, #a52e28);
+}
+
+.animal-form-feedback.success {
+    border-color: #c8e5cf;
+    background: var(--success-bg, #eaf7ed);
+    color: var(--success, #216b3a);
+}
+
+/* AÇÕES */
+
+.animal-form-actions {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 12px;
+    margin-top: 30px;
+    padding-top: 22px;
+    border-top: 1px solid var(--border, #e0e8e1);
+}
+
+.animal-cancel-button,
+.animal-save-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 44px;
+    padding: 0 20px;
+    border-radius: 8px;
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 600;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background 0.2s ease, border-color 0.2s ease;
+}
+
+.animal-cancel-button {
+    border: 1px solid var(--border, #e0e8e1);
+    background: #fff;
+    color: var(--text, #26352a);
+}
+
+.animal-cancel-button:hover {
+    background: #f5f7f5;
+}
+
+.animal-save-button {
+    border: 1px solid var(--primary, #245c38);
+    background: var(--primary, #245c38);
+    color: #fff;
+}
+
+.animal-save-button:hover:not(:disabled) {
+    border-color: var(--primary-dark, #19452b);
+    background: var(--primary-dark, #19452b);
+}
+
+.animal-save-button:disabled {
+    cursor: not-allowed;
+    opacity: 0.65;
+}
+
+/* ACESSIBILIDADE */
+
+.animal-form-page button:focus-visible,
+.animal-form-page a:focus-visible,
+.animal-form-page input:focus-visible,
+.animal-form-page textarea:focus-visible,
+.animal-form-page select:focus-visible {
+    outline: 3px solid rgba(36, 92, 56, 0.2);
+    outline-offset: 2px;
+}
+
+/* RESPONSIVIDADE */
+
+@media (max-width: 700px) {
+    .animal-form-page {
+        padding: 18px 12px;
+    }
+
+    .animal-form-header {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .animal-form-header h1 {
+        font-size: 23px;
+    }
+
+    .animal-form-card-header {
+        padding: 19px;
+    }
+
+    #animalDataForm {
+        padding: 19px;
+    }
+
+    .animal-form-grid {
+        grid-template-columns: 1fr;
+        gap: 18px;
+    }
+
+    .animal-field-full {
+        grid-column: auto;
+    }
+
+    .animal-form-actions {
+        flex-direction: column-reverse;
+    }
+
+    .animal-cancel-button,
+    .animal-save-button {
+        width: 100%;
+    }
+}

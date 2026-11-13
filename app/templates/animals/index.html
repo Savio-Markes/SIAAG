@@ -1,55 +1,137 @@
 
 {% extends "base.html" %}
 
-{% block title %}Animais | SIAAG{% endblock %}
+{% block title %}Gerenciamento de Animais | SIAAG{% endblock %}
 
 {% block content %}
-<section class="page-header">
-    <div>
-        <h1>Animais</h1>
-        <p>Gerenciamento dos animais da Fazenda Escola.</p>
-    </div>
-</section>
+<main class="animals-page">
 
-<section class="content-panel">
-    <div class="panel-header">
+    <section class="animals-header">
         <div>
-            <h2>Animais cadastrados</h2>
-            <p>Consulte os registros dos animais.</p>
+            <span class="animals-subtitle">GESTÃO AGROPECUÁRIA</span>
+            <h1>Gerenciamento de Animais</h1>
+            <p>Consulte e gerencie os animais cadastrados no sistema.</p>
         </div>
-    </div>
 
-    {% if animais %}
-    <div class="table-responsive">
-        <table class="data-table">
-            <thead>
-                <tr>
-                    <th>Identificação</th>
-                    <th>Espécie</th>
-                    <th>Raça</th>
-                    <th>Situação</th>
-                    <th>Localização</th>
-                </tr>
-            </thead>
+        <button type="button" id="btnNovoAnimal" class="btn-primary">
+            <span aria-hidden="true">+</span>
+            Novo animal
+        </button>
+    </section>
 
-            <tbody>
-                {% for animal in animais %}
-                <tr>
-                    <td>{{ animal.identificacao }}</td>
-                    <td>{{ animal.especie }}</td>
-                    <td>{{ animal.raca }}</td>
-                    <td>{{ animal.situacao }}</td>
-                    <td>{{ animal.localizacao }}</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </div>
-    {% else %}
-    <div class="empty-state">
-        <h3>Nenhum animal cadastrado</h3>
-        <p>Os registros aparecerão aqui quando forem disponibilizados pelo sistema.</p>
-    </div>
-    {% endif %}
-</section>
+    <section class="animals-card">
+
+        <div class="animals-card-header">
+            <div>
+                <h2>Animais cadastrados</h2>
+                <p>Pesquise e filtre os registros disponíveis.</p>
+            </div>
+
+            <span id="totalAnimais" class="animals-counter">
+                0 animais
+            </span>
+        </div>
+
+        <div class="animals-filters">
+
+            <div class="filter-group filter-search">
+                <label for="filtroIdentificacao">Identificação</label>
+                <input
+                    type="search"
+                    id="filtroIdentificacao"
+                    name="identificacao"
+                    placeholder="Pesquisar por identificação..."
+                    autocomplete="off"
+                >
+            </div>
+
+            <div class="filter-group">
+                <label for="filtroEspecie">Espécie</label>
+                <select id="filtroEspecie" name="especie">
+                    <option value="">Todas as espécies</option>
+                </select>
+            </div>
+
+            <div class="filter-group">
+                <label for="filtroSituacao">Situação</label>
+                <select id="filtroSituacao" name="situacao">
+                    <option value="">Todas as situações</option>
+                </select>
+            </div>
+
+            <button type="button" id="btnLimparFiltros" class="btn-secondary">
+                Limpar filtros
+            </button>
+
+        </div>
+
+        <div id="animalsFeedback" class="animals-feedback"
+             role="status" aria-live="polite" hidden>
+        </div>
+
+        <div class="animals-table-container">
+            <table class="animals-table">
+                <thead>
+                    <tr>
+                        <th scope="col">Identificação</th>
+                        <th scope="col">Espécie</th>
+                        <th scope="col">Raça</th>
+                        <th scope="col">Situação</th>
+                        <th scope="col">Localização</th>
+                        <th scope="col">Ações</th>
+                    </tr>
+                </thead>
+
+                <tbody id="animalsTableBody">
+                    <tr>
+                        <td colspan="6" class="animals-loading">
+                            Carregando animais...
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="animals-pagination">
+            <span id="paginationInfo">
+                Nenhum registro carregado.
+            </span>
+
+            <div class="pagination-actions">
+                <button
+                    type="button"
+                    id="btnPaginaAnterior"
+                    class="btn-pagination"
+                    disabled
+                    aria-label="Página anterior"
+                >
+                    Anterior
+                </button>
+
+                <span id="paginaAtual" aria-live="polite">1</span>
+
+                <button
+                    type="button"
+                    id="btnProximaPagina"
+                    class="btn-pagination"
+                    disabled
+                    aria-label="Próxima página"
+                >
+                    Próxima
+                </button>
+            </div>
+        </div>
+
+    </section>
+
+</main>
+{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet"
+      href="{{ url_for('static', filename='css/animals.css') }}">
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/animals.js') }}" defer></script>
 {% endblock %}

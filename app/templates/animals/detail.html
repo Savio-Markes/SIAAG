@@ -1,0 +1,185 @@
+
+{% extends "base.html" %}
+
+{% block title %}Ficha do Animal | SIAAG{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/animal-detail.css') }}">
+{% endblock %}
+
+{% block content %}
+<main class="animal-detail-container">
+
+    <header class="animal-detail-header">
+        <div>
+            <span class="page-subtitle">GERENCIAMENTO AGROPECUÁRIO</span>
+            <h1>Ficha do Animal</h1>
+            <p>Consulte as informações cadastrais e o histórico do animal.</p>
+        </div>
+
+        <div class="animal-detail-actions">
+            <a href="/animais/painel" class="btn-back">
+                ← Voltar para animais
+            </a>
+
+            <a
+                href="/animais/{{ animal.get('id') }}/editar"
+                class="btn-back btn-edit-animal"
+            >
+                ✏️ Editar animal
+            </a>
+
+            <button
+                type="button"
+                id="btnInativarAnimal"
+                class="btn-inactivate-animal"
+            >
+                Inativar animal
+            </button>
+        </div>
+    </header>
+
+    <!-- IDENTIFICAÇÃO -->
+    <section class="animal-profile-card">
+        <div class="animal-avatar">
+            <span>🐄</span>
+        </div>
+
+        <div class="animal-profile-info">
+            <span class="animal-status">
+                {{ animal.get('situacao') or 'Não informado' }}
+            </span>
+
+            <h2>{{ animal.get('identificacao') or 'Identificação não informada' }}</h2>
+            <p>{{ animal.get('nome') or 'Sem nome cadastrado' }}</p>
+        </div>
+    </section>
+
+    <!-- DADOS CADASTRAIS -->
+    <section class="detail-section">
+        <div class="section-heading">
+            <div>
+                <h2>Dados cadastrais</h2>
+                <p>Informações gerais do animal registrado no sistema.</p>
+            </div>
+        </div>
+
+        <div class="detail-grid">
+            <div class="detail-item">
+                <span>Identificação</span>
+                <strong>{{ animal.get('identificacao') or '—' }}</strong>
+            </div>
+
+            <div class="detail-item">
+                <span>Nome</span>
+                <strong>{{ animal.get('nome') or '—' }}</strong>
+            </div>
+
+            <div class="detail-item">
+                <span>Espécie</span>
+                <strong>{{ animal.get('especie') or '—' }}</strong>
+            </div>
+
+            <div class="detail-item">
+                <span>Raça</span>
+                <strong>{{ animal.get('raca') or '—' }}</strong>
+            </div>
+
+            <div class="detail-item">
+                <span>Sexo</span>
+                <strong>{{ animal.get('sexo') or '—' }}</strong>
+            </div>
+
+            <div class="detail-item">
+                <span>Data de nascimento</span>
+                <strong>{{ animal.get('nascimento') or '—' }}</strong>
+            </div>
+
+            <div class="detail-item">
+                <span>Origem</span>
+                <strong>{{ animal.get('origem') or '—' }}</strong>
+            </div>
+
+            <div class="detail-item">
+                <span>Data de entrada</span>
+                <strong>{{ animal.get('data_entrada') or '—' }}</strong>
+            </div>
+
+            <div class="detail-item">
+                <span>Localização</span>
+                <strong>{{ animal.get('localizacao') or '—' }}</strong>
+            </div>
+
+            <div class="detail-item">
+                <span>Situação</span>
+                <strong>{{ animal.get('situacao') or '—' }}</strong>
+            </div>
+        </div>
+
+        <div class="detail-observations">
+            <span>Observações</span>
+            <p>{{ animal.get('observacoes') or 'Nenhuma observação cadastrada.' }}</p>
+        </div>
+    </section>
+
+    <!-- HISTÓRICO VETERINÁRIO -->
+    <section class="detail-section">
+        <div class="section-heading">
+            <div>
+                <h2>Histórico veterinário</h2>
+                <p>Registros de atendimentos e acompanhamento veterinário.</p>
+            </div>
+        </div>
+
+        <div class="history-placeholder">
+            <span>🩺</span>
+            <h3>Histórico veterinário</h3>
+            <p>Os registros veterinários serão apresentados aqui quando o módulo estiver integrado.</p>
+        </div>
+    </section>
+
+    <!-- PESAGENS -->
+    <section class="detail-section">
+        <div class="section-heading">
+            <div>
+                <h2>Histórico de pesagens</h2>
+                <p>Acompanhamento dos registros de peso do animal.</p>
+            </div>
+        </div>
+
+        <div class="history-placeholder">
+            <span>⚖️</span>
+            <h3>Nenhuma pesagem disponível</h3>
+            <p>Os registros de pesagem serão exibidos nesta seção.</p>
+        </div>
+    </section>
+
+    <!-- ATIVIDADES -->
+    <section class="detail-section">
+        <div class="section-heading">
+            <div>
+                <h2>Atividades relacionadas</h2>
+                <p>Atividades agropecuárias vinculadas ao animal.</p>
+            </div>
+        </div>
+
+        <div class="history-placeholder">
+            <span>📋</span>
+            <h3>Atividades relacionadas</h3>
+            <p>As atividades vinculadas ao animal serão apresentadas quando o módulo estiver integrado.</p>
+        </div>
+    </section>
+
+    <div
+        id="animalDetailFeedback"
+        class="animals-feedback"
+        role="status"
+        aria-live="polite"
+    ></div>
+
+</main>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/animals-detail.js') }}"></script>
+{% endblock %}

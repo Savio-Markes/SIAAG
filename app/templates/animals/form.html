@@ -1,209 +1,193 @@
 
 {% extends "base.html" %}
 
-{% block title %}Cadastro de Animais | SIAAG{% endblock %}
+{% block title %}Cadastrar Animal | SIAAG{% endblock %}
 
 {% block content %}
-<section class="page-header">
-    <div class="page-header-content">
-        <h2>Cadastro de Animais</h2>
-        <p>
-            Registre os dados de identificação e acompanhamento
-            dos animais da Fazenda Escola.
-        </p>
-    </div>
-</section>
+<main class="animal-form-page">
 
-<section class="content-panel">
-    <header class="panel-header">
-        <h3>Dados do animal</h3>
-        <p>Preencha as informações disponíveis para o cadastro.</p>
+    <header class="animal-form-header">
+        <div>
+            <span class="animal-form-subtitle">GESTÃO AGROPECUÁRIA</span>
+            <h1>Cadastrar animal</h1>
+            <p>Preencha os dados para registrar um novo animal no sistema.</p>
+        </div>
+
+        <a href="{{ url_for('animals.painel') }}" class="animal-back-link">
+            Voltar para animais
+        </a>
     </header>
 
-    <div
-        id="animal-form-feedback"
-        class="form-feedback"
-        aria-live="polite"
-    ></div>
+    <section class="animal-form-card">
 
-    <form
-        id="animal-form"
-        class="data-form"
-        action="/animais/novo"
-        method="POST"
-    >
-        <fieldset class="form-section">
-            <legend>1. Identificação do animal</legend>
-
-            <div class="form-field">
-                <label for="identificacao">
-                    Identificação ou número do brinco
-                    <span aria-hidden="true">*</span>
-                </label>
-
-                <input
-                    type="text"
-                    id="identificacao"
-                    name="identificacao"
-                    maxlength="100"
-                    autocomplete="off"
-                    required
-                    aria-describedby="identificacao-help"
-                >
-
-                <small id="identificacao-help">
-                    Informe o código de identificação do animal.
-                </small>
-            </div>
-
-            <div class="form-field">
-                <label for="nome">Nome do animal</label>
-
-                <input
-                    type="text"
-                    id="nome"
-                    name="nome"
-                    maxlength="100"
-                    autocomplete="off"
-                >
-            </div>
-        </fieldset>
-
-        <fieldset class="form-section">
-            <legend>2. Classificação</legend>
-
-            <div class="form-field">
-                <label for="especie">
-                    Espécie
-                    <span aria-hidden="true">*</span>
-                </label>
-
-                <input
-                    type="text"
-                    id="especie"
-                    name="especie"
-                    maxlength="100"
-                    required
-                >
-            </div>
-
-            <div class="form-field">
-                <label for="raca">Raça</label>
-
-                <input
-                    type="text"
-                    id="raca"
-                    name="raca"
-                    maxlength="100"
-                >
-            </div>
-
-            <div class="form-field">
-                <label for="sexo">Sexo</label>
-
-                <select id="sexo" name="sexo">
-                    <option value="">Não informado</option>
-                    <option value="Macho">Macho</option>
-                    <option value="Fêmea">Fêmea</option>
-                </select>
-            </div>
-
-        </fieldset>
-
-        <fieldset class="form-section">
-            <legend>3. Origem e localização</legend>
-
-            <div class="form-field">
-                <label for="data_nascimento">
-                    Data de nascimento
-                </label>
-
-                <input
-                    type="date"
-                    id="data_nascimento"
-                    name="data_nascimento"
-                    max="{{ hoje }}"
-                >
-            </div>
-
-            <div class="form-field">
-                <label for="origem">Origem</label>
-
-                <input
-                    type="text"
-                    id="origem"
-                    name="origem"
-                    maxlength="150"
-                >
-            </div>
-
-            <div class="form-field">
-                <label for="data_entrada">Data de entrada</label>
-
-                <input
-                    type="date"
-                    id="data_entrada"
-                    name="data_entrada"
-                >
-            </div>
-
-            <div class="form-field">
-                <label for="localizacao">Localização ou lote</label>
-
-                <input
-                    type="text"
-                    id="localizacao"
-                    name="localizacao"
-                    maxlength="150"
-                >
-            </div>
-        </fieldset>
-
-        <fieldset class="form-section">
-            <legend>4. Situação e observações</legend>
-
-            <div class="form-field">
-                <label for="situacao">Situação do animal</label>
-
-                <input
-                    type="text"
-                    id="situacao"
-                    name="situacao"
-                    maxlength="50"
-                >
-            </div>
-
-            <div class="form-field">
-                <label for="observacoes">Observações</label>
-
-                <textarea
-                    id="observacoes"
-                    name="observacoes"
-                    rows="4"
-                ></textarea>
-            </div>
-        </fieldset>
-
-        <div class="form-required-note">
-            <p><span aria-hidden="true">*</span> Campo obrigatório.</p>
+        <div class="animal-form-card-header">
+            <h2>Dados cadastrais</h2>
+            <p>Os campos marcados com * são obrigatórios.</p>
         </div>
 
-        <div class="form-actions">
-            <button
-                type="button"
-                class="button-secondary"
-                data-action="cancel"
-            >
-                Cancelar
-            </button>
+        <form id="animalDataForm" autocomplete="off">
 
-            <button
-                type="submit"
-                class="button-primary"
-            >
-                Salvar cadastro
-            </button>
-        </div>
-    </form>
-</section>
+            <div id="animalFormFeedback"
+                 class="animal-form-feedback"
+                 role="status"
+                 aria-live="polite"
+                 hidden>
+            </div>
+
+            <div class="animal-form-grid">
+
+                <div class="animal-field">
+                    <label for="identificacao">
+                        Identificação *
+                    </label>
+                    <input
+                        type="text"
+                        id="identificacao"
+                        name="identificacao"
+                        maxlength="100"
+                        placeholder="Ex.: BRINCO-001"
+                        required
+                        aria-required="true"
+                    >
+                    <small>Identificação única do animal.</small>
+                </div>
+
+                <div class="animal-field">
+                    <label for="nome">Nome</label>
+                    <input
+                        type="text"
+                        id="nome"
+                        name="nome"
+                        maxlength="150"
+                        placeholder="Nome do animal"
+                    >
+                </div>
+
+                <div class="animal-field">
+                    <label for="especie">Espécie *</label>
+                    <input
+                        type="text"
+                        id="especie"
+                        name="especie"
+                        maxlength="100"
+                        placeholder="Informe a espécie"
+                        required
+                        aria-required="true"
+                    >
+                </div>
+
+                <div class="animal-field">
+                    <label for="raca">Raça</label>
+                    <input
+                        type="text"
+                        id="raca"
+                        name="raca"
+                        maxlength="100"
+                        placeholder="Informe a raça"
+                    >
+                </div>
+
+                <div class="animal-field">
+                    <label for="sexo">Sexo</label>
+                    <input
+                        type="text"
+                        id="sexo"
+                        name="sexo"
+                        maxlength="50"
+                        placeholder="Informe o sexo"
+                    >
+                </div>
+
+                <div class="animal-field">
+                    <label for="nascimento">Data de nascimento</label>
+                    <input
+                        type="date"
+                        id="nascimento"
+                        name="nascimento"
+                    >
+                </div>
+
+                <div class="animal-field">
+                    <label for="origem">Origem</label>
+                    <input
+                        type="text"
+                        id="origem"
+                        name="origem"
+                        maxlength="150"
+                        placeholder="Origem do animal"
+                    >
+                </div>
+
+                <div class="animal-field">
+                    <label for="data_entrada">Data de entrada</label>
+                    <input
+                        type="date"
+                        id="data_entrada"
+                        name="data_entrada"
+                    >
+                </div>
+
+                <div class="animal-field">
+                    <label for="localizacao">Localização / Lote</label>
+                    <input
+                        type="text"
+                        id="localizacao"
+                        name="localizacao"
+                        maxlength="150"
+                        placeholder="Informe a localização ou lote"
+                    >
+                </div>
+
+                <div class="animal-field">
+                    <label for="situacao">Situação *</label>
+                    <input
+                        type="text"
+                        id="situacao"
+                        name="situacao"
+                        maxlength="100"
+                        placeholder="Informe a situação"
+                        required
+                        aria-required="true"
+                    >
+                </div>
+
+                <div class="animal-field animal-field-full">
+                    <label for="observacoes">Observações</label>
+                    <textarea
+                        id="observacoes"
+                        name="observacoes"
+                        rows="4"
+                        maxlength="2000"
+                        placeholder="Informações adicionais sobre o animal..."
+                    ></textarea>
+                </div>
+
+            </div>
+
+            <div class="animal-form-actions">
+                <a href="{{ url_for('animals.painel') }}"
+                   class="animal-cancel-button">
+                    Cancelar
+                </a>
+
+                <button type="submit"
+                        id="btnSalvarAnimal"
+                        class="animal-save-button">
+                    Cadastrar animal
+                </button>
+            </div>
+
+        </form>
+    </section>
+
+</main>
+{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet"
+      href="{{ url_for('static', filename='css/animals-form.css') }}">
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/animals-form.js') }}" defer></script>
 {% endblock %}

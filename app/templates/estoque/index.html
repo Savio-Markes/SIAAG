@@ -1,0 +1,196 @@
+
+{% extends "base.html" %}
+
+{% block title %}Gerenciamento de Estoque | SIAAG{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/stock.css') }}">
+{% endblock %}
+
+{% block content %}
+<main class="stock-container">
+
+    <header class="stock-header">
+        <div>
+            <span class="stock-eyebrow">GESTÃO AGROPECUÁRIA</span>
+            <h1>Gerenciamento de Estoque</h1>
+            <p>Controle os produtos, quantidades disponíveis e movimentações da Fazenda Escola.</p>
+        </div>
+
+        <div class="stock-header-actions">
+            <a href="/estoque/movimentacoes" class="stock-btn stock-btn-secondary">
+                ↔ Movimentações
+            </a>
+
+            <a href="/estoque/produtos/novo" class="stock-btn stock-btn-primary">
+                + Novo produto
+            </a>
+        </div>
+    </header>
+
+    <!-- INDICADORES -->
+    <section class="stock-summary">
+
+        <article class="stock-summary-card">
+            <div class="summary-icon">📦</div>
+            <div>
+                <span>Produtos cadastrados</span>
+                <strong id="totalProdutos">—</strong>
+                <small>Itens registrados no sistema</small>
+            </div>
+        </article>
+
+        <article class="stock-summary-card">
+            <div class="summary-icon warning-icon">⚠️</div>
+            <div>
+                <span>Estoque baixo</span>
+                <strong id="produtosEstoqueBaixo">—</strong>
+                <small>Produtos no mínimo ou abaixo dele</small>
+            </div>
+        </article>
+
+        <article class="stock-summary-card">
+            <div class="summary-icon success-icon">✓</div>
+            <div>
+                <span>Estoque regular</span>
+                <strong id="produtosRegulares">—</strong>
+                <small>Produtos acima do mínimo</small>
+            </div>
+        </article>
+
+    </section>
+
+    <!-- ALERTA -->
+    <section class="stock-alert" id="stockAlert" hidden>
+        <span class="stock-alert-icon">⚠</span>
+        <div>
+            <strong>Atenção ao estoque!</strong>
+            <p>Existem produtos que precisam de reposição.</p>
+        </div>
+    </section>
+
+    <!-- LISTAGEM -->
+    <section class="stock-content">
+
+        <div class="stock-section-header">
+            <div>
+                <h2>Produtos cadastrados</h2>
+                <p>Consulte e acompanhe os itens disponíveis no estoque.</p>
+            </div>
+        </div>
+
+        <div class="stock-filters">
+
+            <div class="stock-search">
+                <label for="filtroNome">Pesquisar produto</label>
+                <input
+                    type="search"
+                    id="filtroNome"
+                    placeholder="Digite o nome do produto..."
+                    autocomplete="off"
+                >
+            </div>
+
+            <div class="stock-filter-group">
+                <label for="filtroCategoria">Categoria</label>
+                <select id="filtroCategoria">
+                    <option value="">Todas as categorias</option>
+                </select>
+            </div>
+
+            <div class="stock-filter-group">
+                <label for="filtroSituacao">Situação do estoque</label>
+                <select id="filtroSituacao">
+                    <option value="">Todas as situações</option>
+                    <option value="baixo">Estoque baixo</option>
+                    <option value="regular">Estoque regular</option>
+                    <option value="zerado">Estoque zerado</option>
+                </select>
+            </div>
+
+            <button type="button" id="btnLimparFiltros" class="stock-btn stock-btn-light">
+                Limpar filtros
+            </button>
+
+        </div>
+
+        <div
+            id="stockFeedback"
+            class="stock-feedback"
+            role="status"
+            aria-live="polite"
+        ></div>
+
+        <div class="stock-table-wrapper">
+            <table class="stock-table">
+
+                <thead>
+                    <tr>
+                        <th>Produto</th>
+                        <th>Categoria</th>
+                        <th>Unidade</th>
+                        <th>Saldo atual</th>
+                        <th>Estoque mínimo</th>
+                        <th>Situação</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+
+                <tbody id="stockTableBody">
+                    <tr>
+                        <td colspan="7" class="stock-loading">
+                            Carregando produtos...
+                        </td>
+                    </tr>
+                </tbody>
+
+            </table>
+        </div>
+
+        <footer class="stock-table-footer">
+            <span id="stockPaginationInfo">Aguardando produtos...</span>
+
+            <div class="stock-pagination">
+                <button type="button" id="btnPaginaAnterior" disabled>
+                    ← Anterior
+                </button>
+
+                <span id="paginaAtual">1</span>
+
+                <button type="button" id="btnProximaPagina" disabled>
+                    Próxima →
+                </button>
+            </div>
+        </footer>
+
+    </section>
+
+    <!-- ÚLTIMAS MOVIMENTAÇÕES -->
+    <section class="stock-content stock-recent-section">
+
+        <div class="stock-section-header">
+            <div>
+                <h2>Movimentações de estoque</h2>
+                <p>Acompanhe as entradas, saídas e ajustes registrados.</p>
+            </div>
+
+            <a href="/estoque/movimentacoes" class="stock-text-link">
+                Ver todas →
+            </a>
+        </div>
+
+        <div id="recentMovements" class="stock-recent-movements">
+            <div class="stock-empty-state">
+                <span>📋</span>
+                <p>As movimentações recentes serão apresentadas aqui.</p>
+            </div>
+        </div>
+
+    </section>
+
+</main>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/stock.js') }}"></script>
+{% endblock %}

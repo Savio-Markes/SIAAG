@@ -1,0 +1,353 @@
+
+/* =========================================
+   SIAAG - FICHA INDIVIDUAL DO ANIMAL
+========================================= */
+
+.animal-detail-container {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 30px 24px 50px;
+    color: var(--text, #26352a);
+}
+
+/* CABEÇALHO */
+
+.animal-detail-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 24px;
+    margin-bottom: 28px;
+}
+
+.page-subtitle {
+    display: block;
+    margin-bottom: 8px;
+    color: var(--primary, #245c38);
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 1.3px;
+}
+
+.animal-detail-header h1 {
+    margin: 0 0 8px;
+    font-size: 28px;
+    font-weight: 750;
+}
+
+.animal-detail-header p {
+    margin: 0;
+    color: var(--muted, #718075);
+    font-size: 14px;
+}
+
+/* BOTÕES DO CABEÇALHO */
+
+.animal-detail-actions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.btn-back,
+.btn-edit-animal,
+.btn-inactivate-animal {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 42px;
+    padding: 10px 16px;
+    border: 1px solid var(--border, #e0e8e1);
+    border-radius: 8px;
+    background: #fff;
+    color: var(--text, #26352a);
+    font-size: 13px;
+    font-weight: 650;
+    text-decoration: none;
+    cursor: pointer;
+    transition: 0.2s ease;
+}
+
+.btn-back:hover {
+    border-color: var(--primary, #245c38);
+    color: var(--primary, #245c38);
+}
+
+.btn-edit-animal {
+    border-color: var(--primary, #245c38);
+    background: var(--primary, #245c38);
+    color: #fff;
+}
+
+.btn-edit-animal:hover {
+    background: var(--primary-dark, #19452b);
+    color: #fff;
+}
+
+.btn-inactivate-animal {
+    border-color: #e8c6c3;
+    background: #fff;
+    color: var(--danger, #a52e28);
+}
+
+.btn-inactivate-animal:hover {
+    border-color: var(--danger, #a52e28);
+    background: var(--danger-bg, #fff0ee);
+}
+
+.btn-inactivate-animal:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+/* PERFIL DO ANIMAL */
+
+.animal-profile-card {
+    display: flex;
+    align-items: center;
+    gap: 22px;
+    margin-bottom: 24px;
+    padding: 26px;
+    border: 1px solid var(--border, #e0e8e1);
+    border-radius: 12px;
+    background: var(--surface, #fff);
+    box-shadow: var(--shadow, 0 4px 18px rgba(31,68,42,.06));
+}
+
+.animal-avatar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 76px;
+    height: 76px;
+    border-radius: 14px;
+    background: var(--primary-light, #eaf3ec);
+    font-size: 38px;
+}
+
+.animal-profile-info h2 {
+    margin: 10px 0 5px;
+    color: var(--primary-dark, #19452b);
+    font-size: 23px;
+}
+
+.animal-profile-info p {
+    margin: 0;
+    color: var(--muted, #718075);
+    font-size: 14px;
+}
+
+.animal-status {
+    display: inline-block;
+    padding: 5px 11px;
+    border-radius: 20px;
+    background: var(--success-bg, #eaf7ed);
+    color: var(--success, #216b3a);
+    font-size: 11px;
+    font-weight: 750;
+    text-transform: uppercase;
+}
+
+/* SEÇÕES */
+
+.detail-section {
+    margin-bottom: 22px;
+    padding: 25px;
+    border: 1px solid var(--border, #e0e8e1);
+    border-radius: 12px;
+    background: var(--surface, #fff);
+    box-shadow: var(--shadow, 0 4px 18px rgba(31,68,42,.06));
+}
+
+.section-heading {
+    margin-bottom: 22px;
+}
+
+.section-heading h2 {
+    margin: 0 0 6px;
+    color: var(--primary-dark, #19452b);
+    font-size: 18px;
+}
+
+.section-heading p {
+    margin: 0;
+    color: var(--muted, #718075);
+    font-size: 13px;
+}
+
+/* DADOS CADASTRAIS */
+
+.detail-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 20px;
+}
+
+.detail-item {
+    min-width: 0;
+    padding: 14px;
+    border: 1px solid var(--border, #e0e8e1);
+    border-radius: 8px;
+    background: #fbfdfb;
+}
+
+.detail-item span,
+.detail-observations span {
+    display: block;
+    margin-bottom: 7px;
+    color: var(--muted, #718075);
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.detail-item strong {
+    display: block;
+    overflow-wrap: anywhere;
+    color: var(--text, #26352a);
+    font-size: 14px;
+    font-weight: 650;
+}
+
+.detail-observations {
+    margin-top: 20px;
+    padding: 16px;
+    border-radius: 8px;
+    background: var(--primary-light, #eaf3ec);
+}
+
+.detail-observations p {
+    margin: 0;
+    color: var(--text, #26352a);
+    font-size: 14px;
+    line-height: 1.6;
+    overflow-wrap: anywhere;
+}
+
+/* HISTÓRICOS */
+
+.history-placeholder {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 180px;
+    padding: 25px;
+    border: 1px dashed var(--border, #e0e8e1);
+    border-radius: 10px;
+    background: #fbfdfb;
+    text-align: center;
+}
+
+.history-placeholder > span {
+    margin-bottom: 12px;
+    font-size: 30px;
+}
+
+.history-placeholder h3 {
+    margin: 0 0 8px;
+    color: var(--primary-dark, #19452b);
+    font-size: 15px;
+}
+
+.history-placeholder p {
+    max-width: 440px;
+    margin: 0;
+    color: var(--muted, #718075);
+    font-size: 13px;
+    line-height: 1.6;
+}
+
+/* FEEDBACK */
+
+.animals-feedback {
+    display: none;
+    margin-top: 18px;
+    padding: 13px 16px;
+    border-radius: 8px;
+    font-size: 13px;
+    line-height: 1.5;
+}
+
+.animals-feedback.sucesso {
+    display: block;
+    background: var(--success-bg, #eaf7ed);
+    color: var(--success, #216b3a);
+}
+
+.animals-feedback.erro {
+    display: block;
+    background: var(--danger-bg, #fff0ee);
+    color: var(--danger, #a52e28);
+}
+
+.animals-feedback.carregando {
+    display: block;
+    background: var(--primary-light, #eaf3ec);
+    color: var(--primary-dark, #19452b);
+}
+
+/* RESPONSIVIDADE */
+
+@media (max-width: 850px) {
+    .animal-detail-header {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .animal-detail-actions {
+        justify-content: flex-start;
+    }
+
+    .detail-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 550px) {
+    .animal-detail-container {
+        padding: 20px 14px 35px;
+    }
+
+    .animal-detail-header h1 {
+        font-size: 23px;
+    }
+
+    .animal-detail-actions {
+        width: 100%;
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .animal-detail-actions a,
+    .animal-detail-actions button {
+        width: 100%;
+    }
+
+    .animal-profile-card {
+        align-items: flex-start;
+        padding: 18px;
+    }
+
+    .animal-avatar {
+        width: 58px;
+        height: 58px;
+        font-size: 29px;
+    }
+
+    .animal-profile-info h2 {
+        font-size: 18px;
+    }
+
+    .detail-section {
+        padding: 18px;
+    }
+
+    .detail-grid {
+        grid-template-columns: 1fr;
+        gap: 12px;
+    }
+}
