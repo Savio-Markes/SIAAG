@@ -1,7 +1,7 @@
 
 # Desenvolvido por: Fábio Barbosa
 
-from flask import Blueprint, jsonify, request, session
+from flask import Blueprint, jsonify, request, session, render_template
 
 from app.permissions import permission_required
 from app.users.service import listar_usuarios
@@ -17,6 +17,14 @@ users_bp = Blueprint("users", __name__, url_prefix="/usuarios")
 
 
 # Rotas administrativas de gerenciamento de usuários e permissões.
+
+
+@users_bp.route("/painel", methods=["GET"])
+@permission_required("usuarios.visualizar")
+def painel():
+    """Exibe a página de gerenciamento de usuários."""
+
+    return render_template("users/index.html")
 
 
 @users_bp.route("/", methods=["GET"])
