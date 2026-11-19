@@ -9,14 +9,19 @@ function inicializarDetalhesAnimal() {
 
     if (!botaoInativar) return;
 
-    // Obtém o ID do animal pela URL da ficha.
+    // Identifica o animal pelo endereço da página.
     const correspondencia = window.location.pathname.match(
         /^\/animais\/(\d+)\/painel\/?$/
     );
 
     if (!correspondencia) {
         botaoInativar.disabled = true;
-        mostrarFeedback("Não foi possível identificar o animal.", "erro");
+
+        mostrarFeedback(
+            "Não foi possível identificar o animal.",
+            "error"
+        );
+
         return;
     }
 
@@ -25,7 +30,7 @@ function inicializarDetalhesAnimal() {
     botaoInativar.addEventListener("click", async () => {
         const confirmou = window.confirm(
             "Deseja realmente inativar este animal?\n\n" +
-            "O cadastro e seu histórico serão preservados."
+            "O cadastro e todo o histórico serão preservados."
         );
 
         if (!confirmou) return;
@@ -33,7 +38,10 @@ function inicializarDetalhesAnimal() {
         botaoInativar.disabled = true;
         botaoInativar.textContent = "Inativando...";
 
-        mostrarFeedback("Processando inativação...", "carregando");
+        mostrarFeedback(
+            "Processando a solicitação...",
+            "info"
+        );
 
         try {
             const resposta = await fetch(
@@ -49,7 +57,7 @@ function inicializarDetalhesAnimal() {
 
             const resultado = await resposta.json().catch(() => ({}));
 
-            if (!resposta.ok || resultado.sucesso === false) {
+            if (!resposta.ok || resultado.sucesso !== true) {
                 throw new Error(
                     resultado.mensagem ||
                     resultado.erro ||
@@ -59,19 +67,20 @@ function inicializarDetalhesAnimal() {
 
             mostrarFeedback(
                 resultado.mensagem || "Animal inativado com sucesso!",
-                "sucesso"
+                "success"
             );
 
             botaoInativar.textContent = "Animal inativado";
 
-            setTimeout(() => {
+            // Retorna à listagem após a confirmação do servidor.
+            window.setTimeout(() => {
                 window.location.href = "/animais/painel";
             }, 1200);
 
         } catch (erro) {
             mostrarFeedback(
                 erro.message || "Não foi possível inativar o animal.",
-                "erro"
+                "error"
             );
 
             botaoInativar.disabled = false;
@@ -86,7 +95,8 @@ function inicializarDetalhesAnimal() {
         }
 
         feedback.textContent = mensagem;
-        feedback.className = `animals-feedback ${tipo}`;
+        feedback.className = `animal-detail-feedback ${tipo}`;
+        feedback.hidden = false;
     }
 }
 

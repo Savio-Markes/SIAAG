@@ -1,75 +1,125 @@
 
 {% extends "base.html" %}
 
-{% block title %}Gerenciamento de Animais | SIAAG{% endblock %}
+{% block title %}Animais | SIAAG{% endblock %}
+
+{% block page_css %}
+<link
+    rel="stylesheet"
+    href="{{ url_for('static', filename='css/animals.css') }}"
+>
+{% endblock %}
 
 {% block content %}
-<main class="animals-page">
+<section class="animals-page" aria-labelledby="animals-title">
 
-    <section class="animals-header">
-        <div>
+    <!-- Cabeçalho -->
+    <header class="animals-header">
+        <div class="animals-header-content">
             <span class="animals-subtitle">GESTÃO AGROPECUÁRIA</span>
-            <h1>Gerenciamento de Animais</h1>
-            <p>Consulte e gerencie os animais cadastrados no sistema.</p>
+
+            <h2 id="animals-title">Animais</h2>
+
+            <p>
+                Gerenciamento e acompanhamento dos animais
+                cadastrados na Fazenda Escola.
+            </p>
         </div>
 
-        <button type="button" id="btnNovoAnimal" class="btn-primary">
+        <button
+            type="button"
+            id="btnNovoAnimal"
+            class="btn-primary"
+        >
             <span aria-hidden="true">+</span>
-            Novo animal
+            Cadastrar animal
         </button>
-    </section>
+    </header>
 
-    <section class="animals-card">
+    <!-- Listagem -->
+    <section class="animals-card" aria-labelledby="animals-list-title">
 
         <div class="animals-card-header">
             <div>
-                <h2>Animais cadastrados</h2>
-                <p>Pesquise e filtre os registros disponíveis.</p>
+                <h3 id="animals-list-title">Animais cadastrados</h3>
+                <p>Consulte, pesquise e gerencie os registros.</p>
             </div>
 
-            <span id="totalAnimais" class="animals-counter">
-                0 animais
+            <span
+                id="totalAnimais"
+                class="animals-counter"
+                aria-live="polite"
+            >
+                Carregando...
             </span>
         </div>
 
+        <!-- Pesquisa e filtros -->
         <div class="animals-filters">
 
             <div class="filter-group filter-search">
-                <label for="filtroIdentificacao">Identificação</label>
+                <label for="filtroIdentificacao">
+                    Buscar por identificação
+                </label>
+
                 <input
                     type="search"
                     id="filtroIdentificacao"
                     name="identificacao"
-                    placeholder="Pesquisar por identificação..."
+                    placeholder="Buscar por identificação..."
                     autocomplete="off"
+                    aria-label="Buscar animal pela identificação"
                 >
             </div>
 
             <div class="filter-group">
                 <label for="filtroEspecie">Espécie</label>
-                <select id="filtroEspecie" name="especie">
+
+                <select
+                    id="filtroEspecie"
+                    name="especie"
+                >
                     <option value="">Todas as espécies</option>
                 </select>
             </div>
 
             <div class="filter-group">
                 <label for="filtroSituacao">Situação</label>
-                <select id="filtroSituacao" name="situacao">
+
+                <select
+                    id="filtroSituacao"
+                    name="situacao"
+                >
                     <option value="">Todas as situações</option>
                 </select>
             </div>
 
-            <button type="button" id="btnLimparFiltros" class="btn-secondary">
+            <button
+                type="button"
+                id="btnLimparFiltros"
+                class="btn-secondary"
+            >
                 Limpar filtros
             </button>
 
         </div>
 
-        <div id="animalsFeedback" class="animals-feedback"
-             role="status" aria-live="polite" hidden>
-        </div>
+        <!-- Feedback -->
+        <div
+            id="animalsFeedback"
+            class="animals-feedback"
+            role="status"
+            aria-live="polite"
+            hidden
+        ></div>
 
-        <div class="animals-table-container">
+        <!-- Tabela -->
+        <div
+            class="animals-table-container"
+            role="region"
+            aria-label="Tabela de animais cadastrados"
+            tabindex="0"
+        >
             <table class="animals-table">
                 <thead>
                     <tr>
@@ -92,46 +142,57 @@
             </table>
         </div>
 
-        <div class="animals-pagination">
-            <span id="paginationInfo">
-                Nenhum registro carregado.
+        <!-- Paginação -->
+        <footer class="animals-pagination">
+
+            <span
+                id="paginationInfo"
+                aria-live="polite"
+            >
+                Aguardando registros...
             </span>
 
-            <div class="pagination-actions">
+            <nav
+                class="pagination-actions"
+                aria-label="Paginação dos animais"
+            >
                 <button
                     type="button"
                     id="btnPaginaAnterior"
                     class="btn-pagination"
                     disabled
-                    aria-label="Página anterior"
                 >
                     Anterior
                 </button>
 
-                <span id="paginaAtual" aria-live="polite">1</span>
+                <span
+                    id="paginaAtual"
+                    class="pagination-current"
+                    aria-live="polite"
+                >
+                    1
+                </span>
 
                 <button
                     type="button"
                     id="btnProximaPagina"
                     class="btn-pagination"
                     disabled
-                    aria-label="Próxima página"
                 >
                     Próxima
                 </button>
-            </div>
-        </div>
+            </nav>
+
+        </footer>
 
     </section>
 
-</main>
+</section>
 {% endblock %}
 
-{% block extra_css %}
-<link rel="stylesheet"
-      href="{{ url_for('static', filename='css/animals.css') }}">
-{% endblock %}
-
-{% block extra_js %}
-<script src="{{ url_for('static', filename='js/animals.js') }}" defer></script>
+{% block page_js %}
+<script
+    src="{{ url_for('static', filename='js/animals.js') }}"
+    defer
+></script>
 {% endblock %}

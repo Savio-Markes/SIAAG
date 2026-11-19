@@ -3,53 +3,54 @@
 
 {% block title %}Cadastrar Animal | SIAAG{% endblock %}
 
+{% block page_css %}
+<link
+    rel="stylesheet"
+    href="{{ url_for('static', filename='css/animals-form.css') }}"
+>
+{% endblock %}
+
 {% block content %}
-<main class="animal-form-page">
+<section class="animal-form-page" aria-labelledby="animal-form-title">
 
     <header class="animal-form-header">
         <div>
             <span class="animal-form-subtitle">GESTÃO AGROPECUÁRIA</span>
-            <h1>Cadastrar animal</h1>
-            <p>Preencha os dados para registrar um novo animal no sistema.</p>
+            <h2 id="animal-form-title">Cadastrar animal</h2>
+            <p>Preencha as informações para adicionar um novo animal ao sistema.</p>
         </div>
 
-        <a href="{{ url_for('animals.painel') }}" class="animal-back-link">
+        <a href="/animais/painel" class="animal-back-button">
+            <span aria-hidden="true">←</span>
             Voltar para animais
         </a>
     </header>
 
-    <section class="animal-form-card">
+    <form id="animalForm" class="animal-form" novalidate>
 
-        <div class="animal-form-card-header">
-            <h2>Dados cadastrais</h2>
-            <p>Os campos marcados com * são obrigatórios.</p>
-        </div>
-
-        <form id="animalDataForm" autocomplete="off">
-
-            <div id="animalFormFeedback"
-                 class="animal-form-feedback"
-                 role="status"
-                 aria-live="polite"
-                 hidden>
+        <section class="animal-form-card" aria-labelledby="identification-title">
+            <div class="animal-form-card-header">
+                <div class="animal-section-icon" aria-hidden="true">01</div>
+                <div>
+                    <h3 id="identification-title">Identificação do animal</h3>
+                    <p>Informações principais para identificação e registro.</p>
+                </div>
             </div>
 
             <div class="animal-form-grid">
-
                 <div class="animal-field">
                     <label for="identificacao">
-                        Identificação *
+                        Identificação <span aria-hidden="true">*</span>
                     </label>
                     <input
                         type="text"
                         id="identificacao"
                         name="identificacao"
                         maxlength="100"
-                        placeholder="Ex.: BRINCO-001"
+                        placeholder="Ex.: BOV-001"
                         required
                         aria-required="true"
                     >
-                    <small>Identificação única do animal.</small>
                 </div>
 
                 <div class="animal-field">
@@ -58,18 +59,20 @@
                         type="text"
                         id="nome"
                         name="nome"
-                        maxlength="150"
+                        maxlength="100"
                         placeholder="Nome do animal"
                     >
                 </div>
 
                 <div class="animal-field">
-                    <label for="especie">Espécie *</label>
+                    <label for="especie">
+                        Espécie <span aria-hidden="true">*</span>
+                    </label>
                     <input
                         type="text"
                         id="especie"
                         name="especie"
-                        maxlength="100"
+                        maxlength="80"
                         placeholder="Informe a espécie"
                         required
                         aria-required="true"
@@ -89,13 +92,11 @@
 
                 <div class="animal-field">
                     <label for="sexo">Sexo</label>
-                    <input
-                        type="text"
-                        id="sexo"
-                        name="sexo"
-                        maxlength="50"
-                        placeholder="Informe o sexo"
-                    >
+                    <select id="sexo" name="sexo">
+                        <option value="">Não informado</option>
+                        <option value="Macho">Macho</option>
+                        <option value="Fêmea">Fêmea</option>
+                    </select>
                 </div>
 
                 <div class="animal-field">
@@ -106,7 +107,19 @@
                         name="nascimento"
                     >
                 </div>
+            </div>
+        </section>
 
+        <section class="animal-form-card" aria-labelledby="origin-title">
+            <div class="animal-form-card-header">
+                <div class="animal-section-icon" aria-hidden="true">02</div>
+                <div>
+                    <h3 id="origin-title">Origem e localização</h3>
+                    <p>Registre a entrada e a localização do animal.</p>
+                </div>
+            </div>
+
+            <div class="animal-form-grid">
                 <div class="animal-field">
                     <label for="origem">Origem</label>
                     <input
@@ -128,66 +141,75 @@
                 </div>
 
                 <div class="animal-field">
-                    <label for="localizacao">Localização / Lote</label>
+                    <label for="localizacao">Localização</label>
                     <input
                         type="text"
                         id="localizacao"
                         name="localizacao"
                         maxlength="150"
-                        placeholder="Informe a localização ou lote"
+                        placeholder="Ex.: Curral 01"
                     >
                 </div>
 
                 <div class="animal-field">
-                    <label for="situacao">Situação *</label>
+                    <label for="situacao">Situação</label>
                     <input
                         type="text"
                         id="situacao"
                         name="situacao"
-                        maxlength="100"
+                        maxlength="80"
                         placeholder="Informe a situação"
-                        required
-                        aria-required="true"
                     >
                 </div>
+            </div>
+        </section>
 
-                <div class="animal-field animal-field-full">
-                    <label for="observacoes">Observações</label>
-                    <textarea
-                        id="observacoes"
-                        name="observacoes"
-                        rows="4"
-                        maxlength="2000"
-                        placeholder="Informações adicionais sobre o animal..."
-                    ></textarea>
+        <section class="animal-form-card" aria-labelledby="observations-title">
+            <div class="animal-form-card-header">
+                <div class="animal-section-icon" aria-hidden="true">03</div>
+                <div>
+                    <h3 id="observations-title">Observações</h3>
+                    <p>Adicione informações complementares, se necessário.</p>
                 </div>
-
             </div>
 
-            <div class="animal-form-actions">
-                <a href="{{ url_for('animals.painel') }}"
-                   class="animal-cancel-button">
-                    Cancelar
-                </a>
-
-                <button type="submit"
-                        id="btnSalvarAnimal"
-                        class="animal-save-button">
-                    Cadastrar animal
-                </button>
+            <div class="animal-field">
+                <label for="observacoes">Observações gerais</label>
+                <textarea
+                    id="observacoes"
+                    name="observacoes"
+                    rows="5"
+                    placeholder="Digite informações adicionais sobre o animal..."
+                ></textarea>
             </div>
+        </section>
 
-        </form>
-    </section>
+        <div
+            id="animalFormFeedback"
+            class="animal-form-feedback"
+            role="status"
+            aria-live="polite"
+            hidden
+        ></div>
 
-</main>
+        <footer class="animal-form-actions">
+            <a href="/animais/painel" class="animal-cancel-button">
+                Cancelar
+            </a>
+
+            <button type="submit" id="btnSalvarAnimal" class="animal-save-button">
+                <span aria-hidden="true">✓</span>
+                Cadastrar animal
+            </button>
+        </footer>
+
+    </form>
+</section>
 {% endblock %}
 
-{% block extra_css %}
-<link rel="stylesheet"
-      href="{{ url_for('static', filename='css/animals-form.css') }}">
-{% endblock %}
-
-{% block extra_js %}
-<script src="{{ url_for('static', filename='js/animals-form.js') }}" defer></script>
+{% block page_js %}
+<script
+    src="{{ url_for('static', filename='js/animals-form.js') }}"
+    defer
+></script>
 {% endblock %}

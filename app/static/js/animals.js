@@ -1,31 +1,28 @@
 
-/* =========================================
-   SIAAG - MÓDULO DE ANIMAIS
-   Listagem e integração com a API
-========================================= */
-
 document.addEventListener("DOMContentLoaded", () => {
+    "use strict";
+
     const API_URL = "/animais/";
     const LIMITE = 50;
 
     const elementos = {
-        identificacao: document.getElementById("filtroIdentificacao"),
-        especie: document.getElementById("filtroEspecie"),
-        situacao: document.getElementById("filtroSituacao"),
-        corpo: document.getElementById("animalsTableBody"),
+        filtroIdentificacao: document.getElementById("filtroIdentificacao"),
+        filtroEspecie: document.getElementById("filtroEspecie"),
+        filtroSituacao: document.getElementById("filtroSituacao"),
         feedback: document.getElementById("animalsFeedback"),
-        total: document.getElementById("totalAnimais"),
-        informacao: document.getElementById("paginationInfo"),
-        pagina: document.getElementById("paginaAtual"),
+        contador: document.getElementById("totalAnimais"),
+        tabela: document.getElementById("animalsTableBody"),
+        informacaoPaginacao: document.getElementById("paginationInfo"),
+        paginaAtual: document.getElementById("paginaAtual"),
         anterior: document.getElementById("btnPaginaAnterior"),
         proxima: document.getElementById("btnProximaPagina"),
         limpar: document.getElementById("btnLimparFiltros"),
-        novo: document.getElementById("btnNovoAnimal")
+        novoAnimal: document.getElementById("btnNovoAnimal")
     };
 
-    let deslocamento = 0;
-    let animais = [];
+    let pagina = 1;
     let carregando = false;
+    let temporizadorBusca = null;
 
     function mostrarFeedback(mensagem, tipo = "info") {
         elementos.feedback.textContent = mensagem;
@@ -33,215 +30,240 @@ document.addEventListener("DOMContentLoaded", () => {
         elementos.feedback.hidden = false;
     }
 
-    function limparFeedback() {
-        elementos.feedback.textContent = "";
+    function ocultarFeedback() {
         elementos.feedback.hidden = true;
-        elementos.feedback.className = "animals-feedback";
-    }
-
-    function mostrarCarregamento() {
-        elementos.corpo.innerHTML = `
-            <tr>
-                <td colspan="6" class="animals-loading">
-                    Carregando animais...
-                </td>
-            </tr>
-        `;
-    }
-
-    function mostrarEstadoVazio(mensagem) {
-        elementos.corpo.innerHTML = "";
-
-        const linha = document.createElement("tr");
-        const celula = document.createElement("td");
-
-        celula.colSpan = 6;
-        celula.className = "animals-empty";
-        celula.textContent = mensagem;
-
-        linha.appendChild(celula);
-        elementos.corpo.appendChild(linha);
+        elementos.feedback.textContent = "";
     }
 
     function criarCelula(valor) {
         const celula = document.createElement("td");
-        celula.textContent = valor ?? "—";
+        celula.textContent = valor || "—";
         return celula;
+    }
+
+    function criarLinhaVazia(mensagem) {
+        const linha = document.createElement("tr");
+        const celula = document.createElement("td");
+
+        celula.colSpan = 6;
+        celula.className = "animals-loading";
+        celula.textContent = mensagem;
+
+        linha.appendChild(celula);
+        elementos.tabela.replaceChildren(linha);
+    }
+
+    function formatarSituacao(situacao) {
+        if (!situacao) return "—";
+
+        return String(situacao)
+            .replace(/_/g, " ")
+            .replace(/\b\w/g, letra => letra.toUpperCase());
     }
 
     function criarAcao(animal) {
         const celula = document.createElement("td");
         const link = document.createElement("a");
 
-        link.className = "animal-action";
-        link.textContent = "Abrir ficha";
         link.href = `/animais/${encodeURIComponent(animal.id)}/painel`;
+        link.className = "btn-action";
+        link.textContent = "Abrir ficha";
+        link.setAttribute(
+            "aria-label",
+            `Abrir ficha do animal ${animal.identificacao || animal.id}`
+        );
+
         celula.appendChild(link);
         return celula;
     }
 
-    function renderizarAnimais(lista) {
-        elementos.corpo.innerHTML = "";
+    function renderizarAnimais(animais) {
+        elementos.tabela.replaceChildren();
 
-        if (!lista.length) {
-            mostrarEstadoVazio("Nenhum animal encontrado.");
+        if (!animais.length) {
+            criarLinhaVazia("Nenhum animal encontrado.");
             return;
         }
 
         const fragmento = document.createDocumentFragment();
 
-        lista.forEach(animal => {
+        animais.forEach(animal => {
             const linha = document.createElement("tr");
 
-            linha.appendChild(criarCelula(animal.identificacao));
+            const identificacao = animal.nome
+                ? `${animal.identificacao || "—"} — ${animal.nome}`
+                : animal.identificacao || "—";
+
+            linha.appendChild(criarCelula(identificacao));
             linha.appendChild(criarCelula(animal.especie));
             linha.appendChild(criarCelula(animal.raca));
-            linha.appendChild(criarCelula(animal.situacao));
+            linha.appendChild(criarCelula(formatarSituacao(animal.situacao)));
             linha.appendChild(criarCelula(animal.localizacao));
             linha.appendChild(criarAcao(animal));
 
             fragmento.appendChild(linha);
         });
 
-        elementos.corpo.appendChild(fragmento);
+        elementos.tabela.appendChild(fragmento);
     }
 
     function atualizarPaginacao(quantidade) {
-        elementos.pagina.textContent = String(
-            Math.floor(deslocamento / LIMITE) + 1
-        );
+        elementos.paginaAtual.textContent = String(pagina);
 
-        elementos.informacao.textContent =
-            `${quantidade} registro(s) nesta página.`;
+        elementos.informacaoPaginacao.textContent =
+            `${quantidade} animal(is) nesta página`;
 
-        elementos.anterior.disabled = deslocamento === 0;
+        elementos.contador.textContent =
+            `${quantidade} nesta página`;
 
-        // A API atual não informa total de páginas.
-        // Uma página com menos registros que o limite indica o fim.
+        elementos.anterior.disabled = pagina <= 1;
         elementos.proxima.disabled = quantidade < LIMITE;
+    }
+
+    function obterFiltros() {
+        return {
+            identificacao: elementos.filtroIdentificacao.value.trim(),
+            especie: elementos.filtroEspecie.value,
+            situacao: elementos.filtroSituacao.value
+        };
     }
 
     async function carregarAnimais() {
         if (carregando) return;
 
         carregando = true;
-        limparFeedback();
-        mostrarCarregamento();
+        elementos.anterior.disabled = true;
+        elementos.proxima.disabled = true;
 
-        const parametros = new URLSearchParams({
-            identificacao: elementos.identificacao.value.trim(),
-            especie: elementos.especie.value,
-            situacao: elementos.situacao.value,
-            limite: String(LIMITE),
-            deslocamento: String(deslocamento)
-        });
+        ocultarFeedback();
+        criarLinhaVazia("Carregando animais...");
+
+        const filtros = obterFiltros();
+        const parametros = new URLSearchParams();
+
+        if (filtros.identificacao) {
+            parametros.set("identificacao", filtros.identificacao);
+        }
+
+        if (filtros.especie) {
+            parametros.set("especie", filtros.especie);
+        }
+
+        if (filtros.situacao) {
+            parametros.set("situacao", filtros.situacao);
+        }
+
+        parametros.set("limite", String(LIMITE));
+        parametros.set("deslocamento", String((pagina - 1) * LIMITE));
 
         try {
-            const resposta = await fetch(`${API_URL}?${parametros}`, {
-                method: "GET",
-                headers: {
-                    "Accept": "application/json"
-                },
-                credentials: "same-origin"
-            });
-
-            if (!resposta.ok) {
-                if (resposta.status === 401 || resposta.status === 403) {
-                    throw new Error(
-                        "Você não possui autorização para visualizar os animais."
-                    );
+            const resposta = await fetch(
+                `${API_URL}?${parametros.toString()}`,
+                {
+                    method: "GET",
+                    headers: {
+                        "Accept": "application/json"
+                    },
+                    credentials: "same-origin"
                 }
-
-                throw new Error("Não foi possível carregar os animais.");
-            }
-
-            const resultado = await resposta.json();
-
-            if (!resultado.sucesso || !Array.isArray(resultado.dados)) {
-                throw new Error("A resposta recebida pela API é inválida.");
-            }
-
-            animais = resultado.dados;
-
-            renderizarAnimais(animais);
-
-            elementos.total.textContent =
-                `${animais.length} ${animais.length === 1 ? "animal" : "animais"}`;
-
-            atualizarPaginacao(animais.length);
-
-        } catch (erro) {
-            mostrarEstadoVazio("Não foi possível carregar os registros.");
-
-            mostrarFeedback(
-                erro.message || "Erro de comunicação com o servidor.",
-                "error"
             );
 
-            elementos.total.textContent = "—";
-            elementos.informacao.textContent = "Falha ao carregar registros.";
-            elementos.anterior.disabled = true;
+            let resultado = {};
+
+            try {
+                resultado = await resposta.json();
+            } catch {
+                throw new Error("O servidor retornou uma resposta inválida.");
+            }
+
+            if (resposta.status === 401) {
+                throw new Error("Sua sessão expirou. Entre novamente no sistema.");
+            }
+
+            if (resposta.status === 403) {
+                throw new Error("Você não tem permissão para visualizar os animais.");
+            }
+
+            if (!resposta.ok || resultado.sucesso !== true) {
+                throw new Error(
+                    resultado.mensagem ||
+                    resultado.erro ||
+                    "Não foi possível carregar os animais."
+                );
+            }
+
+            if (!Array.isArray(resultado.dados)) {
+                throw new Error("O formato dos dados recebidos é inválido.");
+            }
+
+            renderizarAnimais(resultado.dados);
+            atualizarPaginacao(resultado.dados.length);
+
+        } catch (erro) {
+            console.error("Erro ao carregar animais:", erro);
+
+            criarLinhaVazia("Não foi possível carregar os registros.");
+            elementos.contador.textContent = "Indisponível";
+            elementos.informacaoPaginacao.textContent = "Falha ao carregar";
+            elementos.paginaAtual.textContent = String(pagina);
+
+            elementos.anterior.disabled = pagina <= 1;
             elementos.proxima.disabled = true;
 
-            console.error("Erro ao carregar animais:", erro);
+            mostrarFeedback(
+                erro.message || "Ocorreu um erro inesperado.",
+                "error"
+            );
 
         } finally {
             carregando = false;
         }
     }
 
-    function limparFiltros() {
-        elementos.identificacao.value = "";
-        elementos.especie.value = "";
-        elementos.situacao.value = "";
-
-        deslocamento = 0;
+    function aplicarFiltros() {
+        pagina = 1;
         carregarAnimais();
     }
 
-    function configurarEventos() {
-        let temporizadorPesquisa;
+    function limparFiltros() {
+        elementos.filtroIdentificacao.value = "";
+        elementos.filtroEspecie.value = "";
+        elementos.filtroSituacao.value = "";
 
-        elementos.identificacao.addEventListener("input", () => {
-            clearTimeout(temporizadorPesquisa);
-
-            temporizadorPesquisa = setTimeout(() => {
-                deslocamento = 0;
-                carregarAnimais();
-            }, 350);
-        });
-
-        elementos.especie.addEventListener("change", () => {
-            deslocamento = 0;
-            carregarAnimais();
-        });
-
-        elementos.situacao.addEventListener("change", () => {
-            deslocamento = 0;
-            carregarAnimais();
-        });
-
-        elementos.limpar.addEventListener("click", limparFiltros);
-
-        elementos.anterior.addEventListener("click", () => {
-            if (deslocamento >= LIMITE) {
-                deslocamento -= LIMITE;
-                carregarAnimais();
-            }
-        });
-
-        elementos.proxima.addEventListener("click", () => {
-            if (animais.length === LIMITE) {
-                deslocamento += LIMITE;
-                carregarAnimais();
-            }
-        });
-
-        elementos.novo.addEventListener("click", () => {
-            window.location.href = "/animais/novo";
-        });
+        pagina = 1;
+        carregarAnimais();
     }
 
-    configurarEventos();
+    elementos.novoAnimal.addEventListener("click", () => {
+        window.location.href = "/animais/novo";
+    });
+
+    elementos.filtroIdentificacao.addEventListener("input", () => {
+        clearTimeout(temporizadorBusca);
+
+        temporizadorBusca = setTimeout(() => {
+            aplicarFiltros();
+        }, 350);
+    });
+
+    elementos.filtroEspecie.addEventListener("change", aplicarFiltros);
+    elementos.filtroSituacao.addEventListener("change", aplicarFiltros);
+
+    elementos.limpar.addEventListener("click", limparFiltros);
+
+    elementos.anterior.addEventListener("click", () => {
+        if (pagina > 1 && !carregando) {
+            pagina--;
+            carregarAnimais();
+        }
+    });
+
+    elementos.proxima.addEventListener("click", () => {
+        if (!carregando && elementos.proxima.disabled === false) {
+            pagina++;
+            carregarAnimais();
+        }
+    });
+
     carregarAnimais();
 });

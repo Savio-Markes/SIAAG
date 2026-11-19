@@ -1,83 +1,97 @@
 
-/* =========================================
-   SIAAG - MÓDULO DE ANIMAIS
-   Cadastro e integração com a API
-========================================= */
-
 document.addEventListener("DOMContentLoaded", () => {
+    "use strict";
+
     const API_URL = "/animais/";
-    const PAINEL_URL = "/animais/painel";
 
-    const form = document.getElementById("animalDataForm");
-    const feedback = document.getElementById("animalFormFeedback");
+    const formulario = document.getElementById("animalForm");
     const botaoSalvar = document.getElementById("btnSalvarAnimal");
+    const feedback = document.getElementById("animalFormFeedback");
 
-    if (!form || !feedback || !botaoSalvar) {
+    if (!formulario || !botaoSalvar || !feedback) {
+        console.error("Elementos do formulário de animais não encontrados.");
         return;
     }
+
+    let enviando = false;
 
     function mostrarFeedback(mensagem, tipo = "info") {
         feedback.textContent = mensagem;
         feedback.className = `animal-form-feedback ${tipo}`;
         feedback.hidden = false;
+
+        feedback.scrollIntoView({
+            behavior: "smooth",
+            block: "center"
+        });
     }
 
-    function limparFeedback() {
-        feedback.textContent = "";
-        feedback.className = "animal-form-feedback";
+    function ocultarFeedback() {
         feedback.hidden = true;
+        feedback.textContent = "";
     }
 
-    function obterDataAtual() {
-        const agora = new Date();
-        const ano = agora.getFullYear();
-        const mes = String(agora.getMonth() + 1).padStart(2, "0");
-        const dia = String(agora.getDate()).padStart(2, "0");
+    function obterDadosFormulario() {
+        const campos = [
+            "identificacao",
+            "nome",
+            "especie",
+            "raca",
+            "sexo",
+            "nascimento",
+            "origem",
+            "data_entrada",
+            "localizacao",
+            "situacao",
+            "observacoes"
+        ];
 
-        return `${ano}-${mes}-${dia}`;
+        const dados = {};
+
+        campos.forEach(nome => {
+            const campo = formulario.elements.namedItem(nome);
+
+            dados[nome] = campo
+                ? campo.value.trim()
+                : "";
+        });
+
+        return dados;
     }
 
-    function validarNascimento() {
-        const campoNascimento = document.getElementById("nascimento");
-        const nascimento = campoNascimento.value;
+    function validarFormulario() {
+        const identificacao = formulario.elements.namedItem("identificacao");
+        const especie = formulario.elements.namedItem("especie");
 
-        campoNascimento.setCustomValidity("");
-
-        if (!nascimento) {
-            return true;
+        if (!identificacao.value.trim()) {
+            identificacao.setCustomValidity(
+                "Informe a identificação do animal."
+            );
+            identificacao.reportValidity();
+            identificacao.setCustomValidity("");
+            identificacao.focus();
+            return false;
         }
 
-        if (nascimento > obterDataAtual()) {
-            campoNascimento.setCustomValidity(
-                "A data de nascimento não pode ser futura."
+        if (!especie.value.trim()) {
+            especie.setCustomValidity(
+                "Informe a espécie do animal."
             );
+            especie.reportValidity();
+            especie.setCustomValidity("");
+            especie.focus();
+            return false;
+        }
 
-            campoNascimento.reportValidity();
+        if (!formulario.checkValidity()) {
+            formulario.reportValidity();
             return false;
         }
 
         return true;
     }
 
-    function obterDadosFormulario() {
-        const dados = new FormData(form);
-
-        return {
-            identificacao: dados.get("identificacao").trim(),
-            nome: dados.get("nome").trim(),
-            especie: dados.get("especie").trim(),
-            raca: dados.get("raca").trim(),
-            sexo: dados.get("sexo").trim(),
-            nascimento: dados.get("nascimento"),
-            origem: dados.get("origem").trim(),
-            data_entrada: dados.get("data_entrada"),
-            localizacao: dados.get("localizacao").trim(),
-            situacao: dados.get("situacao").trim(),
-            observacoes: dados.get("observacoes").trim()
-        };
-    }
-
-    async function enviarCadastro(dados) {
+    async function cadastrarAnimal(dados) {
         const resposta = await fetch(API_URL, {
             method: "POST",
             headers: {
@@ -88,7 +102,7 @@ document.addEventListener("DOMContentLoaded", () => {
             body: JSON.stringify(dados)
         });
 
-        let resultado = {};
+        let resultado;
 
         try {
             resultado = await resposta.json();
@@ -98,19 +112,19 @@ document.addEventListener("DOMContentLoaded", () => {
             );
         }
 
-        if (!resposta.ok || !resultado.sucesso) {
-            if (resposta.status === 401 || resposta.status === 403) {
-                throw new Error(
-                    "Você não possui permissão para cadastrar animais."
-                );
-            }
+        if (resposta.status === 401) {
+            throw new Error(
+                "Sua sessão expirou. Entre novamente no sistema."
+            );
+        }
 
-            if (resposta.status === 409) {
-                throw new Error(
-                    "Essa identificação já está cadastrada."
-                );
-            }
+        if (resposta.status === 403) {
+            throw new Error(
+                "Você não tem permissão para cadastrar animais."
+            );
+        }
 
+        if (!resposta.ok || resultado.sucesso !== true) {
             throw new Error(
                 resultado.mensagem ||
                 resultado.erro ||
@@ -121,62 +135,74 @@ document.addEventListener("DOMContentLoaded", () => {
         return resultado;
     }
 
-    form.addEventListener("submit", async (evento) => {
+    function definirEstadoEnvio(ativo) {
+        enviando = ativo;
+        botaoSalvar.disabled = ativo;
+
+        botaoSalvar.innerHTML = ativo
+            ? "Cadastrando..."
+            : '<span aria-hidden="true">✓</span> Cadastrar animal';
+    }
+
+    formulario.addEventListener("submit", async evento => {
         evento.preventDefault();
-        limparFeedback();
 
-        if (!form.reportValidity()) {
-            return;
-        }
+        if (enviando) return;
 
-        if (!validarNascimento()) {
-            return;
-        }
+        ocultarFeedback();
+
+        if (!validarFormulario()) return;
 
         const dados = obterDadosFormulario();
 
-        if (!dados.identificacao || !dados.especie || !dados.situacao) {
-            mostrarFeedback(
-                "Preencha todos os campos obrigatórios.",
-                "error"
-            );
-            return;
-        }
-
-        botaoSalvar.disabled = true;
-        botaoSalvar.textContent = "Salvando...";
-
         try {
-            await enviarCadastro(dados);
+            definirEstadoEnvio(true);
+
+            const resultado = await cadastrarAnimal(dados);
 
             mostrarFeedback(
-                "Animal cadastrado com sucesso! Redirecionando...",
+                resultado.mensagem || "Animal cadastrado com sucesso!",
                 "success"
             );
 
-            form.reset();
+            formulario.reset();
 
-            setTimeout(() => {
-                window.location.href = PAINEL_URL;
-            }, 1200);
+            const animalId = resultado.animal_id;
+
+            if (animalId) {
+                setTimeout(() => {
+                    window.location.href =
+                        `/animais/${encodeURIComponent(animalId)}/painel`;
+                }, 1200);
+            } else {
+                setTimeout(() => {
+                    window.location.href = "/animais/painel";
+                }, 1200);
+            }
 
         } catch (erro) {
+            console.error("Erro ao cadastrar animal:", erro);
+
             mostrarFeedback(
-                erro.message || "Erro ao comunicar com o servidor.",
+                erro.message || "Ocorreu um erro ao cadastrar o animal.",
                 "error"
             );
 
-            console.error("Erro no cadastro de animal:", erro);
-
         } finally {
-            botaoSalvar.disabled = false;
-            botaoSalvar.textContent = "Cadastrar animal";
+            definirEstadoEnvio(false);
         }
     });
 
-    const campoNascimento = document.getElementById("nascimento");
+    formulario.addEventListener("input", evento => {
+        if (evento.target instanceof HTMLInputElement ||
+            evento.target instanceof HTMLTextAreaElement) {
+            evento.target.setCustomValidity("");
+        }
+    });
 
-    campoNascimento.max = obterDataAtual();
-
-    campoNascimento.addEventListener("change", validarNascimento);
+    formulario.addEventListener("change", evento => {
+        if (evento.target instanceof HTMLSelectElement) {
+            evento.target.setCustomValidity("");
+        }
+    });
 });

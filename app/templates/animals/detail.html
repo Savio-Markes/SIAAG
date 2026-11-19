@@ -3,45 +3,48 @@
 
 {% block title %}Ficha do Animal | SIAAG{% endblock %}
 
-{% block extra_css %}
-<link rel="stylesheet" href="{{ url_for('static', filename='css/animal-detail.css') }}">
+{% block page_css %}
+<link
+    rel="stylesheet"
+    href="{{ url_for('static', filename='css/animal-detail.css') }}"
+>
 {% endblock %}
 
 {% block content %}
-<main class="animal-detail-container">
+<section class="animal-detail-container">
 
     <header class="animal-detail-header">
         <div>
-            <span class="page-subtitle">GERENCIAMENTO AGROPECUÁRIO</span>
-            <h1>Ficha do Animal</h1>
-            <p>Consulte as informações cadastrais e o histórico do animal.</p>
+            <span class="animal-detail-subtitle">GESTÃO AGROPECUÁRIA</span>
+            <h2>Ficha do Animal</h2>
+            <p>Consulte as informações cadastrais e o acompanhamento do animal.</p>
         </div>
 
         <div class="animal-detail-actions">
-            <a href="/animais/painel" class="btn-back">
+            <a href="/animais/painel" class="detail-btn detail-btn-back">
                 ← Voltar para animais
             </a>
 
             <a
                 href="/animais/{{ animal.get('id') }}/editar"
-                class="btn-back btn-edit-animal"
+                class="detail-btn detail-btn-edit"
             >
-                ✏️ Editar animal
+                Editar animal
             </a>
 
             <button
                 type="button"
                 id="btnInativarAnimal"
-                class="btn-inactivate-animal"
+                class="detail-btn detail-btn-inactivate"
             >
                 Inativar animal
             </button>
         </div>
     </header>
 
-    <!-- IDENTIFICAÇÃO -->
+    <!-- PERFIL DO ANIMAL -->
     <section class="animal-profile-card">
-        <div class="animal-avatar">
+        <div class="animal-avatar" aria-hidden="true">
             <span>🐄</span>
         </div>
 
@@ -51,6 +54,7 @@
             </span>
 
             <h2>{{ animal.get('identificacao') or 'Identificação não informada' }}</h2>
+
             <p>{{ animal.get('nome') or 'Sem nome cadastrado' }}</p>
         </div>
     </section>
@@ -59,12 +63,13 @@
     <section class="detail-section">
         <div class="section-heading">
             <div>
-                <h2>Dados cadastrais</h2>
+                <h3>Dados cadastrais</h3>
                 <p>Informações gerais do animal registrado no sistema.</p>
             </div>
         </div>
 
         <div class="detail-grid">
+
             <div class="detail-item">
                 <span>Identificação</span>
                 <strong>{{ animal.get('identificacao') or '—' }}</strong>
@@ -114,6 +119,7 @@
                 <span>Situação</span>
                 <strong>{{ animal.get('situacao') or '—' }}</strong>
             </div>
+
         </div>
 
         <div class="detail-observations">
@@ -126,60 +132,70 @@
     <section class="detail-section">
         <div class="section-heading">
             <div>
-                <h2>Histórico veterinário</h2>
+                <h3>Histórico veterinário</h3>
                 <p>Registros de atendimentos e acompanhamento veterinário.</p>
             </div>
         </div>
 
         <div class="history-placeholder">
-            <span>🩺</span>
-            <h3>Histórico veterinário</h3>
-            <p>Os registros veterinários serão apresentados aqui quando o módulo estiver integrado.</p>
+            <span aria-hidden="true">🩺</span>
+            <h4>Histórico veterinário</h4>
+            <p>
+                Os registros veterinários serão apresentados aqui
+                quando o módulo estiver integrado.
+            </p>
         </div>
     </section>
 
-    <!-- PESAGENS -->
+    <!-- HISTÓRICO DE PESAGENS -->
     <section class="detail-section">
         <div class="section-heading">
             <div>
-                <h2>Histórico de pesagens</h2>
+                <h3>Histórico de pesagens</h3>
                 <p>Acompanhamento dos registros de peso do animal.</p>
             </div>
         </div>
 
         <div class="history-placeholder">
-            <span>⚖️</span>
-            <h3>Nenhuma pesagem disponível</h3>
-            <p>Os registros de pesagem serão exibidos nesta seção.</p>
+            <span aria-hidden="true">⚖️</span>
+            <h4>Nenhuma pesagem disponível</h4>
+            <p>Os registros de pesagem serão exibidos nesta seção quando disponíveis.</p>
         </div>
     </section>
 
-    <!-- ATIVIDADES -->
+    <!-- ATIVIDADES RELACIONADAS -->
     <section class="detail-section">
         <div class="section-heading">
             <div>
-                <h2>Atividades relacionadas</h2>
+                <h3>Atividades relacionadas</h3>
                 <p>Atividades agropecuárias vinculadas ao animal.</p>
             </div>
         </div>
 
         <div class="history-placeholder">
-            <span>📋</span>
-            <h3>Atividades relacionadas</h3>
-            <p>As atividades vinculadas ao animal serão apresentadas quando o módulo estiver integrado.</p>
+            <span aria-hidden="true">📋</span>
+            <h4>Atividades relacionadas</h4>
+            <p>
+                As atividades vinculadas ao animal serão apresentadas
+                quando o módulo estiver integrado.
+            </p>
         </div>
     </section>
 
     <div
         id="animalDetailFeedback"
-        class="animals-feedback"
+        class="animal-detail-feedback"
         role="status"
         aria-live="polite"
+        hidden
     ></div>
 
-</main>
+</section>
 {% endblock %}
 
-{% block extra_js %}
-<script src="{{ url_for('static', filename='js/animals-detail.js') }}"></script>
+{% block page_js %}
+<script
+    src="{{ url_for('static', filename='js/animals-detail.js') }}"
+    defer
+></script>
 {% endblock %}
