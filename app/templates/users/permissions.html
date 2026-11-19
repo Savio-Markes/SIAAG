@@ -1,0 +1,319 @@
+
+{% extends "base.html" %}
+
+{% block title %}Permissões do Usuário | SIAAG{% endblock %}
+
+{% block page_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/users.css') }}">
+{% endblock %}
+
+{% block content %}
+<section class="users-page">
+
+    <header class="users-header">
+        <div class="users-header__text">
+            <h1>Permissões do usuário</h1>
+            <p>Consulte e gerencie os acessos concedidos ao usuário.</p>
+        </div>
+
+        <a href="{{ url_for('users.painel') }}"
+           class="users-button users-button--secondary">
+            Voltar
+        </a>
+    </header>
+
+    <section class="users-panel">
+        <div class="users-panel__header">
+            <div>
+                <h2>Usuário #{{ usuario_id }}</h2>
+                <p>Gerenciamento individual de permissões.</p>
+            </div>
+        </div>
+
+        <div class="permissions-content">
+
+            <div id="permissionsFeedback"
+                 class="users-feedback"
+                 role="status"
+                 aria-live="polite"
+                 hidden>
+            </div>
+
+            <div class="users-search">
+                <label for="permissionCode">Código da permissão</label>
+
+                <input
+                    type="text"
+                    id="permissionCode"
+                    name="codigo"
+                    maxlength="120"
+                    placeholder="Ex.: animais.visualizar"
+                    autocomplete="off"
+                    required
+                >
+
+                <small>
+                    Informe o código de uma permissão válida do sistema.
+                </small>
+            </div>
+
+            <button type="button"
+                    id="btnGrantPermission"
+                    class="users-button users-button--primary">
+                Conceder permissão
+            </button>
+
+        </div>
+    </section>
+
+    <section class="users-panel permissions-list">
+        <div class="users-panel__header">
+            <div>
+                <h2>Permissões concedidas</h2>
+                <p>Permissões atualmente vinculadas ao usuário.</p>
+            </div>
+        </div>
+
+        <div id="permissionsLoading"
+             class="users-feedback"
+             role="status"
+             hidden>
+            <p>Carregando permissões...</p>
+        </div>
+
+        <div id="permissionsError"
+             class="users-feedback users-feedback--error"
+             role="alert"
+             hidden>
+            <strong>Não foi possível carregar as permissões.</strong>
+
+            <button type="button"
+                    id="btnRetryPermissions"
+                    class="users-button users-button--secondary">
+                Tentar novamente
+            </button>
+        </div>
+
+        <div class="users-table-container"
+             id="permissionsTableContainer"
+             hidden>
+
+            <table class="users-table">
+                <thead>
+                    <tr>
+                        <th scope="col">Código</th>
+                        <th scope="col">Ação</th>
+                    </tr>
+                </thead>
+
+                <tbody id="permissionsTableBody"></tbody>
+            </table>
+        </div>
+
+        <div id="permissionsEmpty"
+             class="users-empty"
+             hidden>
+            <div class="users-empty__icon" aria-hidden="true">🔒</div>
+            <h3>Nenhuma permissão concedida</h3>
+            <p>As permissões concedidas aparecerão nesta lista.</p>
+        </div>
+
+    </section>
+
+</section>
+{% endblock %}
+
+{% block page_js %}
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+    const usuarioId = {{ usuario_id | tojson }};
+    const baseUrl = `/usuarios/${encodeURIComponent(usuarioId)}/permissoes`;
+
+    const tabela = document.getElementById("permissionsTableBody");
+    const tabelaContainer = document.getElementById("permissionsTableContainer");
+    const loading = document.getElementById("permissionsLoading");
+    const error = document.getElementById("permissionsError");
+    const empty = document.getElementById("permissionsEmpty");
+    const feedback = document.getElementById("permissionsFeedback");
+
+    const inputCode = document.getElementById("permissionCode");
+    const grantButton = document.getElementById("btnGrantPermission");
+    const retryButton = document.getElementById("btnRetryPermissions");
+
+    function mostrarFeedback(mensagem, isError = false) {
+        feedback.textContent = mensagem;
+        feedback.hidden = !mensagem;
+        feedback.classList.toggle("users-feedback--error", isError);
+    }
+
+    function mostrarEstado(estado) {
+        loading.hidden = estado !== "loading";
+        error.hidden = estado !== "error";
+        empty.hidden = estado !== "empty";
+        tabelaContainer.hidden = estado !== "table";
+    }
+
+    async function obterResposta(response) {
+        const texto = await response.text();
+
+        let data;
+
+        try {
+            data = texto ? JSON.parse(texto) : {};
+        } catch {
+            throw new Error(
+                "O servidor retornou uma resposta inválida. Verifique a rota no backend."
+            );
+        }
+
+        if (!response.ok) {
+            throw new Error(
+                data.erro ||
+                data.mensagem ||
+                `Erro na requisição (${response.status}).`
+            );
+        }
+
+        return data;
+    }
+
+    async function carregarPermissoes() {
+        mostrarEstado("loading");
+        mostrarFeedback("");
+        tabela.replaceChildren();
+
+        try {
+            const response = await fetch(baseUrl, {
+                method: "GET",
+                headers: {
+                    "Accept": "application/json"
+                }
+            });
+
+            const data = await obterResposta(response);
+
+            const permissoes = Array.isArray(data.permissoes)
+                ? data.permissoes
+                : [];
+
+            const fragmento = document.createDocumentFragment();
+
+            permissoes.forEach(permissao => {
+                const codigo = typeof permissao === "string"
+                    ? permissao
+                    : permissao?.codigo;
+
+                if (!codigo) return;
+
+                const linha = document.createElement("tr");
+                const celulaCodigo = document.createElement("td");
+                const celulaAcao = document.createElement("td");
+                const botao = document.createElement("button");
+
+                celulaCodigo.textContent = codigo;
+
+                botao.type = "button";
+                botao.className = "users-action";
+                botao.textContent = "Revogar";
+
+                botao.addEventListener("click", () => {
+                    revogarPermissao(codigo, botao);
+                });
+
+                celulaAcao.appendChild(botao);
+                linha.append(celulaCodigo, celulaAcao);
+                fragmento.appendChild(linha);
+            });
+
+            tabela.appendChild(fragmento);
+
+            mostrarEstado(
+                tabela.children.length > 0 ? "table" : "empty"
+            );
+
+        } catch (err) {
+            mostrarEstado("error");
+            mostrarFeedback(err.message, true);
+        }
+    }
+
+    async function concederPermissao() {
+        const codigo = inputCode.value.trim();
+
+        if (!codigo) {
+            mostrarFeedback("Informe o código da permissão.", true);
+            inputCode.focus();
+            return;
+        }
+
+        grantButton.disabled = true;
+
+        try {
+            const response = await fetch(baseUrl, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Accept": "application/json"
+                },
+                body: JSON.stringify({ codigo })
+            });
+
+            const data = await obterResposta(response);
+
+            mostrarFeedback(data.mensagem || "Permissão concedida.");
+            inputCode.value = "";
+
+            await carregarPermissoes();
+
+        } catch (err) {
+            mostrarFeedback(err.message, true);
+        } finally {
+            grantButton.disabled = false;
+        }
+    }
+
+    async function revogarPermissao(codigo, botao) {
+        const confirmar = window.confirm(
+            `Deseja revogar a permissão "${codigo}"?`
+        );
+
+        if (!confirmar) return;
+
+        botao.disabled = true;
+
+        try {
+            const url = `${baseUrl}/${encodeURIComponent(codigo)}`;
+
+            const response = await fetch(url, {
+                method: "DELETE",
+                headers: {
+                    "Accept": "application/json"
+                }
+            });
+
+            const data = await obterResposta(response);
+
+            mostrarFeedback(data.mensagem || "Permissão revogada.");
+
+            await carregarPermissoes();
+
+        } catch (err) {
+            mostrarFeedback(err.message, true);
+            botao.disabled = false;
+        }
+    }
+
+    grantButton.addEventListener("click", concederPermissao);
+    retryButton.addEventListener("click", carregarPermissoes);
+
+    inputCode.addEventListener("keydown", event => {
+        if (event.key === "Enter") {
+            event.preventDefault();
+            concederPermissao();
+        }
+    });
+
+    carregarPermissoes();
+});
+</script>
+{% endblock %}

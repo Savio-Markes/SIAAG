@@ -1,0 +1,132 @@
+
+{% extends "base.html" %}
+
+{% block title %}Histórico Veterinário | SIAAG{% endblock %}
+
+{% block page_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/forms.css') }}">
+{% endblock %}
+
+{% block content %}
+<section class="page-header">
+    <div>
+        <h1>Histórico veterinário</h1>
+        <p>Acompanhamento dos registros e da evolução do animal.</p>
+    </div>
+
+    <a href="{{ url_for('animals.index') }}" class="btn btn-secondary">
+        Voltar
+    </a>
+</section>
+
+<section class="content-panel">
+    <div class="panel-header">
+        <div>
+            <h2>Identificação do animal</h2>
+            <p>Dados do animal selecionado.</p>
+        </div>
+    </div>
+
+    <div class="form-grid">
+        <div class="form-group">
+            <label>Identificação</label>
+            <p>{{ animal.identificacao or 'Não informado' }}</p>
+        </div>
+
+        <div class="form-group">
+            <label>Nome</label>
+            <p>{{ animal.nome or 'Não informado' }}</p>
+        </div>
+
+        <div class="form-group">
+            <label>Espécie</label>
+            <p>{{ animal.especie or 'Não informado' }}</p>
+        </div>
+
+        <div class="form-group">
+            <label>Raça</label>
+            <p>{{ animal.raca or 'Não informado' }}</p>
+        </div>
+    </div>
+</section>
+
+<section class="content-panel">
+    <div class="panel-header">
+        <div>
+            <h2>Atendimentos veterinários</h2>
+            <p>Registros de avaliações e procedimentos realizados.</p>
+        </div>
+    </div>
+
+    {% if atendimentos %}
+    <div class="table-responsive">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Data e hora</th>
+                    <th>Motivo</th>
+                    <th>Avaliação</th>
+                    <th>Procedimento</th>
+                    <th>Recomendação</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for atendimento in atendimentos %}
+                <tr>
+                    <td>{{ atendimento.data_hora or '—' }}</td>
+                    <td>{{ atendimento.motivo or '—' }}</td>
+                    <td>{{ atendimento.avaliacao or '—' }}</td>
+                    <td>{{ atendimento.procedimento or '—' }}</td>
+                    <td>{{ atendimento.recomendacao or '—' }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div class="empty-state">
+        <h3>Nenhum atendimento encontrado</h3>
+        <p>Ainda não existem atendimentos veterinários registrados para este animal.</p>
+    </div>
+    {% endif %}
+</section>
+
+<section class="content-panel">
+    <div class="panel-header">
+        <div>
+            <h2>Histórico de pesagens</h2>
+            <p>Acompanhamento dos registros de peso do animal.</p>
+        </div>
+    </div>
+
+    {% if pesagens %}
+    <div class="table-responsive">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Data da pesagem</th>
+                    <th>Peso (kg)</th>
+                    <th>Observação</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for pesagem in pesagens %}
+                <tr>
+                    <td>{{ pesagem.data_pesagem or '—' }}</td>
+                    <td>{{ pesagem.peso_kg or '—' }}</td>
+                    <td>{{ pesagem.observacao or '—' }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div class="empty-state">
+        <h3>Nenhuma pesagem encontrada</h3>
+        <p>As pesagens registradas para este animal aparecerão nesta seção.</p>
+    </div>
+    {% endif %}
+</section>
+{% endblock %}

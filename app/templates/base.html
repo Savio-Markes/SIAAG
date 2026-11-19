@@ -8,11 +8,18 @@
 
     <title>{% block title %}SIAAG{% endblock %}</title>
 
+    <!-- Estilos globais -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/app.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/components.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/forms.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/responsive.css') }}">
 
     {% block page_css %}{% endblock %}
 
+    <!-- JavaScript global -->
     <script src="{{ url_for('static', filename='js/app.js') }}" defer></script>
+    <script src="{{ url_for('static', filename='js/main.js') }}" defer></script>
+
     {% block page_js %}{% endblock %}
 </head>
 
@@ -41,35 +48,64 @@
 
                 <ul class="navigation-list">
                     <li>
-                        <a href="/animais/novo" class="navigation-link">
+                        <a href="/animais/painel" class="navigation-link menu-link">
                             Animais
                         </a>
                     </li>
 
                     <li>
-                        <a href="/patrimonio/novo" class="navigation-link">
+                        <a href="/patrimonio/" class="navigation-link menu-link">
                             Patrimônio
                         </a>
                     </li>
 
                     <li>
-                        <a href="{{ url_for('users.painel') }}" class="navigation-link">
+                        <a href="/estoque/" class="navigation-link menu-link">
+                            Estoque
+                        </a>
+                    </li>
+
+                    <li>
+                        <a href="/usuarios/painel" class="navigation-link menu-link">
                             Usuários
+                        </a>
+                    </li>
+
+                    <li>
+                        <a href="/" class="navigation-link menu-link">
+                            Painel inicial
                         </a>
                     </li>
                 </ul>
             </nav>
         </aside>
 
+        <div class="sidebar-overlay"></div>
+
         <div class="app-main">
+
             <header class="app-header">
                 <div class="header-content">
-                    <p class="header-institution">IFPI — Campus Paulistana</p>
-                    <h1 class="header-title">Fazenda Escola</h1>
+
+                    <button
+                        type="button"
+                        class="menu-toggle"
+                        aria-label="Abrir menu de navegação"
+                        aria-controls="menu-principal"
+                    >
+                        ☰
+                    </button>
+
+                    <div>
+                        <p class="header-institution">IFPI — Campus Paulistana</p>
+                        <h1 class="header-title">Fazenda Escola</h1>
+                    </div>
+
                 </div>
             </header>
 
             <main class="main-content" id="conteudo-principal" tabindex="-1">
+
                 <section
                     class="global-messages"
                     aria-label="Mensagens do sistema"
@@ -90,14 +126,15 @@
                 </section>
 
                 {% block content %}{% endblock %}
+
             </main>
 
             <footer class="app-footer">
                 <p>SIAAG — Sistema Integrado de Administração Agropecuária</p>
                 <p>IFPI — Campus Paulistana</p>
             </footer>
-        </div>
 
+        </div>
     </div>
 </body>
 </html>

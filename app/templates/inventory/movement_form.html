@@ -1,0 +1,175 @@
+
+{% extends "base.html" %}
+
+{% block title %}Nova Movimentação | SIAAG{% endblock %}
+
+{% block page_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/stock.css') }}">
+{% endblock %}
+
+{% block content %}
+<section class="stock-page">
+
+    <header class="page-header">
+        <div>
+            <h1>Nova movimentação</h1>
+            <p>Registre a entrada ou saída de produtos do estoque.</p>
+        </div>
+
+        <a href="/estoque" class="button-secondary">
+            Voltar ao estoque
+        </a>
+    </header>
+
+    <section class="content-panel">
+
+        <div class="panel-header">
+            <div>
+                <h2>Dados da movimentação</h2>
+                <p>Preencha as informações para registrar a movimentação.</p>
+            </div>
+        </div>
+
+        <div
+            id="movimentacaoFeedback"
+            class="form-feedback"
+            role="status"
+            aria-live="polite"
+        ></div>
+
+        <form
+            id="movimentacaoForm"
+            class="data-form"
+            method="POST"
+            action=""
+        >
+
+            <fieldset class="form-section">
+                <legend>1. Produto e lote</legend>
+
+                <div class="form-field">
+                    <label for="produto_id">Produto</label>
+                    <select
+                        id="produto_id"
+                        name="produto_id"
+                        required
+                    >
+                        <option value="">Selecione um produto</option>
+
+                        {% if produtos is defined %}
+                            {% for produto in produtos %}
+                            <option
+                                value="{{ produto.id }}"
+                                data-unidade="{{ produto.unidade }}"
+                            >
+                                {{ produto.nome }}
+                            </option>
+                            {% endfor %}
+                        {% endif %}
+                    </select>
+                </div>
+
+                <div class="form-field">
+                    <label for="lote_id">Lote</label>
+                    <select id="lote_id" name="lote_id">
+                        <option value="">Selecione um lote, se aplicável</option>
+
+                        {% if lotes is defined %}
+                            {% for lote in lotes %}
+                            <option
+                                value="{{ lote.id }}"
+                                data-produto="{{ lote.produto_id }}"
+                            >
+                                {{ lote.codigo_lote }}
+                            </option>
+                            {% endfor %}
+                        {% endif %}
+                    </select>
+                </div>
+            </fieldset>
+
+            <fieldset class="form-section">
+                <legend>2. Tipo e quantidade</legend>
+
+                <div class="form-field">
+                    <label for="tipo">Tipo de movimentação</label>
+                    <select id="tipo" name="tipo" required>
+                        <option value="">Selecione</option>
+                        <option value="entrada">Entrada</option>
+                        <option value="saida">Saída</option>
+                    </select>
+                </div>
+
+                <div class="form-field">
+                    <label for="quantidade">Quantidade</label>
+                    <input
+                        type="number"
+                        id="quantidade"
+                        name="quantidade"
+                        min="0.001"
+                        step="0.001"
+                        required
+                    >
+                </div>
+
+                <div class="form-field">
+                    <label for="unidade">Unidade</label>
+                    <input
+                        type="text"
+                        id="unidade"
+                        name="unidade"
+                        maxlength="30"
+                        required
+                    >
+                </div>
+
+                <div class="form-field">
+                    <label for="data_hora">Data e hora</label>
+                    <input
+                        type="datetime-local"
+                        id="data_hora"
+                        name="data_hora"
+                        required
+                    >
+                </div>
+            </fieldset>
+
+            <fieldset class="form-section">
+                <legend>3. Responsável e motivo</legend>
+
+                <div class="form-field">
+                    <label for="responsavel_id">ID do responsável</label>
+                    <input
+                        type="number"
+                        id="responsavel_id"
+                        name="responsavel_id"
+                        min="1"
+                        required
+                    >
+                </div>
+
+                <div class="form-field">
+                    <label for="motivo">Motivo da movimentação</label>
+                    <textarea
+                        id="motivo"
+                        name="motivo"
+                        rows="4"
+                        required
+                    ></textarea>
+                </div>
+            </fieldset>
+
+            <div class="form-actions">
+                <a href="/estoque" class="button-secondary">
+                    Cancelar
+                </a>
+
+                <button type="submit" class="button-primary">
+                    Registrar movimentação
+                </button>
+            </div>
+
+        </form>
+    </section>
+</section>
+{% endblock %}

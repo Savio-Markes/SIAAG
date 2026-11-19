@@ -1,0 +1,157 @@
+
+{% extends "base.html" %}
+
+{% block title %}Relatório de Atividades | SIAAG{% endblock %}
+
+{% block page_css %}
+<style>
+    .report-toolbar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 12px;
+        margin: 20px 0;
+    }
+
+    .report-description {
+        color: var(--muted, #718075);
+        font-size: 14px;
+        margin-top: 6px;
+    }
+
+    .report-print-button {
+        border: none;
+        border-radius: 8px;
+        padding: 11px 18px;
+        background: var(--primary, #245c38);
+        color: white;
+        font-weight: 600;
+        cursor: pointer;
+    }
+
+    .report-print-button:hover {
+        background: var(--primary-dark, #19452b);
+    }
+
+    .report-summary {
+        margin: 20px 0;
+        padding: 18px;
+        border: 1px solid var(--border, #e0e8e1);
+        border-radius: 10px;
+        background: var(--surface, #fff);
+    }
+
+    .report-summary strong {
+        display: block;
+        font-size: 25px;
+        color: var(--primary, #245c38);
+    }
+
+    .report-summary span {
+        color: var(--muted, #718075);
+        font-size: 13px;
+    }
+
+    @media print {
+        .sidebar,
+        .app-header,
+        .app-footer,
+        .report-toolbar,
+        .global-messages {
+            display: none !important;
+        }
+
+        .app-layout,
+        .app-main,
+        .main-content {
+            display: block !important;
+            width: 100% !important;
+            margin: 0 !important;
+            padding: 0 !important;
+        }
+
+        .report-summary,
+        .content-panel {
+            box-shadow: none !important;
+            break-inside: avoid;
+        }
+
+        body {
+            background: white !important;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<section class="page-header">
+    <div>
+        <h1>Relatório de atividades</h1>
+        <p class="report-description">
+            Consulta dos registros de atividades agropecuárias da Fazenda Escola.
+        </p>
+    </div>
+</section>
+
+<div class="report-toolbar">
+    <span class="report-description">
+        Relatório gerado em
+        <strong>{{ now.strftime('%d/%m/%Y') if now is defined else '—' }}</strong>
+    </span>
+
+    <button
+        type="button"
+        class="report-print-button"
+        onclick="window.print()"
+    >
+        Imprimir relatório
+    </button>
+</div>
+
+<section class="report-summary">
+    <strong>{{ atividades|length if atividades else 0 }}</strong>
+    <span>Atividades encontradas</span>
+</section>
+
+<section class="content-panel">
+    <div class="panel-header">
+        <div>
+            <h2>Registros de atividades</h2>
+            <p>Dados disponibilizados pelo sistema.</p>
+        </div>
+    </div>
+
+    {% if atividades %}
+    <div class="table-responsive">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    {% for campo in campos_atividades %}
+                    <th>{{ campo.label }}</th>
+                    {% endfor %}
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for atividade in atividades %}
+                <tr>
+                    {% for campo in campos_atividades %}
+                    <td>{{ atividade[campo.key] if atividade[campo.key] is not none else '—' }}</td>
+                    {% endfor %}
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div class="empty-state">
+        <h3>Nenhuma atividade encontrada</h3>
+        <p>
+            Quando houver atividades cadastradas e disponibilizadas
+            pela integração com o backend, elas aparecerão neste relatório.
+        </p>
+    </div>
+    {% endif %}
+</section>
+{% endblock %}

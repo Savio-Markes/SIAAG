@@ -1,0 +1,108 @@
+
+{% extends "base.html" %}
+
+{% block title %}{{ 'Editar atividade' if atividade else 'Nova atividade' }} | SIAAG{% endblock %}
+
+{% block page_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/forms.css') }}">
+{% endblock %}
+
+{% block content %}
+<section class="page-header">
+    <div>
+        <h1>{{ 'Editar atividade' if atividade else 'Cadastrar atividade' }}</h1>
+        <p>Registre e organize uma atividade agropecuária.</p>
+    </div>
+</section>
+
+<section class="content-panel">
+    <form method="POST" action="{{ request.url }}" class="form-grid">
+
+        <div class="form-group form-group-full">
+            <label for="titulo">Título da atividade *</label>
+            <input
+                type="text"
+                id="titulo"
+                name="titulo"
+                maxlength="150"
+                value="{{ atividade.titulo if atividade else '' }}"
+                placeholder="Digite o título da atividade"
+                required>
+        </div>
+
+        <div class="form-group">
+            <label for="tipo">Tipo de atividade</label>
+            <input
+                type="text"
+                id="tipo"
+                name="tipo"
+                maxlength="100"
+                value="{{ atividade.tipo if atividade else '' }}"
+                placeholder="Informe o tipo">
+        </div>
+
+        <div class="form-group">
+            <label for="responsavel_id">Responsável</label>
+            <select id="responsavel_id" name="responsavel_id">
+                <option value="">Selecione o responsável</option>
+                {% for responsavel in responsaveis %}
+                <option
+                    value="{{ responsavel.id }}"
+                    {% if atividade and atividade.responsavel_id == responsavel.id %}selected{% endif %}>
+                    {{ responsavel.nome }}
+                </option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="data_inicio">Data de início</label>
+            <input
+                type="date"
+                id="data_inicio"
+                name="data_inicio"
+                value="{{ atividade.data_inicio if atividade and atividade.data_inicio else '' }}">
+        </div>
+
+        <div class="form-group">
+            <label for="data_fim">Data de encerramento</label>
+            <input
+                type="date"
+                id="data_fim"
+                name="data_fim"
+                value="{{ atividade.data_fim if atividade and atividade.data_fim else '' }}">
+        </div>
+
+        <div class="form-group">
+            <label for="situacao">Situação</label>
+            <input
+                type="text"
+                id="situacao"
+                name="situacao"
+                maxlength="50"
+                value="{{ atividade.situacao if atividade else '' }}"
+                placeholder="Informe a situação">
+        </div>
+
+        <div class="form-group form-group-full">
+            <label for="descricao">Descrição</label>
+            <textarea
+                id="descricao"
+                name="descricao"
+                rows="5"
+                placeholder="Descreva a atividade">{{ atividade.descricao if atividade else '' }}</textarea>
+        </div>
+
+        <div class="form-actions form-group-full">
+            <a href="{{ url_for('atividades.index') }}" class="btn btn-secondary">
+                Cancelar
+            </a>
+
+            <button type="submit" class="btn btn-primary">
+                {{ 'Salvar alterações' if atividade else 'Cadastrar atividade' }}
+            </button>
+        </div>
+    </form>
+</section>
+{% endblock %}
+

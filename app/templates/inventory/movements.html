@@ -1,0 +1,104 @@
+
+{% extends "base.html" %}
+
+{% block title %}Movimentações do Estoque | SIAAG{% endblock %}
+
+{% block page_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/stock.css') }}">
+{% endblock %}
+
+{% block content %}
+<section class="stock-page">
+
+    <header class="page-header">
+        <div>
+            <h1>Movimentações do estoque</h1>
+            <p>Acompanhe as entradas e saídas dos produtos cadastrados.</p>
+        </div>
+
+        <a href="/estoque" class="button-secondary">
+            Voltar ao estoque
+        </a>
+    </header>
+
+    <section class="content-panel">
+
+        <div class="panel-header">
+            <div>
+                <h2>Histórico de movimentações</h2>
+                <p>Consulte os registros de movimentação dos produtos.</p>
+            </div>
+        </div>
+
+        <div class="filters-container">
+            <div class="form-field">
+                <label for="filtroProduto">Pesquisar produto</label>
+                <input
+                    type="search"
+                    id="filtroProduto"
+                    placeholder="Digite o nome do produto..."
+                >
+            </div>
+
+            <div class="form-field">
+                <label for="filtroTipo">Tipo de movimentação</label>
+                <select id="filtroTipo">
+                    <option value="">Todas</option>
+                    <option value="entrada">Entrada</option>
+                    <option value="saida">Saída</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="table-responsive">
+            <table class="data-table" id="tabelaMovimentacoes">
+                <thead>
+                    <tr>
+                        <th>Produto</th>
+                        <th>Lote</th>
+                        <th>Tipo</th>
+                        <th>Quantidade</th>
+                        <th>Data e hora</th>
+                        <th>Responsável</th>
+                        <th>Motivo</th>
+                    </tr>
+                </thead>
+
+                <tbody id="listaMovimentacoes">
+                    {% if movimentacoes %}
+                        {% for movimento in movimentacoes %}
+                        <tr>
+                            <td>{{ movimento.produto_nome or 'Não informado' }}</td>
+                            <td>{{ movimento.lote_codigo or '—' }}</td>
+                            <td>
+                                <span class="status-badge">
+                                    {{ movimento.tipo or 'Não informado' }}
+                                </span>
+                            </td>
+                            <td>
+                                {{ movimento.quantidade }}
+                                {{ movimento.unidade or '' }}
+                            </td>
+                            <td>
+                                {{ movimento.data_hora or '—' }}
+                            </td>
+                            <td>
+                                {{ movimento.responsavel_nome or '—' }}
+                            </td>
+                            <td>{{ movimento.motivo or '—' }}</td>
+                        </tr>
+                        {% endfor %}
+                    {% else %}
+                        <tr>
+                            <td colspan="7" class="empty-state">
+                                Nenhuma movimentação registrada.
+                            </td>
+                        </tr>
+                    {% endif %}
+                </tbody>
+            </table>
+        </div>
+
+    </section>
+</section>
+{% endblock %}

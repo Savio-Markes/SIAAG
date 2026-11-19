@@ -1,0 +1,177 @@
+
+{% extends "base.html" %}
+
+{% block title %}Relatório de Estoque | SIAAG{% endblock %}
+
+{% block page_css %}
+<style>
+    .report-toolbar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 12px;
+        margin: 20px 0;
+    }
+
+    .report-description {
+        color: var(--muted, #718075);
+        font-size: 14px;
+    }
+
+    .report-print-button {
+        border: none;
+        border-radius: 8px;
+        padding: 11px 18px;
+        background: var(--primary, #245c38);
+        color: white;
+        font-weight: 600;
+        cursor: pointer;
+    }
+
+    .report-print-button:hover {
+        background: var(--primary-dark, #19452b);
+    }
+
+    .report-summary {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        gap: 16px;
+        margin: 20px 0;
+    }
+
+    .summary-card {
+        padding: 18px;
+        border: 1px solid var(--border, #e0e8e1);
+        border-radius: 10px;
+        background: var(--surface, #fff);
+    }
+
+    .summary-card strong {
+        display: block;
+        margin-bottom: 5px;
+        color: var(--primary, #245c38);
+        font-size: 25px;
+    }
+
+    .summary-card span {
+        color: var(--muted, #718075);
+        font-size: 13px;
+    }
+
+    @media print {
+        .sidebar,
+        .app-header,
+        .app-footer,
+        .report-toolbar,
+        .global-messages {
+            display: none !important;
+        }
+
+        .app-layout,
+        .app-main,
+        .main-content {
+            display: block !important;
+            width: 100% !important;
+            margin: 0 !important;
+            padding: 0 !important;
+        }
+
+        body {
+            background: white !important;
+        }
+
+        .summary-card,
+        .content-panel {
+            box-shadow: none !important;
+            break-inside: avoid;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<section class="page-header">
+    <div>
+        <h1>Relatório de estoque</h1>
+        <p class="report-description">
+            Acompanhamento dos produtos, quantidades e situações do estoque.
+        </p>
+    </div>
+</section>
+
+<div class="report-toolbar">
+    <span class="report-description">
+        Relatório gerado em
+        <strong>{{ now.strftime('%d/%m/%Y') if now is defined else '—' }}</strong>
+    </span>
+
+    <button
+        type="button"
+        class="report-print-button"
+        onclick="window.print()"
+    >
+        Imprimir relatório
+    </button>
+</div>
+
+<section class="report-summary">
+    <article class="summary-card">
+        <strong>{{ produtos|length if produtos else 0 }}</strong>
+        <span>Produtos encontrados</span>
+    </article>
+
+    <article class="summary-card">
+        <strong>{{ produtos_baixo if produtos_baixo is defined else '—' }}</strong>
+        <span>Produtos com estoque baixo</span>
+    </article>
+
+    <article class="summary-card">
+        <strong>{{ produtos_zerados if produtos_zerados is defined else '—' }}</strong>
+        <span>Produtos com estoque zerado</span>
+    </article>
+</section>
+
+<section class="content-panel">
+    <div class="panel-header">
+        <div>
+            <h2>Produtos cadastrados</h2>
+            <p>Informações disponibilizadas pelo módulo de estoque.</p>
+        </div>
+    </div>
+
+    {% if produtos %}
+    <div class="table-responsive">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    {% for campo in campos_produtos %}
+                    <th>{{ campo.label }}</th>
+                    {% endfor %}
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for produto in produtos %}
+                <tr>
+                    {% for campo in campos_produtos %}
+                    <td>
+                        {{ produto[campo.key] if produto[campo.key] is not none else '—' }}
+                    </td>
+                    {% endfor %}
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div class="empty-state">
+        <h3>Nenhum produto encontrado</h3>
+        <p>
+            Os produtos serão exibidos aqui quando o backend
+            disponibilizar os dados do estoque.
+        </p>
+    </div>
+    {% endif %}
+</section>
+{% endblock %}

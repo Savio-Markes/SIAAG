@@ -1,0 +1,97 @@
+
+{% extends "base.html" %}
+
+{% block title %}Aulas Práticas | SIAAG{% endblock %}
+
+{% block content %}
+<section class="page-header">
+    <div>
+        <h1>Aulas práticas</h1>
+        <p>Organize e acompanhe as aulas práticas da Fazenda Escola.</p>
+    </div>
+
+    <div class="header-actions">
+        <a href="/aulas-praticas/nova" class="button-primary">
+            + Cadastrar aula
+        </a>
+    </div>
+</section>
+
+<section class="content-panel">
+
+    <div class="panel-header">
+        <div>
+            <h2>Aulas cadastradas</h2>
+            <p>Consulte as aulas práticas registradas no sistema.</p>
+        </div>
+    </div>
+
+    <div class="filters-container">
+        <div class="form-field">
+            <label for="filtroAula">Pesquisar aula</label>
+            <input
+                type="search"
+                id="filtroAula"
+                placeholder="Digite o título da aula..."
+            >
+        </div>
+
+        <div class="form-field">
+            <label for="filtroTurma">Turma</label>
+            <input
+                type="search"
+                id="filtroTurma"
+                placeholder="Pesquisar turma..."
+            >
+        </div>
+    </div>
+
+    <div class="table-responsive">
+        <table class="data-table" id="tabelaAulas">
+            <thead>
+                <tr>
+                    <th>Título</th>
+                    <th>Disciplina</th>
+                    <th>Turma</th>
+                    <th>Professor</th>
+                    <th>Data</th>
+                    <th>Horário</th>
+                </tr>
+            </thead>
+
+            <tbody id="listaAulas">
+                {% if aulas %}
+                    {% for aula in aulas %}
+                    <tr>
+                        <td>{{ aula.titulo }}</td>
+                        <td>{{ aula.disciplina }}</td>
+                        <td>{{ aula.turma }}</td>
+                        <td>{{ aula.professor_nome|default('—') }}</td>
+                        <td>
+                            {% if aula.data_aula %}
+                                {{ aula.data_aula }}
+                            {% else %}
+                                —
+                            {% endif %}
+                        </td>
+                        <td>
+                            {{ aula.hora_inicio or '—' }}
+                            {% if aula.hora_fim %}
+                                até {{ aula.hora_fim }}
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                {% else %}
+                    <tr>
+                        <td colspan="6" class="empty-state">
+                            Nenhuma aula prática cadastrada.
+                        </td>
+                    </tr>
+                {% endif %}
+            </tbody>
+        </table>
+    </div>
+
+</section>
+{% endblock %}

@@ -1,0 +1,114 @@
+
+{% extends "base.html" %}
+
+{% block title %}Patrimônio | SIAAG{% endblock %}
+
+{% block page_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/assets.css') }}">
+{% endblock %}
+
+{% block content %}
+<section class="assets-page">
+
+    <header class="page-header">
+        <div>
+            <h1>Patrimônio</h1>
+            <p>Gerencie os bens e equipamentos da Fazenda Escola.</p>
+        </div>
+
+        <a href="/patrimonio/novo" class="button-primary">
+            + Cadastrar patrimônio
+        </a>
+    </header>
+
+    <section class="content-panel">
+        <div class="panel-header">
+            <div>
+                <h2>Bens cadastrados</h2>
+                <p>Consulte os patrimônios registrados no sistema.</p>
+            </div>
+
+            <span class="assets-count">
+                {{ patrimonios|length if patrimonios is defined else 0 }}
+                registro(s)
+            </span>
+        </div>
+
+        <div class="assets-filters">
+            <div class="form-field">
+                <label for="filtroPatrimonio">Pesquisar patrimônio</label>
+                <input
+                    type="search"
+                    id="filtroPatrimonio"
+                    placeholder="Nome ou código de tombamento"
+                >
+            </div>
+
+            <div class="form-field">
+                <label for="filtroSituacao">Situação</label>
+                <select id="filtroSituacao">
+                    <option value="">Todas as situações</option>
+                    <option value="ativo">Ativo</option>
+                    <option value="manutenção">Em manutenção</option>
+                    <option value="inativo">Inativo</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="table-responsive">
+            <table class="data-table" id="tabelaPatrimonios">
+                <thead>
+                    <tr>
+                        <th>Código</th>
+                        <th>Nome do bem</th>
+                        <th>Categoria</th>
+                        <th>Localização</th>
+                        <th>Conservação</th>
+                        <th>Situação</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+
+                <tbody id="listaPatrimonios">
+                    {% if patrimonios is defined and patrimonios %}
+                        {% for patrimonio in patrimonios %}
+                        <tr>
+                            <td>{{ patrimonio.codigo_tombamento|default('—') }}</td>
+                            <td>{{ patrimonio.nome|default('—') }}</td>
+                            <td>{{ patrimonio.categoria|default('—') }}</td>
+                            <td>{{ patrimonio.localizacao|default('—') }}</td>
+                            <td>{{ patrimonio.estado_conservacao|default('—') }}</td>
+                            <td>
+                                <span class="status-badge">
+                                    {{ patrimonio.situacao|default('Não informada') }}
+                                </span>
+                            </td>
+                            <td class="table-actions">
+                                <a
+                                    href="/patrimonio/{{ patrimonio.id|default('') }}"
+                                    class="button-small"
+                                    aria-label="Visualizar patrimônio"
+                                >
+                                    Visualizar
+                                </a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    {% else %}
+                        <tr id="emptyPatrimonios">
+                            <td colspan="7">
+                                <div class="empty-state">
+                                    <h3>Nenhum patrimônio encontrado</h3>
+                                    <p>Os bens cadastrados serão exibidos nesta tabela.</p>
+                                </div>
+                            </td>
+                        </tr>
+                    {% endif %}
+                </tbody>
+            </table>
+        </div>
+
+        <p id="patrimonioFeedback" class="form-feedback" role="status" aria-live="polite"></p>
+    </section>
+</section>
+{% endblock %}

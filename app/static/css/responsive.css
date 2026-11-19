@@ -1,0 +1,182 @@
+/* =========================================
+   SIAAG — RESPONSIVIDADE
+   IFPI — Campus Paulistana
+   ========================================= */
+
+/* Tablets e telas intermediárias */
+@media (max-width: 1024px) {
+    .main-content {
+        padding: 24px;
+    }
+
+    .app-header {
+        padding: 18px 24px;
+    }
+
+    .dashboard-grid,
+    .dashboard-cards,
+    .summary-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+/* Celulares e tablets menores */
+@media (max-width: 900px) {
+    .app-layout {
+        display: block;
+    }
+
+    .sidebar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        z-index: 1000;
+        width: min(280px, 85vw);
+        height: 100vh;
+        overflow-y: auto;
+        transform: translateX(-100%);
+        transition: transform 0.25s ease;
+    }
+
+    .sidebar.open {
+        transform: translateX(0);
+    }
+
+    .sidebar-overlay {
+        position: fixed;
+        inset: 0;
+        z-index: 999;
+        background: rgba(0, 0, 0, 0.45);
+        opacity: 0;
+        visibility: hidden;
+        transition: opacity 0.25s ease, visibility 0.25s ease;
+    }
+
+    .sidebar-overlay.active {
+        opacity: 1;
+        visibility: visible;
+    }
+
+    .app-main {
+        width: 100%;
+        min-width: 0;
+    }
+
+    .menu-toggle {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .main-content {
+        padding: 20px;
+    }
+
+    .app-header {
+        padding: 16px 20px;
+    }
+}
+
+/* Celulares */
+@media (max-width: 600px) {
+    .main-content {
+        padding: 14px;
+    }
+
+    .app-header {
+        padding: 14px;
+    }
+
+    .header-title {
+        font-size: 1.25rem;
+    }
+
+    .header-institution {
+        font-size: 0.8rem;
+    }
+
+    .dashboard-grid,
+    .dashboard-cards,
+    .summary-grid,
+    .stock-summary {
+        grid-template-columns: 1fr;
+    }
+
+    .animals-header,
+    .stock-header,
+    .section-header {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 16px;
+    }
+
+    .animals-header button,
+    .stock-header-actions,
+    .stock-header-actions a {
+        width: 100%;
+    }
+
+    .animals-filters,
+    .stock-filters {
+        display: grid;
+        grid-template-columns: 1fr;
+    }
+
+    .filter-group,
+    .stock-filter-group,
+    .stock-search {
+        width: 100%;
+        min-width: 0;
+    }
+
+    input,
+    select,
+    textarea {
+        max-width: 100%;
+    }
+
+    .animals-table-container,
+    .stock-table-wrapper,
+    .table-responsive {
+        width: 100%;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .animals-table,
+    .stock-table {
+        min-width: 650px;
+    }
+
+    .animals-pagination,
+    .stock-table-footer {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+    }
+
+    .pagination-actions,
+    .stock-pagination {
+        width: 100%;
+        justify-content: space-between;
+    }
+
+    .app-footer {
+        flex-direction: column;
+        gap: 6px;
+        text-align: center;
+        padding: 16px;
+    }
+}
+
+/* Acessibilidade: respeita a preferência por menos animações */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        scroll-behavior: auto !important;
+        transition-duration: 0.01ms !important;
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+    }
+}

@@ -1,0 +1,60 @@
+
+{#
+    Componente reutilizável de paginação.
+
+    Variáveis esperadas:
+    - pagina_atual
+    - total_paginas
+    - endpoint_paginacao (opcional)
+    - parametros_filtro (opcional)
+#}
+
+{% set pagina = pagina_atual|default(1)|int %}
+{% set total = total_paginas|default(1)|int %}
+
+{% if total > 1 %}
+<nav class="pagination-component" aria-label="Navegação entre páginas">
+
+    {% if endpoint_paginacao is defined %}
+        {% set filtros = parametros_filtro|default({}) %}
+
+        {% if pagina > 1 %}
+            <a
+                class="pagination-component__button"
+                href="{{ url_for(endpoint_paginacao, page=pagina-1, **filtros) }}"
+                aria-label="Ir para a página anterior"
+            >
+                Anterior
+            </a>
+        {% else %}
+            <span class="pagination-component__button is-disabled">
+                Anterior
+            </span>
+        {% endif %}
+
+        <span class="pagination-component__info" aria-current="page">
+            Página {{ pagina }} de {{ total }}
+        </span>
+
+        {% if pagina < total %}
+            <a
+                class="pagination-component__button"
+                href="{{ url_for(endpoint_paginacao, page=pagina+1, **filtros) }}"
+                aria-label="Ir para a próxima página"
+            >
+                Próxima
+            </a>
+        {% else %}
+            <span class="pagination-component__button is-disabled">
+                Próxima
+            </span>
+        {% endif %}
+
+    {% else %}
+        <span class="pagination-component__info">
+            Página {{ pagina }} de {{ total }}
+        </span>
+    {% endif %}
+
+</nav>
+{% endif %}

@@ -3,12 +3,13 @@
 
 {% block title %}Gerenciamento de Estoque | SIAAG{% endblock %}
 
-{% block extra_css %}
+{% block page_css %}
 <link rel="stylesheet" href="{{ url_for('static', filename='css/stock.css') }}">
 {% endblock %}
 
 {% block content %}
-<main class="stock-container">
+
+<div class="stock-container">
 
     <header class="stock-header">
         <div>
@@ -28,7 +29,6 @@
         </div>
     </header>
 
-    <!-- INDICADORES -->
     <section class="stock-summary">
 
         <article class="stock-summary-card">
@@ -60,7 +60,6 @@
 
     </section>
 
-    <!-- ALERTA -->
     <section class="stock-alert" id="stockAlert" hidden>
         <span class="stock-alert-icon">⚠</span>
         <div>
@@ -69,7 +68,6 @@
         </div>
     </section>
 
-    <!-- LISTAGEM -->
     <section class="stock-content">
 
         <div class="stock-section-header">
@@ -139,7 +137,7 @@
                 <tbody id="stockTableBody">
                     <tr>
                         <td colspan="7" class="stock-loading">
-                            Carregando produtos...
+                            Aguardando integração com o estoque...
                         </td>
                     </tr>
                 </tbody>
@@ -165,7 +163,6 @@
 
     </section>
 
-    <!-- ÚLTIMAS MOVIMENTAÇÕES -->
     <section class="stock-content stock-recent-section">
 
         <div class="stock-section-header">
@@ -188,9 +185,6 @@
 
     </section>
 
-</main>
-{% endblock %}
+</div>
 
-{% block extra_js %}
-<script src="{{ url_for('static', filename='js/stock.js') }}"></script>
 {% endblock %}

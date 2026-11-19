@@ -1,0 +1,79 @@
+
+{% extends "base.html" %}
+
+{% block title %}Detalhes da Aula | SIAAG{% endblock %}
+
+{% block content %}
+<section class="page-header">
+    <div>
+        <h1>Detalhes da aula prática</h1>
+        <p>Visualize as informações da aula cadastrada.</p>
+    </div>
+
+    <a href="/aulas-praticas" class="button-secondary">
+        Voltar às aulas
+    </a>
+</section>
+
+<section class="content-panel">
+
+    {% if aula %}
+
+    <div class="panel-header">
+        <div>
+            <h2>{{ aula.titulo }}</h2>
+            <p>Informações gerais da atividade prática.</p>
+        </div>
+    </div>
+
+    <div class="details-grid">
+
+        <div class="detail-item">
+            <span class="detail-label">Disciplina</span>
+            <strong>{{ aula.disciplina or 'Não informado' }}</strong>
+        </div>
+
+        <div class="detail-item">
+            <span class="detail-label">Turma</span>
+            <strong>{{ aula.turma or 'Não informado' }}</strong>
+        </div>
+
+        <div class="detail-item">
+            <span class="detail-label">Professor responsável</span>
+            <strong>{{ professor_nome|default('Não informado') }}</strong>
+        </div>
+
+        <div class="detail-item">
+            <span class="detail-label">Data da aula</span>
+            <strong>{{ aula.data_aula or 'Não informado' }}</strong>
+        </div>
+
+        <div class="detail-item">
+            <span class="detail-label">Horário de início</span>
+            <strong>{{ aula.hora_inicio or 'Não informado' }}</strong>
+        </div>
+
+        <div class="detail-item">
+            <span class="detail-label">Horário de término</span>
+            <strong>{{ aula.hora_fim or 'Não informado' }}</strong>
+        </div>
+
+    </div>
+
+    {% else %}
+
+    <div class="empty-state">
+        <h3>Aula não encontrada</h3>
+        <p>Não foi possível localizar os dados desta aula prática.</p>
+    </div>
+
+    {% endif %}
+
+    <div class="form-actions">
+        <a href="/aulas-praticas" class="button-secondary">
+            Voltar
+        </a>
+    </div>
+
+</section>
+{% endblock %}

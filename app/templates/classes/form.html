@@ -1,0 +1,148 @@
+
+{% extends "base.html" %}
+
+{% block title %}Cadastrar Aula Prática | SIAAG{% endblock %}
+
+{% block content %}
+<section class="page-header">
+    <div>
+        <h1>Cadastrar aula prática</h1>
+        <p>Registre uma nova atividade de ensino na Fazenda Escola.</p>
+    </div>
+
+    <a href="/aulas-praticas" class="button-secondary">
+        Voltar
+    </a>
+</section>
+
+<section class="content-panel">
+
+    <div class="panel-header">
+        <div>
+            <h2>Informações da aula</h2>
+            <p>Preencha os dados para registrar a aula prática.</p>
+        </div>
+    </div>
+
+    <div
+        id="aulaFeedback"
+        class="form-feedback"
+        role="status"
+        aria-live="polite"
+    ></div>
+
+    <form
+        id="aulaForm"
+        class="data-form"
+        method="POST"
+        action=""
+    >
+
+        <fieldset class="form-section">
+            <legend>1. Identificação</legend>
+
+            <div class="form-field">
+                <label for="titulo">Título da aula</label>
+                <input
+                    type="text"
+                    id="titulo"
+                    name="titulo"
+                    maxlength="150"
+                    required
+                >
+            </div>
+
+            <div class="form-field">
+                <label for="disciplina">Disciplina</label>
+                <input
+                    type="text"
+                    id="disciplina"
+                    name="disciplina"
+                    maxlength="100"
+                    required
+                >
+            </div>
+
+            <div class="form-field">
+                <label for="turma">Turma</label>
+                <input
+                    type="text"
+                    id="turma"
+                    name="turma"
+                    maxlength="100"
+                    required
+                >
+            </div>
+
+            <div class="form-field">
+                <label for="professor">Professor responsável</label>
+                <input
+                    type="text"
+                    id="professor"
+                    name="professor"
+                    maxlength="150"
+                    required
+                >
+            </div>
+        </fieldset>
+
+        <fieldset class="form-section">
+            <legend>2. Data e horário</legend>
+
+            <div class="form-field">
+                <label for="data_aula">Data da aula</label>
+                <input
+                    type="date"
+                    id="data_aula"
+                    name="data_aula"
+                    required
+                >
+            </div>
+
+            <div class="form-field">
+                <label for="hora_inicio">Horário de início</label>
+                <input
+                    type="time"
+                    id="hora_inicio"
+                    name="hora_inicio"
+                    required
+                >
+            </div>
+
+            <div class="form-field">
+                <label for="hora_fim">Horário de término</label>
+                <input
+                    type="time"
+                    id="hora_fim"
+                    name="hora_fim"
+                    required
+                >
+            </div>
+        </fieldset>
+
+        <fieldset class="form-section">
+            <legend>3. Descrição</legend>
+
+            <div class="form-field">
+                <label for="descricao">Descrição da aula prática</label>
+                <textarea
+                    id="descricao"
+                    name="descricao"
+                    rows="5"
+                ></textarea>
+            </div>
+        </fieldset>
+
+        <div class="form-actions">
+            <a href="/aulas-praticas" class="button-secondary">
+                Cancelar
+            </a>
+
+            <button type="submit" class="button-primary">
+                Salvar aula
+            </button>
+        </div>
+
+    </form>
+</section>
+{% endblock %}

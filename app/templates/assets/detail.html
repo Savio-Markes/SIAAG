@@ -1,0 +1,136 @@
+
+{% extends "base.html" %}
+
+{% block title %}Detalhes do Patrimônio | SIAAG{% endblock %}
+
+{% block page_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/assets.css') }}">
+{% endblock %}
+
+{% block content %}
+<section class="assets-page">
+
+    <header class="page-header">
+        <div>
+            <h1>Detalhes do patrimônio</h1>
+            <p>Informações completas do bem cadastrado.</p>
+        </div>
+
+        <div class="page-actions">
+            <a href="/patrimonio" class="button-secondary">
+                Voltar
+            </a>
+
+            {% if patrimonio is defined and patrimonio %}
+            <a href="/patrimonio/{{ patrimonio.id }}/editar" class="button-primary">
+                Editar patrimônio
+            </a>
+            {% endif %}
+        </div>
+    </header>
+
+    {% if patrimonio is defined and patrimonio %}
+
+    <section class="content-panel">
+        <div class="panel-header">
+            <div>
+                <h2>{{ patrimonio.nome|default('Patrimônio sem nome') }}</h2>
+                <p>
+                    Código de tombamento:
+                    {{ patrimonio.codigo_tombamento|default('Não informado') }}
+                </p>
+            </div>
+
+            <span class="status-badge">
+                {{ patrimonio.situacao|default('Situação não informada') }}
+            </span>
+        </div>
+
+        <div class="detail-section">
+            <h3>Identificação</h3>
+
+            <div class="detail-grid">
+                <div class="detail-item">
+                    <span>Código de tombamento</span>
+                    <strong>{{ patrimonio.codigo_tombamento|default('Não informado') }}</strong>
+                </div>
+
+                <div class="detail-item">
+                    <span>Nome do bem</span>
+                    <strong>{{ patrimonio.nome|default('Não informado') }}</strong>
+                </div>
+
+                <div class="detail-item">
+                    <span>Categoria</span>
+                    <strong>{{ patrimonio.categoria|default('Não informada') }}</strong>
+                </div>
+
+                <div class="detail-item">
+                    <span>Modelo ou descrição</span>
+                    <strong>{{ patrimonio.modelo_descricao|default('Não informado') }}</strong>
+                </div>
+            </div>
+        </div>
+
+        <div class="detail-section">
+            <h3>Aquisição e localização</h3>
+
+            <div class="detail-grid">
+                <div class="detail-item">
+                    <span>Data de aquisição</span>
+                    <strong>{{ patrimonio.data_aquisicao|default('Não informada') }}</strong>
+                </div>
+
+                <div class="detail-item">
+                    <span>Localização</span>
+                    <strong>{{ patrimonio.localizacao|default('Não informada') }}</strong>
+                </div>
+            </div>
+        </div>
+
+        <div class="detail-section">
+            <h3>Responsabilidade e conservação</h3>
+
+            <div class="detail-grid">
+                <div class="detail-item">
+                    <span>Responsável</span>
+                    <strong>{{ patrimonio.responsavel|default('Não informado') }}</strong>
+                </div>
+
+                <div class="detail-item">
+                    <span>Estado de conservação</span>
+                    <strong>{{ patrimonio.estado_conservacao|default('Não informado') }}</strong>
+                </div>
+
+                <div class="detail-item">
+                    <span>Situação</span>
+                    <strong>{{ patrimonio.situacao|default('Não informada') }}</strong>
+                </div>
+            </div>
+        </div>
+
+        <div class="detail-section">
+            <h3>Observações</h3>
+
+            <div class="detail-observations">
+                {{ patrimonio.observacoes|default('Nenhuma observação registrada.') }}
+            </div>
+        </div>
+    </section>
+
+    {% else %}
+
+    <section class="content-panel">
+        <div class="empty-state">
+            <h2>Patrimônio não encontrado</h2>
+            <p>Não foi possível localizar as informações deste patrimônio.</p>
+            <a href="/patrimonio" class="button-primary">
+                Voltar para patrimônio
+            </a>
+        </div>
+    </section>
+
+    {% endif %}
+
+</section>
+{% endblock %}

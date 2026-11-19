@@ -1,0 +1,146 @@
+
+{% extends "base.html" %}
+
+{% block title %}Histórico de Acessos | SIAAG{% endblock %}
+
+{% block page_css %}
+<style>
+    .report-toolbar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 12px;
+        margin: 20px 0;
+    }
+
+    .report-description {
+        color: var(--muted, #718075);
+        font-size: 14px;
+    }
+
+    .report-print-button {
+        border: none;
+        border-radius: 8px;
+        padding: 11px 18px;
+        background: var(--primary, #245c38);
+        color: white;
+        font-weight: 600;
+        cursor: pointer;
+    }
+
+    .report-print-button:hover {
+        background: var(--primary-dark, #19452b);
+    }
+
+    .history-notice {
+        margin: 20px 0;
+        padding: 16px;
+        border: 1px solid var(--border, #e0e8e1);
+        border-left: 4px solid var(--primary, #245c38);
+        border-radius: 8px;
+        background: var(--surface, #fff);
+        color: var(--muted, #718075);
+        font-size: 14px;
+        line-height: 1.6;
+    }
+
+    @media print {
+        .sidebar,
+        .app-header,
+        .app-footer,
+        .report-toolbar,
+        .global-messages {
+            display: none !important;
+        }
+
+        .app-layout,
+        .app-main,
+        .main-content {
+            display: block !important;
+            width: 100% !important;
+            margin: 0 !important;
+            padding: 0 !important;
+        }
+
+        body {
+            background: white !important;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<section class="page-header">
+    <div>
+        <h1>Histórico de acessos</h1>
+        <p class="report-description">
+            Consulta dos registros de acesso e atividades dos usuários no SIAAG.
+        </p>
+    </div>
+</section>
+
+<div class="report-toolbar">
+    <span class="report-description">
+        Relatório gerado em
+        <strong>{{ now.strftime('%d/%m/%Y') if now is defined else '—' }}</strong>
+    </span>
+
+    <button
+        type="button"
+        class="report-print-button"
+        onclick="window.print()"
+    >
+        Imprimir relatório
+    </button>
+</div>
+
+<div class="history-notice">
+    <strong>Sobre este relatório:</strong>
+    os registros serão apresentados quando o backend disponibilizar
+    a funcionalidade de auditoria e o histórico de acessos.
+</div>
+
+<section class="content-panel">
+    <div class="panel-header">
+        <div>
+            <h2>Registros de acesso</h2>
+            <p>Histórico disponibilizado pelo sistema.</p>
+        </div>
+    </div>
+
+    {% if registros %}
+    <div class="table-responsive">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    {% for campo in campos_registros %}
+                    <th>{{ campo.label }}</th>
+                    {% endfor %}
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for registro in registros %}
+                <tr>
+                    {% for campo in campos_registros %}
+                    <td>
+                        {{ registro[campo.key] if registro[campo.key] is not none else '—' }}
+                    </td>
+                    {% endfor %}
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div class="empty-state">
+        <h3>Nenhum registro disponível</h3>
+        <p>
+            Quando a funcionalidade de histórico estiver integrada,
+            os registros serão exibidos nesta página.
+        </p>
+    </div>
+    {% endif %}
+</section>
+{% endblock %}

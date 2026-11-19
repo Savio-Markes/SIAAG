@@ -4,7 +4,6 @@
    ========================================= */
 
 document.addEventListener("DOMContentLoaded", () => {
-    // Elementos da página
     const campoPesquisa = document.getElementById("campoPesquisa");
     const tabelaBody = document.getElementById("usersTableBody");
 
@@ -15,15 +14,11 @@ document.addEventListener("DOMContentLoaded", () => {
     const carregamento = document.getElementById("usersLoading");
     const erro = document.getElementById("usersError");
 
-    const botaoNovoUsuario = document.getElementById("btnNovoUsuario");
-    const botaoTentarNovamente = document.getElementById("btnTentarNovamente");
+    const botaoTentarNovamente =
+        document.getElementById("btnTentarNovamente");
 
-    // Estado inicial
     let usuarios = [];
 
-    /**
-     * Controla a exibição dos estados da página.
-     */
     function exibirEstado(estado) {
         carregamento.hidden = estado !== "loading";
         erro.hidden = estado !== "error";
@@ -32,54 +27,13 @@ document.addEventListener("DOMContentLoaded", () => {
         tabelaContainer.hidden = estado !== "table";
     }
 
-    /**
-     * Pesquisa usuários pelo nome ou login.
-     */
-    function pesquisarUsuarios() {
-        const termo = campoPesquisa.value
-            .trim()
-            .toLocaleLowerCase("pt-BR");
-
-        const usuariosFiltrados = usuarios.filter((usuario) => {
-            const nome = String(usuario.nome || "").toLocaleLowerCase("pt-BR");
-            const login = String(usuario.login || "").toLocaleLowerCase("pt-BR");
-
-            return nome.includes(termo) || login.includes(termo);
-        });
-
-        if (usuariosFiltrados.length === 0) {
-            if (usuarios.length === 0) {
-                exibirEstado("empty");
-            } else {
-                exibirEstado("search-empty");
-            }
-
-            return;
-        }
-
-        renderizarUsuarios(usuariosFiltrados);
+    function usuarioEstaAtivo(valor) {
+        return valor === true ||
+            valor === 1 ||
+            valor === "1" ||
+            valor === "true";
     }
 
-    /**
-     * Cria um elemento de situação do usuário.
-     */
-    function criarSituacao(situacao) {
-        const ativo = situacao === "ativo";
-
-        const badge = document.createElement("span");
-
-        badge.className = ativo
-            ? "user-status user-status--active"
-            : "user-status user-status--blocked";
-
-        badge.textContent = ativo ? "Ativo" : "Bloqueado";
-
-        return badge;
-    }
-
-    /**
-     * Cria uma célula da tabela com texto seguro.
-     */
     function criarCelula(conteudo, classe = "") {
         const celula = document.createElement("td");
 
@@ -87,25 +41,23 @@ document.addEventListener("DOMContentLoaded", () => {
             celula.className = classe;
         }
 
-        celula.textContent = conteudo || "—";
+        celula.textContent = conteudo ?? "—";
 
         return celula;
     }
 
-    /**
-     * Renderiza os usuários recebidos.
-     *
-     * A estrutura esperada aqui é provisória:
-     * {
-     *   nome: "Nome",
-     *   login: "login",
-     *   funcao: "Função",
-     *   situacao: "ativo" ou "bloqueado"
-     * }
-     *
-     * A integração definitiva dependerá do contrato
-     * de resposta confirmado pelo backend.
-     */
+    function criarSituacao(ativo) {
+        const badge = document.createElement("span");
+
+        badge.className = ativo
+            ? "user-status user-status--active"
+            : "user-status user-status--blocked";
+
+        badge.textContent = ativo ? "Ativo" : "Inativo";
+
+        return badge;
+    }
+
     function renderizarUsuarios(lista) {
         tabelaBody.replaceChildren();
 
@@ -121,17 +73,13 @@ document.addEventListener("DOMContentLoaded", () => {
             );
 
             linha.appendChild(
-                criarCelula(usuario.funcao)
+                criarCelula(usuario.funcao_referencia)
             );
 
             const celulaSituacao = document.createElement("td");
+            const ativo = usuarioEstaAtivo(usuario.ativo);
 
-            const situacao = String(usuario.situacao || "").toLowerCase();
-
-            celulaSituacao.appendChild(
-                criarSituacao(situacao)
-            );
-
+            celulaSituacao.appendChild(criarSituacao(ativo));
             linha.appendChild(celulaSituacao);
 
             const celulaAcoes = document.createElement("td");
@@ -144,18 +92,18 @@ document.addEventListener("DOMContentLoaded", () => {
             botaoEditar.className = "users-action";
             botaoEditar.textContent = "Editar";
             botaoEditar.disabled = true;
-            botaoEditar.title = "Aguardando rota de edição";
+            botaoEditar.title =
+                "Aguardando implementação da rota de edição";
 
             const botaoPermissoes = document.createElement("button");
             botaoPermissoes.type = "button";
             botaoPermissoes.className = "users-action";
             botaoPermissoes.textContent = "Permissões";
             botaoPermissoes.disabled = true;
-            botaoPermissoes.title = "Aguardando integração de permissões";
+            botaoPermissoes.title =
+                "Aguardando rota para exibir a página de permissões";
 
-            grupoAcoes.appendChild(botaoEditar);
-            grupoAcoes.appendChild(botaoPermissoes);
-
+            grupoAcoes.append(botaoEditar, botaoPermissoes);
             celulaAcoes.appendChild(grupoAcoes);
             linha.appendChild(celulaAcoes);
 
@@ -165,35 +113,90 @@ document.addEventListener("DOMContentLoaded", () => {
         exibirEstado("table");
     }
 
-    /**
-     * Atualiza os dados da listagem.
-     *
-     * Não realiza requisição ao backend ainda.
-     * A rota GET /usuarios e seu formato de resposta
-     * precisam ser confirmados antes da integração.
-     */
-    function atualizarLista() {
-        exibirEstado("loading");
+    function pesquisarUsuarios() {
+        const termo = campoPesquisa.value
+            .trim()
+            .toLocaleLowerCase("pt-BR");
 
-        // Enquanto não existe contrato confirmado,
-        // não enviamos requisições para rotas inexistentes.
-        usuarios = [];
+        const filtrados = usuarios.filter((usuario) => {
+            const nome = String(usuario.nome || "")
+                .toLocaleLowerCase("pt-BR");
 
-        tabelaBody.replaceChildren();
+            const login = String(usuario.login || "")
+                .toLocaleLowerCase("pt-BR");
 
-        exibirEstado("empty");
+            return nome.includes(termo) || login.includes(termo);
+        });
+
+        if (filtrados.length === 0) {
+            tabelaBody.replaceChildren();
+
+            exibirEstado(
+                usuarios.length === 0 ? "empty" : "search-empty"
+            );
+
+            return;
+        }
+
+        renderizarUsuarios(filtrados);
     }
 
-    // Eventos
-    campoPesquisa.addEventListener("input", pesquisarUsuarios);
+    async function atualizarLista() {
+        exibirEstado("loading");
+        tabelaBody.replaceChildren();
 
-    botaoTentarNovamente.addEventListener("click", atualizarLista);
+        try {
+            const resposta = await fetch("/usuarios/", {
+                method: "GET",
+                headers: {
+                    "Accept": "application/json"
+                },
+                credentials: "same-origin"
+            });
 
-    // O cadastro ainda depende da rota do backend.
-    botaoNovoUsuario.addEventListener("click", () => {
-        return;
-    });
+            if (!resposta.ok) {
+                throw new Error(
+                    `Erro ao carregar usuários: ${resposta.status}`
+                );
+            }
 
-    // Inicialização
+            const dados = await resposta.json();
+
+            if (!Array.isArray(dados.usuarios)) {
+                throw new Error(
+                    "Formato de resposta inválido."
+                );
+            }
+
+            usuarios = dados.usuarios;
+
+            if (usuarios.length === 0) {
+                exibirEstado("empty");
+                return;
+            }
+
+            pesquisarUsuarios();
+
+        } catch (erroApi) {
+            console.error(
+                "Erro na listagem de usuários:",
+                erroApi
+            );
+
+            usuarios = [];
+            exibirEstado("error");
+        }
+    }
+
+    campoPesquisa.addEventListener(
+        "input",
+        pesquisarUsuarios
+    );
+
+    botaoTentarNovamente.addEventListener(
+        "click",
+        atualizarLista
+    );
+
     atualizarLista();
 });

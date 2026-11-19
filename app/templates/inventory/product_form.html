@@ -1,0 +1,160 @@
+
+{% extends "base.html" %}
+
+{% block title %}Cadastro de Produto | SIAAG{% endblock %}
+
+{% block page_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/stock.css') }}">
+{% endblock %}
+
+{% block content %}
+<section class="stock-page">
+
+    <header class="page-header">
+        <div>
+            <h1>Cadastrar produto</h1>
+            <p>Adicione um novo produto ao estoque da Fazenda Escola.</p>
+        </div>
+
+        <a href="/estoque" class="button-secondary">
+            Voltar ao estoque
+        </a>
+    </header>
+
+    <section class="content-panel">
+
+        <div class="panel-header">
+            <div>
+                <h2>Informações do produto</h2>
+                <p>Preencha os dados para cadastrar o produto.</p>
+            </div>
+        </div>
+
+        <div
+            id="produtoFeedback"
+            class="form-feedback"
+            role="status"
+            aria-live="polite"
+        ></div>
+
+        <form
+            id="produtoForm"
+            class="data-form"
+            method="POST"
+            action=""
+        >
+
+            <fieldset class="form-section">
+                <legend>1. Identificação</legend>
+
+                <div class="form-field">
+                    <label for="nome">Nome do produto</label>
+                    <input
+                        type="text"
+                        id="nome"
+                        name="nome"
+                        maxlength="150"
+                        required
+                    >
+                </div>
+
+                <div class="form-field">
+                    <label for="categoria_id">Categoria</label>
+                    <select
+                        id="categoria_id"
+                        name="categoria_id"
+                        required
+                    >
+                        <option value="">Selecione uma categoria</option>
+
+                        {% if categorias is defined %}
+                            {% for categoria in categorias %}
+                            <option value="{{ categoria.id }}">
+                                {{ categoria.nome }}
+                            </option>
+                            {% endfor %}
+                        {% endif %}
+                    </select>
+                </div>
+
+                <div class="form-field">
+                    <label for="descricao">Descrição</label>
+                    <textarea
+                        id="descricao"
+                        name="descricao"
+                        rows="4"
+                    ></textarea>
+                </div>
+            </fieldset>
+
+            <fieldset class="form-section">
+                <legend>2. Controle de estoque</legend>
+
+                <div class="form-field">
+                    <label for="unidade">Unidade de medida</label>
+                    <input
+                        type="text"
+                        id="unidade"
+                        name="unidade"
+                        maxlength="30"
+                        placeholder="Ex.: kg, litro, unidade"
+                        required
+                    >
+                </div>
+
+                <div class="form-field">
+                    <label for="estoque_minimo">Estoque mínimo</label>
+                    <input
+                        type="number"
+                        id="estoque_minimo"
+                        name="estoque_minimo"
+                        min="0"
+                        step="0.001"
+                        required
+                    >
+                </div>
+
+                <div class="form-field checkbox-field">
+                    <input
+                        type="checkbox"
+                        id="controla_lote_validade"
+                        name="controla_lote_validade"
+                        value="1"
+                    >
+                    <label for="controla_lote_validade">
+                        Controlar lote e validade deste produto
+                    </label>
+                </div>
+            </fieldset>
+
+            <fieldset class="form-section">
+                <legend>3. Situação do cadastro</legend>
+
+                <div class="form-field checkbox-field">
+                    <input
+                        type="checkbox"
+                        id="ativo"
+                        name="ativo"
+                        value="1"
+                        checked
+                    >
+                    <label for="ativo">
+                        Produto ativo
+                    </label>
+                </div>
+            </fieldset>
+
+            <div class="form-actions">
+                <a href="/estoque" class="button-secondary">
+                    Cancelar
+                </a>
+
+                <button type="submit" class="button-primary">
+                    Cadastrar produto
+                </button>
+            </div>
+
+        </form>
+    </section>
+</section>
+{% endblock %}

@@ -1,0 +1,127 @@
+
+{% extends "base.html" %}
+
+{% block title %}{{ 'Editar pesquisa' if pesquisa else 'Nova pesquisa' }} | SIAAG{% endblock %}
+
+{% block page_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/forms.css') }}">
+{% endblock %}
+
+{% block content %}
+<section class="page-header">
+    <div>
+        <h1>{{ 'Editar pesquisa' if pesquisa else 'Cadastrar pesquisa' }}</h1>
+        <p>Preencha os dados do projeto de pesquisa.</p>
+    </div>
+</section>
+
+<section class="content-panel">
+    <form method="POST"
+          action="{{ request.url }}"
+          class="form-grid">
+
+        <div class="form-group">
+            <label for="titulo">Título da pesquisa *</label>
+            <input
+                type="text"
+                id="titulo"
+                name="titulo"
+                maxlength="200"
+                value="{{ pesquisa.titulo if pesquisa else '' }}"
+                required
+                placeholder="Digite o título do projeto">
+        </div>
+
+        <div class="form-group">
+            <label for="area_tema">Área ou tema</label>
+            <input
+                type="text"
+                id="area_tema"
+                name="area_tema"
+                maxlength="150"
+                value="{{ pesquisa.area_tema if pesquisa else '' }}"
+                placeholder="Informe a área ou tema da pesquisa">
+        </div>
+
+        <div class="form-group">
+            <label for="responsavel_id">Responsável</label>
+            <select id="responsavel_id" name="responsavel_id">
+                <option value="">Selecione o responsável</option>
+                {% for responsavel in responsaveis %}
+                <option
+                    value="{{ responsavel.id }}"
+                    {% if pesquisa and pesquisa.responsavel_id == responsavel.id %}selected{% endif %}>
+                    {{ responsavel.nome }}
+                </option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="inicio_em">Data de início</label>
+            <input
+                type="date"
+                id="inicio_em"
+                name="inicio_em"
+                value="{{ pesquisa.inicio_em if pesquisa and pesquisa.inicio_em else '' }}">
+        </div>
+
+        <div class="form-group">
+            <label for="fim_em">Data de encerramento</label>
+            <input
+                type="date"
+                id="fim_em"
+                name="fim_em"
+                value="{{ pesquisa.fim_em if pesquisa and pesquisa.fim_em else '' }}">
+        </div>
+
+        <div class="form-group">
+            <label for="situacao">Situação</label>
+            <input
+                type="text"
+                id="situacao"
+                name="situacao"
+                maxlength="50"
+                value="{{ pesquisa.situacao if pesquisa else '' }}"
+                placeholder="Informe a situação do projeto">
+        </div>
+
+        <div class="form-group form-group-full">
+            <label for="objetivo">Objetivo</label>
+            <textarea
+                id="objetivo"
+                name="objetivo"
+                rows="4"
+                placeholder="Descreva o objetivo da pesquisa">{{ pesquisa.objetivo if pesquisa else '' }}</textarea>
+        </div>
+
+        <div class="form-group form-group-full">
+            <label for="andamento">Andamento</label>
+            <textarea
+                id="andamento"
+                name="andamento"
+                rows="4"
+                placeholder="Descreva o andamento do projeto">{{ pesquisa.andamento if pesquisa else '' }}</textarea>
+        </div>
+
+        <div class="form-group form-group-full">
+            <label for="referencias">Referências</label>
+            <textarea
+                id="referencias"
+                name="referencias"
+                rows="4"
+                placeholder="Informe as referências utilizadas">{{ pesquisa.referencias if pesquisa else '' }}</textarea>
+        </div>
+
+        <div class="form-actions form-group-full">
+            <a href="{{ url_for('pesquisas.index') }}" class="btn btn-secondary">
+                Cancelar
+            </a>
+
+            <button type="submit" class="btn btn-primary">
+                {{ 'Salvar alterações' if pesquisa else 'Cadastrar pesquisa' }}
+            </button>
+        </div>
+    </form>
+</section>
+{% endblock %}

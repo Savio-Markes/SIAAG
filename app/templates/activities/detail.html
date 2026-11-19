@@ -1,0 +1,74 @@
+
+{% extends "base.html" %}
+
+{% block title %}Detalhes da Atividade | SIAAG{% endblock %}
+
+{% block page_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/forms.css') }}">
+{% endblock %}
+
+{% block content %}
+<section class="page-header">
+    <div>
+        <h1>Detalhes da atividade</h1>
+        <p>Informações completas da atividade agropecuária.</p>
+    </div>
+
+    <div class="header-actions">
+        <a href="{{ url_for('atividades.index') }}" class="btn btn-secondary">
+            Voltar
+        </a>
+
+        <a href="{{ url_for('atividades.editar', id=atividade.id) }}"
+           class="btn btn-primary">
+            Editar atividade
+        </a>
+    </div>
+</section>
+
+<section class="content-panel">
+    <div class="panel-header">
+        <div>
+            <h2>{{ atividade.titulo or 'Atividade sem título' }}</h2>
+            <p>Dados gerais do registro.</p>
+        </div>
+    </div>
+
+    <div class="form-grid">
+        <div class="form-group">
+            <label>Tipo</label>
+            <p>{{ atividade.tipo or 'Não informado' }}</p>
+        </div>
+
+        <div class="form-group">
+            <label>Responsável</label>
+            <p>{{ responsavel_nome or 'Não informado' }}</p>
+        </div>
+
+        <div class="form-group">
+            <label>Data de início</label>
+            <p>{{ atividade.data_inicio or 'Não informada' }}</p>
+        </div>
+
+        <div class="form-group">
+            <label>Data de encerramento</label>
+            <p>{{ atividade.data_fim or 'Não informada' }}</p>
+        </div>
+
+        <div class="form-group">
+            <label>Situação</label>
+            <p>{{ atividade.situacao or 'Não informada' }}</p>
+        </div>
+    </div>
+</section>
+
+<section class="content-panel">
+    <div class="panel-header">
+        <div>
+            <h2>Descrição</h2>
+        </div>
+    </div>
+
+    <p>{{ atividade.descricao or 'Nenhuma descrição cadastrada.' }}</p>
+</section>
+{% endblock %}

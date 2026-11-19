@@ -1,0 +1,158 @@
+
+{% extends "base.html" %}
+
+{% block title %}Registrar Manutenção | SIAAG{% endblock %}
+
+{% block page_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/assets.css') }}">
+{% endblock %}
+
+{% block content %}
+<section class="assets-page">
+
+    <header class="page-header">
+        <div>
+            <h1>Registrar manutenção</h1>
+            <p>Registre informações sobre a manutenção de um patrimônio.</p>
+        </div>
+
+        <a href="/patrimonio" class="button-secondary">
+            Voltar
+        </a>
+    </header>
+
+    <section class="content-panel">
+        <div class="panel-header">
+            <div>
+                <h2>Dados da manutenção</h2>
+                <p>Preencha os campos abaixo para registrar o serviço.</p>
+            </div>
+        </div>
+
+        <div
+            id="manutencaoFeedback"
+            class="form-feedback"
+            role="status"
+            aria-live="polite"
+        ></div>
+
+        <form
+            id="manutencaoForm"
+            class="data-form"
+            action=""
+            method="POST"
+        >
+
+            <fieldset class="form-section">
+                <legend>1. Identificação do patrimônio</legend>
+
+                <div class="form-field">
+                    <label for="patrimonio_id">Patrimônio</label>
+
+                    {% if patrimonio is defined and patrimonio %}
+                    <input
+                        type="hidden"
+                        name="patrimonio_id"
+                        id="patrimonio_id"
+                        value="{{ patrimonio.id }}"
+                    >
+
+                    <input
+                        type="text"
+                        value="{{ patrimonio.nome }}"
+                        disabled
+                    >
+                    {% else %}
+                    <input
+                        type="number"
+                        name="patrimonio_id"
+                        id="patrimonio_id"
+                        min="1"
+                        required
+                    >
+                    {% endif %}
+                </div>
+            </fieldset>
+
+            <fieldset class="form-section">
+                <legend>2. Informações da manutenção</legend>
+
+                <div class="form-field">
+                    <label for="tipo_manutencao">Tipo de manutenção</label>
+                    <input
+                        type="text"
+                        id="tipo_manutencao"
+                        name="tipo_manutencao"
+                        maxlength="100"
+                        required
+                    >
+                </div>
+
+                <div class="form-field">
+                    <label for="data_manutencao">Data da manutenção</label>
+                    <input
+                        type="date"
+                        id="data_manutencao"
+                        name="data_manutencao"
+                        required
+                    >
+                </div>
+
+                <div class="form-field">
+                    <label for="responsavel_manutencao">Responsável</label>
+                    <input
+                        type="text"
+                        id="responsavel_manutencao"
+                        name="responsavel_manutencao"
+                        maxlength="150"
+                    >
+                </div>
+
+                <div class="form-field">
+                    <label for="descricao">Descrição do serviço</label>
+                    <textarea
+                        id="descricao"
+                        name="descricao"
+                        rows="4"
+                        required
+                    ></textarea>
+                </div>
+            </fieldset>
+
+            <fieldset class="form-section">
+                <legend>3. Situação e observações</legend>
+
+                <div class="form-field">
+                    <label for="situacao_manutencao">Situação</label>
+                    <input
+                        type="text"
+                        id="situacao_manutencao"
+                        name="situacao"
+                        maxlength="50"
+                    >
+                </div>
+
+                <div class="form-field">
+                    <label for="observacoes_manutencao">Observações</label>
+                    <textarea
+                        id="observacoes_manutencao"
+                        name="observacoes"
+                        rows="4"
+                    ></textarea>
+                </div>
+            </fieldset>
+
+            <div class="form-actions">
+                <a href="/patrimonio" class="button-secondary">
+                    Cancelar
+                </a>
+
+                <button type="submit" class="button-primary">
+                    Registrar manutenção
+                </button>
+            </div>
+
+        </form>
+    </section>
+</section>
+{% endblock %}

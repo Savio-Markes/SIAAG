@@ -1,0 +1,363 @@
+
+/* =========================================================
+   SIAAG — DASHBOARD
+   IFPI — Campus Paulistana
+   ========================================================= */
+
+.dashboard {
+    display: flex;
+    flex-direction: column;
+    gap: 28px;
+    width: 100%;
+}
+
+/* CABEÇALHO */
+
+.dashboard-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+}
+
+.dashboard-heading .page-title {
+    margin-bottom: 5px;
+    color: var(--primary-dark);
+    font-size: 27px;
+    font-weight: 750;
+}
+
+.dashboard-heading .page-description {
+    margin: 0;
+    color: var(--muted);
+    font-size: 14px;
+}
+
+/* SEÇÕES */
+
+.dashboard-section {
+    display: flex;
+    flex-direction: column;
+    gap: 17px;
+    min-width: 0;
+}
+
+.section-heading {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.section-heading h2 {
+    color: var(--primary-dark);
+    font-size: 18px;
+    font-weight: 700;
+}
+
+.section-heading p {
+    color: var(--muted);
+    font-size: 13px;
+}
+
+/* CARTÕES DE INDICADORES */
+
+.dashboard-cards {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 15px;
+}
+
+.dashboard-card {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    min-width: 0;
+    min-height: 112px;
+    padding: 20px 16px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    box-shadow: var(--shadow);
+    transition: transform .2s ease, box-shadow .2s ease;
+}
+
+.dashboard-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 7px 22px rgba(31, 68, 42, .10);
+}
+
+.card-icon {
+    display: flex;
+    flex: 0 0 45px;
+    align-items: center;
+    justify-content: center;
+    width: 45px;
+    height: 45px;
+    background: var(--primary-light);
+    border-radius: 11px;
+    font-size: 21px;
+}
+
+.card-information {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    gap: 5px;
+}
+
+.card-information span {
+    color: var(--muted);
+    font-size: 11px;
+    line-height: 1.4;
+}
+
+.card-information strong {
+    color: var(--primary-dark);
+    font-size: 25px;
+    font-weight: 750;
+    line-height: 1.2;
+}
+
+/* ORGANIZAÇÃO DOS PAINÉIS */
+
+.dashboard-columns {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 18px;
+}
+
+.dashboard-panel {
+    min-width: 0;
+    overflow: hidden;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    box-shadow: var(--shadow);
+}
+
+.panel-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 19px 21px;
+    border-bottom: 1px solid var(--border);
+}
+
+.panel-heading h2 {
+    color: var(--primary-dark);
+    font-size: 15px;
+    font-weight: 700;
+}
+
+.panel-heading a {
+    color: var(--primary);
+    font-size: 12px;
+    font-weight: 650;
+    white-space: nowrap;
+}
+
+.panel-heading a:hover {
+    text-decoration: underline;
+}
+
+.panel-content {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    padding: 5px 21px;
+}
+
+/* ALERTAS */
+
+.alert-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 15px 0;
+    border-bottom: 1px solid #edf1ed;
+}
+
+.alert-item:last-child {
+    border-bottom: none;
+}
+
+.alert-indicator {
+    flex: 0 0 9px;
+    width: 9px;
+    height: 9px;
+    margin-top: 6px;
+    background: #d49a31;
+    border-radius: 50%;
+}
+
+.alert-item strong {
+    color: var(--text);
+    font-size: 13px;
+}
+
+.alert-item p {
+    margin-top: 3px;
+    color: var(--muted);
+    font-size: 12px;
+}
+
+/* INFORMAÇÕES E MOVIMENTAÇÕES */
+
+.information-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 15px;
+    padding: 15px 0;
+    border-bottom: 1px solid #edf1ed;
+}
+
+.information-item:last-child {
+    border-bottom: none;
+}
+
+.information-item > div {
+    min-width: 0;
+}
+
+.information-item strong {
+    display: block;
+    color: var(--text);
+    font-size: 13px;
+}
+
+.information-item p {
+    margin-top: 3px;
+    color: var(--muted);
+    font-size: 12px;
+}
+
+.information-item > span {
+    flex-shrink: 0;
+    color: var(--muted);
+    font-size: 11px;
+}
+
+/* ESTADO VAZIO */
+
+.dashboard .empty-state {
+    padding: 27px 15px;
+    color: var(--muted);
+    background: #fafcf9;
+    border: 1px dashed var(--border);
+    border-radius: 8px;
+    text-align: center;
+}
+
+.dashboard .empty-state p {
+    font-size: 12px;
+}
+
+/* ACESSO RÁPIDO */
+
+.quick-actions {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 13px;
+}
+
+.quick-action {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-width: 0;
+    padding: 17px 15px;
+    color: var(--primary-dark);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    box-shadow: var(--shadow);
+    transition: background .2s ease, border-color .2s ease;
+}
+
+.quick-action:hover {
+    background: var(--primary-light);
+    border-color: var(--primary);
+}
+
+.quick-action span {
+    display: flex;
+    flex: 0 0 34px;
+    align-items: center;
+    justify-content: center;
+    width: 34px;
+    height: 34px;
+    background: var(--primary-light);
+    border-radius: 8px;
+    font-size: 17px;
+}
+
+.quick-action strong {
+    font-size: 12px;
+    line-height: 1.4;
+}
+
+/* RESPONSIVIDADE */
+
+@media (max-width: 1200px) {
+    .dashboard-cards {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .quick-actions {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 850px) {
+    .dashboard-columns {
+        grid-template-columns: 1fr;
+    }
+
+    .dashboard-cards {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .quick-actions {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 520px) {
+    .dashboard {
+        gap: 23px;
+    }
+
+    .dashboard-heading .page-title {
+        font-size: 22px;
+    }
+
+    .dashboard-cards {
+        grid-template-columns: 1fr;
+        gap: 10px;
+    }
+
+    .dashboard-card {
+        min-height: 88px;
+        padding: 15px;
+    }
+
+    .quick-actions {
+        grid-template-columns: 1fr;
+    }
+
+    .panel-heading {
+        padding: 16px;
+    }
+
+    .panel-content {
+        padding: 5px 16px;
+    }
+
+    .information-item {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 5px;
+    }
+}
