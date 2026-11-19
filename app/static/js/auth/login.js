@@ -4,36 +4,43 @@ document.addEventListener("DOMContentLoaded", () => {
     const passwordInput = document.getElementById("senha");
     const togglePassword = document.getElementById("togglePassword");
     const submitButton = document.getElementById("loginSubmit");
+    const submitText = document.getElementById("loginSubmitText");
+    const loading = document.getElementById("loginLoading");
 
     if (!form) return;
 
-    // Exibir ou ocultar a senha
+    // Exibir ou ocultar senha
     if (passwordInput && togglePassword) {
         togglePassword.addEventListener("click", () => {
-            const senhaVisivel = passwordInput.type === "text";
+            const mostrar = passwordInput.type === "password";
 
-            passwordInput.type = senhaVisivel ? "password" : "text";
-            togglePassword.textContent = senhaVisivel ? "Exibir" : "Ocultar";
+            passwordInput.type = mostrar ? "text" : "password";
+            togglePassword.textContent = mostrar ? "Ocultar" : "Exibir";
 
             togglePassword.setAttribute(
                 "aria-label",
-                senhaVisivel ? "Exibir senha" : "Ocultar senha"
+                mostrar ? "Ocultar senha" : "Exibir senha"
+            );
+
+            togglePassword.setAttribute(
+                "aria-pressed",
+                String(mostrar)
             );
 
             passwordInput.focus();
         });
     }
 
-    // Estado de carregamento durante o envio ao backend
-    form.addEventListener("submit", (event) => {
-        if (!form.checkValidity()) {
-            return;
-        }
+    // Estado de carregamento durante autenticação
+    form.addEventListener("submit", () => {
+        if (!form.checkValidity()) return;
 
         if (submitButton) {
             submitButton.disabled = true;
             submitButton.setAttribute("aria-busy", "true");
-            submitButton.textContent = "Entrando...";
         }
+
+        if (submitText) submitText.hidden = true;
+        if (loading) loading.hidden = false;
     });
 });

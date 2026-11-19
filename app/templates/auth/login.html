@@ -4,29 +4,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <meta
-        name="description"
-        content="Acesso institucional ao Sistema Integrado de Administração Agropecuária do IFPI."
-    >
-
-    <meta name="theme-color" content="#245c38">
+    <meta name="theme-color" content="#173f2b">
+    <meta name="description" content="Acesso ao SIAAG — IFPI Campus Paulistana.">
 
     <title>Entrar | SIAAG</title>
 
-    <!-- Design system principal -->
-    <link
-        rel="stylesheet"
-        href="{{ url_for('static', filename='css/app.css') }}"
-    >
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/app.css') }}">
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/auth/login.css') }}">
 
-    <!-- Estilos exclusivos da autenticação -->
-    <link
-        rel="stylesheet"
-        href="{{ url_for('static', filename='css/auth/login.css') }}"
-    >
-
-    <!-- JavaScript exclusivo do login -->
     <script
         src="{{ url_for('static', filename='js/auth/login.js') }}"
         defer
@@ -35,52 +22,59 @@
 
 <body class="login-body">
 
-    <main class="login-page">
+<main class="login-page">
 
-        <section class="login-container" aria-labelledby="login-title">
+    <section class="login-layout">
 
-            <!-- Identidade institucional -->
-            <header class="login-header">
+        <aside class="login-brand-panel">
+            <div class="brand-content">
 
-                <div class="login-logo-area">
+                <div class="brand-logo">
                     <img
                         src="{{ url_for('static', filename='img/logo.jpg') }}"
-                        alt="Logo do SIAAG"
-                        class="login-logo"
+                        alt="Logo SIAAG"
                     >
                 </div>
 
-                <span class="login-system-name">SIAAG</span>
+                <span class="brand-overline">GESTÃO AGROPECUÁRIA</span>
 
-                <p class="login-description">
-                    Sistema Integrado de Administração Agropecuária
+                <h1>Gestão inteligente.<br>Resultados reais.</h1>
+
+                <p>
+                    Tecnologia e organização a serviço da
+                    administração da Fazenda Escola.
                 </p>
 
-                <p class="login-institution">
-                    IFPI — Campus Paulistana
-                </p>
+                <div class="brand-divider"></div>
 
-            </header>
+                <span class="brand-institution">
+                    INSTITUTO FEDERAL DO PIAUÍ
+                </span>
 
-            <!-- Formulário -->
-            <section class="login-content">
+                <span class="brand-campus">Campus Paulistana</span>
+            </div>
+
+            <span class="brand-version">SIAAG · Sistema institucional</span>
+        </aside>
+
+        <section class="login-panel" aria-labelledby="login-title">
+
+            <div class="login-content">
 
                 <div class="login-heading">
-                    <h1 id="login-title">Bem-vindo(a)!</h1>
-
+                    <span class="login-eyebrow">ÁREA RESTRITA</span>
+                    <h2 id="login-title">Bem-vindo(a)!</h2>
                     <p>
-                        Acesse sua conta para continuar no sistema
-                        de administração agropecuária.
+                        Entre com suas credenciais para acessar
+                        o sistema.
                     </p>
                 </div>
 
-                <!-- Feedback do servidor e da comunicação -->
                 <div
                     class="login-feedback"
                     id="loginFeedback"
                     role="alert"
                     aria-live="assertive"
-                    aria-atomic="true"
                     hidden
                 ></div>
 
@@ -89,7 +83,7 @@
                         {% for categoria, mensagem in mensagens %}
                             <div
                                 class="login-server-message
-                                {{ 'login-server-message--success' if categoria == 'sucesso' else 'login-server-message--error' }}"
+                                {{ 'success' if categoria == 'sucesso' else 'error' }}"
                                 role="alert"
                             >
                                 {{ mensagem }}
@@ -103,33 +97,19 @@
                     class="login-form"
                     action="{{ url_for('auth.login') }}"
                     method="POST"
-                    data-login-url="{{ url_for('auth.login') }}"
                 >
 
-                    <!-- Login institucional -->
                     <div class="login-field">
-
-                        <label for="login">
-                            Login ou e-mail
-                        </label>
+                        <label for="login">Login ou e-mail</label>
 
                         <div class="login-input-wrapper">
-
-                            <span class="login-input-icon" aria-hidden="true">
+                            <span class="field-icon" aria-hidden="true">
                                 <svg viewBox="0 0 24 24" fill="none">
-                                    <path
-                                        d="M20 21V19C20 16.8 18.2 15 16 15H8C5.8 15 4 16.8 4 19V21"
-                                        stroke="currentColor"
-                                        stroke-width="1.7"
-                                        stroke-linecap="round"
-                                    />
-                                    <circle
-                                        cx="12"
-                                        cy="7"
-                                        r="4"
-                                        stroke="currentColor"
-                                        stroke-width="1.7"
-                                    />
+                                    <circle cx="12" cy="8" r="4"
+                                        stroke="currentColor" stroke-width="1.7"/>
+                                    <path d="M4 21C4 17 7.5 14.5 12 14.5S20 17 20 21"
+                                        stroke="currentColor" stroke-width="1.7"
+                                        stroke-linecap="round"/>
                                 </svg>
                             </span>
 
@@ -143,37 +123,22 @@
                                 required
                                 autofocus
                             >
-
                         </div>
-
                     </div>
 
-                    <!-- Senha -->
                     <div class="login-field">
-
-                        <label for="senha">
-                            Senha
-                        </label>
+                        <label for="senha">Senha</label>
 
                         <div class="login-input-wrapper">
-
-                            <span class="login-input-icon" aria-hidden="true">
+                            <span class="field-icon" aria-hidden="true">
                                 <svg viewBox="0 0 24 24" fill="none">
-                                    <rect
-                                        x="4"
-                                        y="10"
-                                        width="16"
-                                        height="11"
-                                        rx="2"
+                                    <rect x="4" y="10" width="16" height="11"
+                                        rx="2" stroke="currentColor"
+                                        stroke-width="1.7"/>
+                                    <path d="M8 10V7A4 4 0 0 1 16 7V10"
                                         stroke="currentColor"
                                         stroke-width="1.7"
-                                    />
-                                    <path
-                                        d="M8 10V7A4 4 0 0 1 16 7V10"
-                                        stroke="currentColor"
-                                        stroke-width="1.7"
-                                        stroke-linecap="round"
-                                    />
+                                        stroke-linecap="round"/>
                                 </svg>
                             </span>
 
@@ -188,60 +153,48 @@
 
                             <button
                                 type="button"
-                                class="login-password-toggle"
+                                class="password-toggle"
                                 id="togglePassword"
                                 aria-label="Exibir senha"
                                 aria-pressed="false"
                             >
                                 Exibir
                             </button>
-
                         </div>
-
                     </div>
 
-                    <!-- Botão de autenticação -->
                     <button
                         type="submit"
                         class="login-submit"
                         id="loginSubmit"
                     >
+                        <span id="loginSubmitText">Entrar no sistema</span>
 
-                        <span class="login-submit-text" id="loginSubmitText">
-                            Entrar no sistema
-                        </span>
-
-                        <span
-                            class="login-loading"
-                            id="loginLoading"
-                            hidden
-                        >
-                            <span class="login-spinner" aria-hidden="true"></span>
+                        <span id="loginLoading" hidden>
+                            <span class="login-spinner"></span>
                             Autenticando...
                         </span>
-
                     </button>
 
                 </form>
 
-            </section>
+                <div class="login-security">
+                    <span class="security-icon">✓</span>
+                    <span>Acesso exclusivo a usuários autorizados.</span>
+                </div>
 
-            <!-- Rodapé -->
+            </div>
+
             <footer class="login-footer">
-
-                <span class="login-footer-indicator" aria-hidden="true"></span>
-
-                <p>Acesso restrito aos usuários autorizados.</p>
-
-                <p>
-                    SIAAG — IFPI Campus Paulistana
-                </p>
-
+                <span>SIAAG</span>
+                <span>IFPI · Campus Paulistana</span>
             </footer>
 
         </section>
 
-    </main>
+    </section>
+
+</main>
 
 </body>
 </html>
