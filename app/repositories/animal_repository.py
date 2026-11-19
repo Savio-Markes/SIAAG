@@ -45,6 +45,12 @@ def listar_animais(filtros=None, limite=50, deslocamento=0):
         consulta += " AND situacao = %s"
         parametros.append(filtros["situacao"])
 
+    # Sem filtro, exibe ativos e inativos.
+    # 1 = somente ativos | 0 = somente inativos.
+    if filtros.get("ativo") is not None:
+        consulta += " AND ativo = %s"
+        parametros.append(filtros["ativo"])
+
     consulta += """
         ORDER BY id DESC
         LIMIT %s OFFSET %s
@@ -224,3 +230,56 @@ def inativar_animal(animal_id):
     except Exception:
         conexao.rollback()
         raise
+
+
+def contar_animais_ativos():
+    """Retorna o total de animais ativos."""
+
+    consulta = """
+        SELECT COUNT(*) AS total
+        FROM animais
+        WHERE ativo = 1
+    """
+
+    conexao = get_db()
+
+    with conexao.cursor() as cursor:
+        cursor.execute(consulta)
+        resultado = cursor.fetchone()
+        return resultado["total"]
+
+
+def contar_animais_por_especie():
+    """Retorna a quantidade de animais ativos por espécie."""
+
+    consulta = """
+        SELECT especie, COUNT(*) AS total
+        FROM animais
+        WHERE ativo = 1
+        GROUP BY especie
+        ORDER BY especie
+    """
+
+    conexao = get_db()
+
+    with conexao.cursor() as cursor:
+        cursor.execute(consulta)
+        return cursor.fetchall()
+
+
+def contar_animais_por_situacao():
+    """Retorna a quantidade de animais ativos por situação."""
+
+    consulta = """
+        SELECT situacao, COUNT(*) AS total
+        FROM animais
+        WHERE ativo = 1
+        GROUP BY situacao
+        ORDER BY situacao
+    """
+
+    conexao = get_db()
+
+    with conexao.cursor() as cursor:
+        cursor.execute(consulta)
+        return cursor.fetchall()
