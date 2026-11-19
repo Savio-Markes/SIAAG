@@ -4,39 +4,25 @@
 {% block title %}Animais | SIAAG{% endblock %}
 
 {% block page_css %}
-<link
-    rel="stylesheet"
-    href="{{ url_for('static', filename='css/animals.css') }}"
->
+<link rel="stylesheet" href="{{ url_for('static', filename='css/animals.css') }}">
 {% endblock %}
 
 {% block content %}
 <section class="animals-page" aria-labelledby="animals-title">
 
-    <!-- Cabeçalho -->
     <header class="animals-header">
         <div class="animals-header-content">
             <span class="animals-subtitle">GESTÃO AGROPECUÁRIA</span>
-
             <h2 id="animals-title">Animais</h2>
-
-            <p>
-                Gerenciamento e acompanhamento dos animais
-                cadastrados na Fazenda Escola.
-            </p>
+            <p>Gerenciamento e acompanhamento dos animais cadastrados na Fazenda Escola.</p>
         </div>
 
-        <button
-            type="button"
-            id="btnNovoAnimal"
-            class="btn-primary"
-        >
+        <button type="button" id="btnNovoAnimal" class="btn-primary">
             <span aria-hidden="true">+</span>
             Cadastrar animal
         </button>
     </header>
 
-    <!-- Listagem -->
     <section class="animals-card" aria-labelledby="animals-list-title">
 
         <div class="animals-card-header">
@@ -45,66 +31,59 @@
                 <p>Consulte, pesquise e gerencie os registros.</p>
             </div>
 
-            <span
-                id="totalAnimais"
-                class="animals-counter"
-                aria-live="polite"
-            >
+            <span id="totalAnimais" class="animals-counter" aria-live="polite">
                 Carregando...
             </span>
         </div>
 
-        <!-- Pesquisa e filtros -->
         <div class="animals-filters">
 
             <div class="filter-group filter-search">
-                <label for="filtroIdentificacao">
-                    Buscar por identificação
-                </label>
-
+                <label for="filtroIdentificacao">Identificação</label>
                 <input
                     type="search"
                     id="filtroIdentificacao"
                     name="identificacao"
-                    placeholder="Buscar por identificação..."
+                    placeholder="Buscar identificação..."
                     autocomplete="off"
-                    aria-label="Buscar animal pela identificação"
                 >
             </div>
 
             <div class="filter-group">
                 <label for="filtroEspecie">Espécie</label>
-
-                <select
+                <input
+                    type="text"
                     id="filtroEspecie"
                     name="especie"
+                    placeholder="Ex.: bovino"
                 >
-                    <option value="">Todas as espécies</option>
-                </select>
             </div>
 
             <div class="filter-group">
                 <label for="filtroSituacao">Situação</label>
-
-                <select
+                <input
+                    type="text"
                     id="filtroSituacao"
                     name="situacao"
+                    placeholder="Ex.: em produção"
                 >
-                    <option value="">Todas as situações</option>
+            </div>
+
+            <div class="filter-group">
+                <label for="filtroAtivo">Status do cadastro</label>
+                <select id="filtroAtivo" name="ativo">
+                    <option value="">Todos</option>
+                    <option value="1">Ativos</option>
+                    <option value="0">Inativos</option>
                 </select>
             </div>
 
-            <button
-                type="button"
-                id="btnLimparFiltros"
-                class="btn-secondary"
-            >
+            <button type="button" id="btnLimparFiltros" class="btn-secondary">
                 Limpar filtros
             </button>
 
         </div>
 
-        <!-- Feedback -->
         <div
             id="animalsFeedback"
             class="animals-feedback"
@@ -113,7 +92,6 @@
             hidden
         ></div>
 
-        <!-- Tabela -->
         <div
             class="animals-table-container"
             role="region"
@@ -128,13 +106,14 @@
                         <th scope="col">Raça</th>
                         <th scope="col">Situação</th>
                         <th scope="col">Localização</th>
+                        <th scope="col">Status</th>
                         <th scope="col">Ações</th>
                     </tr>
                 </thead>
 
                 <tbody id="animalsTableBody">
                     <tr>
-                        <td colspan="6" class="animals-loading">
+                        <td colspan="7" class="animals-loading">
                             Carregando animais...
                         </td>
                     </tr>
@@ -142,20 +121,12 @@
             </table>
         </div>
 
-        <!-- Paginação -->
         <footer class="animals-pagination">
-
-            <span
-                id="paginationInfo"
-                aria-live="polite"
-            >
+            <span id="paginationInfo" aria-live="polite">
                 Aguardando registros...
             </span>
 
-            <nav
-                class="pagination-actions"
-                aria-label="Paginação dos animais"
-            >
+            <nav class="pagination-actions" aria-label="Paginação dos animais">
                 <button
                     type="button"
                     id="btnPaginaAnterior"
@@ -165,11 +136,7 @@
                     Anterior
                 </button>
 
-                <span
-                    id="paginaAtual"
-                    class="pagination-current"
-                    aria-live="polite"
-                >
+                <span id="paginaAtual" class="pagination-current" aria-live="polite">
                     1
                 </span>
 
@@ -182,17 +149,12 @@
                     Próxima
                 </button>
             </nav>
-
         </footer>
 
     </section>
-
 </section>
 {% endblock %}
 
 {% block page_js %}
-<script
-    src="{{ url_for('static', filename='js/animals.js') }}"
-    defer
-></script>
+<script src="{{ url_for('static', filename='js/animals.js') }}" defer></script>
 {% endblock %}

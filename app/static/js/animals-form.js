@@ -29,6 +29,7 @@ document.addEventListener("DOMContentLoaded", () => {
     function ocultarFeedback() {
         feedback.hidden = true;
         feedback.textContent = "";
+        feedback.className = "animal-form-feedback";
     }
 
     function obterDadosFormulario() {
@@ -50,37 +51,29 @@ document.addEventListener("DOMContentLoaded", () => {
 
         campos.forEach(nome => {
             const campo = formulario.elements.namedItem(nome);
-
-            dados[nome] = campo
-                ? campo.value.trim()
-                : "";
+            dados[nome] = campo ? campo.value.trim() : "";
         });
 
         return dados;
     }
 
     function validarFormulario() {
-        const identificacao = formulario.elements.namedItem("identificacao");
-        const especie = formulario.elements.namedItem("especie");
+        const obrigatorios = [
+            ["identificacao", "Informe a identificação do animal."],
+            ["especie", "Informe a espécie do animal."],
+            ["situacao", "Informe a situação do animal."]
+        ];
 
-        if (!identificacao.value.trim()) {
-            identificacao.setCustomValidity(
-                "Informe a identificação do animal."
-            );
-            identificacao.reportValidity();
-            identificacao.setCustomValidity("");
-            identificacao.focus();
-            return false;
-        }
+        for (const [nome, mensagem] of obrigatorios) {
+            const campo = formulario.elements.namedItem(nome);
 
-        if (!especie.value.trim()) {
-            especie.setCustomValidity(
-                "Informe a espécie do animal."
-            );
-            especie.reportValidity();
-            especie.setCustomValidity("");
-            especie.focus();
-            return false;
+            if (!campo.value.trim()) {
+                campo.setCustomValidity(mensagem);
+                campo.reportValidity();
+                campo.focus();
+                campo.setCustomValidity("");
+                return false;
+            }
         }
 
         if (!formulario.checkValidity()) {
@@ -107,21 +100,15 @@ document.addEventListener("DOMContentLoaded", () => {
         try {
             resultado = await resposta.json();
         } catch {
-            throw new Error(
-                "O servidor retornou uma resposta inválida."
-            );
+            throw new Error("O servidor retornou uma resposta inválida.");
         }
 
         if (resposta.status === 401) {
-            throw new Error(
-                "Sua sessão expirou. Entre novamente no sistema."
-            );
+            throw new Error("Sua sessão expirou. Entre novamente no sistema.");
         }
 
         if (resposta.status === 403) {
-            throw new Error(
-                "Você não tem permissão para cadastrar animais."
-            );
+            throw new Error("Você não tem permissão para cadastrar animais.");
         }
 
         if (!resposta.ok || resultado.sucesso !== true) {
@@ -138,10 +125,9 @@ document.addEventListener("DOMContentLoaded", () => {
     function definirEstadoEnvio(ativo) {
         enviando = ativo;
         botaoSalvar.disabled = ativo;
-
-        botaoSalvar.innerHTML = ativo
+        botaoSalvar.textContent = ativo
             ? "Cadastrando..."
-            : '<span aria-hidden="true">✓</span> Cadastrar animal';
+            : "✓ Cadastrar animal";
     }
 
     formulario.addEventListener("submit", async evento => {
@@ -167,18 +153,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
             formulario.reset();
 
-            const animalId = resultado.animal_id;
+            const destino = resultado.animal_id
+                ? `/animais/${encodeURIComponent(resultado.animal_id)}/painel`
+                : "/animais/painel";
 
-            if (animalId) {
-                setTimeout(() => {
-                    window.location.href =
-                        `/animais/${encodeURIComponent(animalId)}/painel`;
-                }, 1200);
-            } else {
-                setTimeout(() => {
-                    window.location.href = "/animais/painel";
-                }, 1200);
-            }
+            window.setTimeout(() => {
+                window.location.href = destino;
+            }, 1200);
 
         } catch (erro) {
             console.error("Erro ao cadastrar animal:", erro);
@@ -194,15 +175,10 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     formulario.addEventListener("input", evento => {
-        if (evento.target instanceof HTMLInputElement ||
-            evento.target instanceof HTMLTextAreaElement) {
+        if (evento.target.matches("input, textarea, select")) {
             evento.target.setCustomValidity("");
         }
     });
 
-    formulario.addEventListener("change", evento => {
-        if (evento.target instanceof HTMLSelectElement) {
-            evento.target.setCustomValidity("");
-        }
-    });
+    console.log("Formulário de cadastro de animais inicializado.");
 });

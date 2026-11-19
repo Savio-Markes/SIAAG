@@ -17,6 +17,13 @@ def validar_dados_animal(dados, atualizacao=False):
     if not isinstance(dados, dict):
         raise AnimalServiceError("Dados do animal inválidos.")
 
+    # O estado de atividade é controlado apenas pelas ações específicas.
+    if "ativo" in dados:
+        raise AnimalServiceError(
+            "O estado de atividade deve ser alterado pela ação de "
+            "inativar ou reativar."
+        )
+
     campos_obrigatorios = ("identificacao", "especie", "situacao")
 
     if not atualizacao:
@@ -27,15 +34,8 @@ def validar_dados_animal(dados, atualizacao=False):
                 )
 
     campos_texto = (
-        "identificacao",
-        "nome",
-        "especie",
-        "raca",
-        "sexo",
-        "origem",
-        "localizacao",
-        "situacao",
-        "observacoes"
+        "identificacao", "nome", "especie", "raca", "sexo",
+        "origem", "localizacao", "situacao", "observacoes"
     )
 
     for campo in campos_texto:
@@ -73,13 +73,6 @@ def validar_dados_animal(dados, atualizacao=False):
                 "A data de entrada é inválida."
             )
 
-    if "ativo" in dados and dados["ativo"] not in (
-        0, 1, False, True
-    ):
-        raise AnimalServiceError(
-            "O estado de atividade é inválido."
-        )
-
     return dados
 
 
@@ -115,6 +108,12 @@ def listar_animais(filtros=None, limite=50, deslocamento=0):
     )
 
 
+def contar_animais(filtros=None):
+    """Conta os animais considerando os filtros aplicados."""
+
+    return animal_repository.contar_animais(filtros)
+
+
 def buscar_animal(animal_id):
     """Busca um animal pelo ID."""
 
@@ -130,7 +129,6 @@ def cadastrar_animal(dados, criado_por):
     """Valida e cadastra um novo animal."""
 
     dados = validar_dados_animal(dados)
-
     validar_identificacao_unica(dados["identificacao"])
 
     return animal_repository.criar_animal(
@@ -178,6 +176,24 @@ def inativar_animal(animal_id):
     if not inativado:
         raise AnimalServiceError(
             "Não foi possível inativar o animal."
+        )
+
+    return True
+
+
+def reativar_animal(animal_id):
+    """Reativa um animal anteriormente inativado."""
+
+    animal = buscar_animal(animal_id)
+
+    if int(animal["ativo"]) == 1:
+        raise AnimalServiceError("O animal já está ativo.")
+
+    reativado = animal_repository.reativar_animal(animal_id)
+
+    if not reativado:
+        raise AnimalServiceError(
+            "Não foi possível reativar o animal."
         )
 
     return True

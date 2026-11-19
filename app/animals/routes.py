@@ -1,4 +1,3 @@
-
 # Desenvolvido por: Fábio Barbosa
 
 from flask import (
@@ -17,39 +16,24 @@ from app.animals import service as animal_service
 animals_bp = Blueprint("animals", __name__, url_prefix="/animais")
 
 
-# ============================================================
-# PÁGINAS HTML
-# ============================================================
-
 @animals_bp.route("/painel", methods=["GET"])
 @permission_required("animais.visualizar")
 def painel():
-    """Exibe a página principal de gerenciamento de animais."""
-
     return render_template("animals/index.html")
 
 
 @animals_bp.route("/novo", methods=["GET"])
 @permission_required("animais.criar")
 def novo():
-    """Exibe o formulário de cadastro de animais."""
-
     return render_template("animals/form.html")
 
 
 @animals_bp.route("/<int:animal_id>/painel", methods=["GET"])
 @permission_required("animais.visualizar")
 def ficha(animal_id):
-    """Exibe a ficha detalhada de um animal."""
-
     try:
         animal = animal_service.buscar_animal(animal_id)
-
-        return render_template(
-            "animals/detail.html",
-            animal=animal
-        )
-
+        return render_template("animals/detail.html", animal=animal)
     except animal_service.AnimalServiceError:
         abort(404)
 
@@ -57,29 +41,16 @@ def ficha(animal_id):
 @animals_bp.route("/<int:animal_id>/editar", methods=["GET"])
 @permission_required("animais.editar")
 def editar_pagina(animal_id):
-    """Exibe o formulário de edição de um animal."""
-
     try:
         animal = animal_service.buscar_animal(animal_id)
-
-        return render_template(
-            "animals/edit.html",
-            animal=animal
-        )
-
+        return render_template("animals/edit.html", animal=animal)
     except animal_service.AnimalServiceError:
         abort(404)
 
 
-# ============================================================
-# API — ANIMAIS
-# ============================================================
-
 @animals_bp.route("/", methods=["GET"])
 @permission_required("animais.visualizar")
 def listar():
-    """Lista animais com filtros e paginação."""
-
     try:
         filtros = {
             "identificacao": request.args.get(
@@ -88,6 +59,16 @@ def listar():
             "especie": request.args.get("especie", "").strip(),
             "situacao": request.args.get("situacao", "").strip()
         }
+
+        ativo = request.args.get("ativo")
+
+        if ativo in ("0", "1"):
+            filtros["ativo"] = int(ativo)
+        elif ativo not in (None, ""):
+            return jsonify({
+                "sucesso": False,
+                "mensagem": "Filtro de atividade inválido."
+            }), 400
 
         limite = int(request.args.get("limite", 50))
         deslocamento = int(request.args.get("deslocamento", 0))
@@ -98,9 +79,14 @@ def listar():
             deslocamento=deslocamento
         )
 
+        total = animal_service.contar_animais(filtros=filtros)
+
         return jsonify({
             "sucesso": True,
-            "dados": animais
+            "dados": animais,
+            "total": total,
+            "limite": limite,
+            "deslocamento": deslocamento
         }), 200
 
     except ValueError:
@@ -119,8 +105,6 @@ def listar():
 @animals_bp.route("/<int:animal_id>", methods=["GET"])
 @permission_required("animais.visualizar")
 def consultar(animal_id):
-    """Consulta os dados de um animal."""
-
     try:
         animal = animal_service.buscar_animal(animal_id)
 
@@ -139,8 +123,6 @@ def consultar(animal_id):
 @animals_bp.route("/", methods=["POST"])
 @permission_required("animais.criar")
 def cadastrar():
-    """Cadastra um novo animal."""
-
     dados = request.get_json(silent=True)
 
     if not isinstance(dados, dict):
@@ -171,8 +153,6 @@ def cadastrar():
 @animals_bp.route("/<int:animal_id>", methods=["PUT"])
 @permission_required("animais.editar")
 def editar(animal_id):
-    """Atualiza os dados cadastrais de um animal."""
-
     dados = request.get_json(silent=True)
 
     if not isinstance(dados, dict):
@@ -191,9 +171,7 @@ def editar(animal_id):
 
     except animal_service.AnimalServiceError as erro:
         status = (
-            404
-            if str(erro) == "Animal não encontrado."
-            else 400
+            404 if str(erro) == "Animal não encontrado." else 400
         )
 
         return jsonify({
@@ -205,8 +183,6 @@ def editar(animal_id):
 @animals_bp.route("/<int:animal_id>/inativar", methods=["POST"])
 @permission_required("animais.editar")
 def inativar(animal_id):
-    """Inativa um animal sem excluir seu histórico."""
-
     try:
         animal_service.inativar_animal(animal_id)
 
@@ -217,9 +193,29 @@ def inativar(animal_id):
 
     except animal_service.AnimalServiceError as erro:
         status = (
-            404
-            if str(erro) == "Animal não encontrado."
-            else 400
+            404 if str(erro) == "Animal não encontrado." else 400
+        )
+
+        return jsonify({
+            "sucesso": False,
+            "mensagem": str(erro)
+        }), status
+
+
+@animals_bp.route("/<int:animal_id>/reativar", methods=["POST"])
+@permission_required("animais.editar")
+def reativar(animal_id):
+    try:
+        animal_service.reativar_animal(animal_id)
+
+        return jsonify({
+            "sucesso": True,
+            "mensagem": "Animal reativado com sucesso."
+        }), 200
+
+    except animal_service.AnimalServiceError as erro:
+        status = (
+            404 if str(erro) == "Animal não encontrado." else 400
         )
 
         return jsonify({

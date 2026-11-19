@@ -1,4 +1,3 @@
-
 document.addEventListener("DOMContentLoaded", () => {
     "use strict";
 
@@ -9,6 +8,7 @@ document.addEventListener("DOMContentLoaded", () => {
         filtroIdentificacao: document.getElementById("filtroIdentificacao"),
         filtroEspecie: document.getElementById("filtroEspecie"),
         filtroSituacao: document.getElementById("filtroSituacao"),
+        filtroAtivo: document.getElementById("filtroAtivo"),
         feedback: document.getElementById("animalsFeedback"),
         contador: document.getElementById("totalAnimais"),
         tabela: document.getElementById("animalsTableBody"),
@@ -21,6 +21,7 @@ document.addEventListener("DOMContentLoaded", () => {
     };
 
     let pagina = 1;
+    let totalRegistros = 0;
     let carregando = false;
     let temporizadorBusca = null;
 
@@ -45,7 +46,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const linha = document.createElement("tr");
         const celula = document.createElement("td");
 
-        celula.colSpan = 6;
+        celula.colSpan = 7;
         celula.className = "animals-loading";
         celula.textContent = mensagem;
 
@@ -61,19 +62,79 @@ document.addEventListener("DOMContentLoaded", () => {
             .replace(/\b\w/g, letra => letra.toUpperCase());
     }
 
+    async function alterarStatus(animal, acao, botao) {
+        const reativando = acao === "reativar";
+
+        const mensagem = reativando
+            ? `Deseja reativar o animal ${animal.identificacao}?`
+            : `Deseja inativar o animal ${animal.identificacao}?`;
+
+        if (!window.confirm(mensagem)) return;
+
+        botao.disabled = true;
+
+        try {
+            const resposta = await fetch(
+                `${API_URL}${encodeURIComponent(animal.id)}/${acao}`,
+                {
+                    method: "POST",
+                    headers: {
+                        "Accept": "application/json"
+                    },
+                    credentials: "same-origin"
+                }
+            );
+
+            const resultado = await resposta.json();
+
+            if (!resposta.ok || resultado.sucesso !== true) {
+                throw new Error(
+                    resultado.mensagem || "Não foi possível alterar o status."
+                );
+            }
+
+            await carregarAnimais();
+
+            mostrarFeedback(
+                resultado.mensagem,
+                "success"
+            );
+
+        } catch (erro) {
+            mostrarFeedback(
+                erro.message || "Erro ao alterar o status do animal.",
+                "error"
+            );
+            botao.disabled = false;
+        }
+    }
+
     function criarAcao(animal) {
         const celula = document.createElement("td");
-        const link = document.createElement("a");
 
+        const link = document.createElement("a");
         link.href = `/animais/${encodeURIComponent(animal.id)}/painel`;
         link.className = "btn-action";
         link.textContent = "Abrir ficha";
-        link.setAttribute(
+
+        const botao = document.createElement("button");
+        botao.type = "button";
+        botao.className = "btn-action btn-status";
+
+        const ativo = Number(animal.ativo) === 1;
+        const acao = ativo ? "inativar" : "reativar";
+
+        botao.textContent = ativo ? "Inativar" : "Reativar";
+        botao.setAttribute(
             "aria-label",
-            `Abrir ficha do animal ${animal.identificacao || animal.id}`
+            `${acao} animal ${animal.identificacao || animal.id}`
         );
 
-        celula.appendChild(link);
+        botao.addEventListener("click", () => {
+            alterarStatus(animal, acao, botao);
+        });
+
+        celula.append(link, botao);
         return celula;
     }
 
@@ -99,8 +160,12 @@ document.addEventListener("DOMContentLoaded", () => {
             linha.appendChild(criarCelula(animal.raca));
             linha.appendChild(criarCelula(formatarSituacao(animal.situacao)));
             linha.appendChild(criarCelula(animal.localizacao));
-            linha.appendChild(criarAcao(animal));
 
+            linha.appendChild(criarCelula(
+                Number(animal.ativo) === 1 ? "Ativo" : "Inativo"
+            ));
+
+            linha.appendChild(criarAcao(animal));
             fragmento.appendChild(linha);
         });
 
@@ -108,23 +173,34 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     function atualizarPaginacao(quantidade) {
+        const totalPaginas = Math.max(
+            1,
+            Math.ceil(totalRegistros / LIMITE)
+        );
+
         elementos.paginaAtual.textContent = String(pagina);
 
         elementos.informacaoPaginacao.textContent =
-            `${quantidade} animal(is) nesta página`;
+            `${totalRegistros} registro(s) encontrado(s)`;
 
         elementos.contador.textContent =
-            `${quantidade} nesta página`;
+            `${totalRegistros} registro(s)`;
 
         elementos.anterior.disabled = pagina <= 1;
-        elementos.proxima.disabled = quantidade < LIMITE;
+        elementos.proxima.disabled = pagina >= totalPaginas;
+
+        if (quantidade === 0) {
+            elementos.informacaoPaginacao.textContent =
+                "Nenhum registro encontrado";
+        }
     }
 
     function obterFiltros() {
         return {
             identificacao: elementos.filtroIdentificacao.value.trim(),
-            especie: elementos.filtroEspecie.value,
-            situacao: elementos.filtroSituacao.value
+            especie: elementos.filtroEspecie.value.trim(),
+            situacao: elementos.filtroSituacao.value.trim(),
+            ativo: elementos.filtroAtivo.value
         };
     }
 
@@ -153,6 +229,10 @@ document.addEventListener("DOMContentLoaded", () => {
             parametros.set("situacao", filtros.situacao);
         }
 
+        if (filtros.ativo !== "") {
+            parametros.set("ativo", filtros.ativo);
+        }
+
         parametros.set("limite", String(LIMITE));
         parametros.set("deslocamento", String((pagina - 1) * LIMITE));
 
@@ -161,9 +241,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 `${API_URL}?${parametros.toString()}`,
                 {
                     method: "GET",
-                    headers: {
-                        "Accept": "application/json"
-                    },
+                    headers: { "Accept": "application/json" },
                     credentials: "same-origin"
                 }
             );
@@ -177,7 +255,7 @@ document.addEventListener("DOMContentLoaded", () => {
             }
 
             if (resposta.status === 401) {
-                throw new Error("Sua sessão expirou. Entre novamente no sistema.");
+                throw new Error("Sua sessão expirou. Entre novamente.");
             }
 
             if (resposta.status === 403) {
@@ -187,7 +265,6 @@ document.addEventListener("DOMContentLoaded", () => {
             if (!resposta.ok || resultado.sucesso !== true) {
                 throw new Error(
                     resultado.mensagem ||
-                    resultado.erro ||
                     "Não foi possível carregar os animais."
                 );
             }
@@ -195,6 +272,8 @@ document.addEventListener("DOMContentLoaded", () => {
             if (!Array.isArray(resultado.dados)) {
                 throw new Error("O formato dos dados recebidos é inválido.");
             }
+
+            totalRegistros = Number(resultado.total) || 0;
 
             renderizarAnimais(resultado.dados);
             atualizarPaginacao(resultado.dados.length);
@@ -207,7 +286,7 @@ document.addEventListener("DOMContentLoaded", () => {
             elementos.informacaoPaginacao.textContent = "Falha ao carregar";
             elementos.paginaAtual.textContent = String(pagina);
 
-            elementos.anterior.disabled = pagina <= 1;
+            elementos.anterior.disabled = true;
             elementos.proxima.disabled = true;
 
             mostrarFeedback(
@@ -229,6 +308,7 @@ document.addEventListener("DOMContentLoaded", () => {
         elementos.filtroIdentificacao.value = "";
         elementos.filtroEspecie.value = "";
         elementos.filtroSituacao.value = "";
+        elementos.filtroAtivo.value = "";
 
         pagina = 1;
         carregarAnimais();
@@ -240,15 +320,20 @@ document.addEventListener("DOMContentLoaded", () => {
 
     elementos.filtroIdentificacao.addEventListener("input", () => {
         clearTimeout(temporizadorBusca);
-
-        temporizadorBusca = setTimeout(() => {
-            aplicarFiltros();
-        }, 350);
+        temporizadorBusca = setTimeout(aplicarFiltros, 350);
     });
 
-    elementos.filtroEspecie.addEventListener("change", aplicarFiltros);
-    elementos.filtroSituacao.addEventListener("change", aplicarFiltros);
+    elementos.filtroEspecie.addEventListener("input", () => {
+        clearTimeout(temporizadorBusca);
+        temporizadorBusca = setTimeout(aplicarFiltros, 350);
+    });
 
+    elementos.filtroSituacao.addEventListener("input", () => {
+        clearTimeout(temporizadorBusca);
+        temporizadorBusca = setTimeout(aplicarFiltros, 350);
+    });
+
+    elementos.filtroAtivo.addEventListener("change", aplicarFiltros);
     elementos.limpar.addEventListener("click", limparFiltros);
 
     elementos.anterior.addEventListener("click", () => {
@@ -259,7 +344,9 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     elementos.proxima.addEventListener("click", () => {
-        if (!carregando && elementos.proxima.disabled === false) {
+        const totalPaginas = Math.ceil(totalRegistros / LIMITE);
+
+        if (!carregando && pagina < totalPaginas) {
             pagina++;
             carregarAnimais();
         }
