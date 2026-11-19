@@ -4,10 +4,7 @@
 {% block title %}Cadastrar Animal | SIAAG{% endblock %}
 
 {% block page_css %}
-<link
-    rel="stylesheet"
-    href="{{ url_for('static', filename='css/animals-form.css') }}"
->
+<link rel="stylesheet" href="{{ url_for('static', filename='css/animals-form.css') }}">
 {% endblock %}
 
 {% block content %}
@@ -20,7 +17,7 @@
             <p>Preencha as informações para adicionar um novo animal ao sistema.</p>
         </div>
 
-        <a href="/animais/painel" class="animal-back-button">
+        <a href="{{ url_for('animals.painel') }}" class="animal-back-button">
             <span aria-hidden="true">←</span>
             Voltar para animais
         </a>
@@ -39,55 +36,27 @@
 
             <div class="animal-form-grid">
                 <div class="animal-field">
-                    <label for="identificacao">
-                        Identificação <span aria-hidden="true">*</span>
-                    </label>
-                    <input
-                        type="text"
-                        id="identificacao"
-                        name="identificacao"
-                        maxlength="100"
-                        placeholder="Ex.: BOV-001"
-                        required
-                        aria-required="true"
-                    >
+                    <label for="identificacao">Identificação <span aria-hidden="true">*</span></label>
+                    <input type="text" id="identificacao" name="identificacao"
+                           maxlength="100" placeholder="Ex.: BOV-001" required>
                 </div>
 
                 <div class="animal-field">
                     <label for="nome">Nome</label>
-                    <input
-                        type="text"
-                        id="nome"
-                        name="nome"
-                        maxlength="100"
-                        placeholder="Nome do animal"
-                    >
+                    <input type="text" id="nome" name="nome"
+                           maxlength="100" placeholder="Nome do animal">
                 </div>
 
                 <div class="animal-field">
-                    <label for="especie">
-                        Espécie <span aria-hidden="true">*</span>
-                    </label>
-                    <input
-                        type="text"
-                        id="especie"
-                        name="especie"
-                        maxlength="80"
-                        placeholder="Informe a espécie"
-                        required
-                        aria-required="true"
-                    >
+                    <label for="especie">Espécie <span aria-hidden="true">*</span></label>
+                    <input type="text" id="especie" name="especie"
+                           maxlength="80" placeholder="Informe a espécie" required>
                 </div>
 
                 <div class="animal-field">
                     <label for="raca">Raça</label>
-                    <input
-                        type="text"
-                        id="raca"
-                        name="raca"
-                        maxlength="100"
-                        placeholder="Informe a raça"
-                    >
+                    <input type="text" id="raca" name="raca"
+                           maxlength="100" placeholder="Informe a raça">
                 </div>
 
                 <div class="animal-field">
@@ -101,11 +70,7 @@
 
                 <div class="animal-field">
                     <label for="nascimento">Data de nascimento</label>
-                    <input
-                        type="date"
-                        id="nascimento"
-                        name="nascimento"
-                    >
+                    <input type="date" id="nascimento" name="nascimento">
                 </div>
             </div>
         </section>
@@ -122,44 +87,25 @@
             <div class="animal-form-grid">
                 <div class="animal-field">
                     <label for="origem">Origem</label>
-                    <input
-                        type="text"
-                        id="origem"
-                        name="origem"
-                        maxlength="150"
-                        placeholder="Origem do animal"
-                    >
+                    <input type="text" id="origem" name="origem"
+                           maxlength="150" placeholder="Origem do animal">
                 </div>
 
                 <div class="animal-field">
                     <label for="data_entrada">Data de entrada</label>
-                    <input
-                        type="date"
-                        id="data_entrada"
-                        name="data_entrada"
-                    >
+                    <input type="date" id="data_entrada" name="data_entrada">
                 </div>
 
                 <div class="animal-field">
                     <label for="localizacao">Localização</label>
-                    <input
-                        type="text"
-                        id="localizacao"
-                        name="localizacao"
-                        maxlength="150"
-                        placeholder="Ex.: Curral 01"
-                    >
+                    <input type="text" id="localizacao" name="localizacao"
+                           maxlength="150" placeholder="Ex.: Curral 01">
                 </div>
 
                 <div class="animal-field">
-                    <label for="situacao">Situação</label>
-                    <input
-                        type="text"
-                        id="situacao"
-                        name="situacao"
-                        maxlength="80"
-                        placeholder="Informe a situação"
-                    >
+                    <label for="situacao">Situação <span aria-hidden="true">*</span></label>
+                    <input type="text" id="situacao" name="situacao"
+                           maxlength="80" placeholder="Informe a situação" required>
                 </div>
             </div>
         </section>
@@ -175,25 +121,16 @@
 
             <div class="animal-field">
                 <label for="observacoes">Observações gerais</label>
-                <textarea
-                    id="observacoes"
-                    name="observacoes"
-                    rows="5"
-                    placeholder="Digite informações adicionais sobre o animal..."
-                ></textarea>
+                <textarea id="observacoes" name="observacoes" rows="5"
+                          placeholder="Digite informações adicionais sobre o animal..."></textarea>
             </div>
         </section>
 
-        <div
-            id="animalFormFeedback"
-            class="animal-form-feedback"
-            role="status"
-            aria-live="polite"
-            hidden
-        ></div>
+        <div id="animalFormFeedback" class="animal-form-feedback"
+             role="status" aria-live="polite" hidden></div>
 
         <footer class="animal-form-actions">
-            <a href="/animais/painel" class="animal-cancel-button">
+            <a href="{{ url_for('animals.painel') }}" class="animal-cancel-button">
                 Cancelar
             </a>
 
@@ -208,8 +145,5 @@
 {% endblock %}
 
 {% block page_js %}
-<script
-    src="{{ url_for('static', filename='js/animals-form.js') }}"
-    defer
-></script>
+<script src="{{ url_for('static', filename='js/animals-form.js') }}" defer></script>
 {% endblock %}

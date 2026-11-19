@@ -1,63 +1,48 @@
-
 # Desenvolvido por: Fábio Barbosa
 
 from app.extensions import get_db
 
 
-def listar_animais(filtros=None, limite=50, deslocamento=0):
-    """Lista animais com filtros opcionais e paginação."""
-
+def _montar_condicoes(filtros=None):
     filtros = filtros or {}
-
-    consulta = """
-        SELECT
-            id,
-            identificacao,
-            nome,
-            especie,
-            raca,
-            sexo,
-            nascimento,
-            origem,
-            data_entrada,
-            localizacao,
-            situacao,
-            observacoes,
-            ativo,
-            criado_por,
-            criado_em,
-            atualizado_em
-        FROM animais
-        WHERE 1 = 1
-    """
-
+    condicoes = ["1 = 1"]
     parametros = []
 
     if filtros.get("identificacao"):
-        consulta += " AND identificacao LIKE %s"
+        condicoes.append("identificacao LIKE %s")
         parametros.append(f"%{filtros['identificacao']}%")
 
     if filtros.get("especie"):
-        consulta += " AND especie = %s"
+        condicoes.append("especie = %s")
         parametros.append(filtros["especie"])
 
     if filtros.get("situacao"):
-        consulta += " AND situacao = %s"
+        condicoes.append("situacao = %s")
         parametros.append(filtros["situacao"])
 
-    # Sem filtro, exibe ativos e inativos.
-    # 1 = somente ativos | 0 = somente inativos.
-    if filtros.get("ativo") is not None:
-        consulta += " AND ativo = %s"
-        parametros.append(filtros["ativo"])
+    if filtros.get("ativo") in (0, 1, "0", "1"):
+        condicoes.append("ativo = %s")
+        parametros.append(int(filtros["ativo"]))
 
-    consulta += """
+    return " AND ".join(condicoes), parametros
+
+
+def listar_animais(filtros=None, limite=50, deslocamento=0):
+    condicoes, parametros = _montar_condicoes(filtros)
+
+    consulta = f"""
+        SELECT
+            id, identificacao, nome, especie, raca, sexo,
+            nascimento, origem, data_entrada, localizacao,
+            situacao, observacoes, ativo, criado_por,
+            criado_em, atualizado_em
+        FROM animais
+        WHERE {condicoes}
         ORDER BY id DESC
         LIMIT %s OFFSET %s
     """
 
     parametros.extend([limite, deslocamento])
-
     conexao = get_db()
 
     with conexao.cursor() as cursor:
@@ -65,15 +50,25 @@ def listar_animais(filtros=None, limite=50, deslocamento=0):
         return cursor.fetchall()
 
 
-def buscar_animal_por_id(animal_id):
-    """Busca um animal pelo ID."""
+def contar_animais(filtros=None):
+    condicoes, parametros = _montar_condicoes(filtros)
 
-    consulta = """
-        SELECT *
+    consulta = f"""
+        SELECT COUNT(*) AS total
         FROM animais
-        WHERE id = %s
+        WHERE {condicoes}
     """
 
+    conexao = get_db()
+
+    with conexao.cursor() as cursor:
+        cursor.execute(consulta, parametros)
+        resultado = cursor.fetchone()
+        return resultado["total"]
+
+
+def buscar_animal_por_id(animal_id):
+    consulta = "SELECT * FROM animais WHERE id = %s"
     conexao = get_db()
 
     with conexao.cursor() as cursor:
@@ -82,8 +77,6 @@ def buscar_animal_por_id(animal_id):
 
 
 def buscar_animal_por_identificacao(identificacao):
-    """Busca um animal pela identificação."""
-
     consulta = """
         SELECT *
         FROM animais
@@ -99,24 +92,12 @@ def buscar_animal_por_identificacao(identificacao):
 
 
 def criar_animal(dados, criado_por):
-    """Insere um novo animal no banco de dados."""
-
     consulta = """
         INSERT INTO animais (
-            identificacao,
-            nome,
-            especie,
-            raca,
-            sexo,
-            nascimento,
-            origem,
-            data_entrada,
-            localizacao,
-            situacao,
-            observacoes,
-            criado_por,
-            criado_em,
-            atualizado_em
+            identificacao, nome, especie, raca, sexo,
+            nascimento, origem, data_entrada, localizacao,
+            situacao, observacoes, criado_por,
+            criado_em, atualizado_em
         ) VALUES (
             %s, %s, %s, %s, %s, %s, %s,
             %s, %s, %s, %s, %s, NOW(), NOW()
@@ -154,21 +135,10 @@ def criar_animal(dados, criado_por):
 
 
 def atualizar_animal(animal_id, dados):
-    """Atualiza os dados cadastrais do animal."""
-
     campos_permitidos = (
-        "identificacao",
-        "nome",
-        "especie",
-        "raca",
-        "sexo",
-        "nascimento",
-        "origem",
-        "data_entrada",
-        "localizacao",
-        "situacao",
-        "observacoes",
-        "ativo"
+        "identificacao", "nome", "especie", "raca", "sexo",
+        "nascimento", "origem", "data_entrada", "localizacao",
+        "situacao", "observacoes"
     )
 
     campos = []
@@ -191,7 +161,6 @@ def atualizar_animal(animal_id, dados):
     """
 
     parametros.append(animal_id)
-
     conexao = get_db()
 
     try:
@@ -208,13 +177,11 @@ def atualizar_animal(animal_id, dados):
 
 
 def inativar_animal(animal_id):
-    """Inativa um animal sem excluir seu histórico."""
-
     consulta = """
         UPDATE animais
         SET ativo = 0,
             atualizado_em = NOW()
-        WHERE id = %s
+        WHERE id = %s AND ativo = 1
     """
 
     conexao = get_db()
@@ -232,9 +199,30 @@ def inativar_animal(animal_id):
         raise
 
 
-def contar_animais_ativos():
-    """Retorna o total de animais ativos."""
+def reativar_animal(animal_id):
+    consulta = """
+        UPDATE animais
+        SET ativo = 1,
+            atualizado_em = NOW()
+        WHERE id = %s AND ativo = 0
+    """
 
+    conexao = get_db()
+
+    try:
+        with conexao.cursor() as cursor:
+            cursor.execute(consulta, (animal_id,))
+            reativado = cursor.rowcount > 0
+
+        conexao.commit()
+        return reativado
+
+    except Exception:
+        conexao.rollback()
+        raise
+
+
+def contar_animais_ativos():
     consulta = """
         SELECT COUNT(*) AS total
         FROM animais
@@ -245,13 +233,10 @@ def contar_animais_ativos():
 
     with conexao.cursor() as cursor:
         cursor.execute(consulta)
-        resultado = cursor.fetchone()
-        return resultado["total"]
+        return cursor.fetchone()["total"]
 
 
 def contar_animais_por_especie():
-    """Retorna a quantidade de animais ativos por espécie."""
-
     consulta = """
         SELECT especie, COUNT(*) AS total
         FROM animais
@@ -268,8 +253,6 @@ def contar_animais_por_especie():
 
 
 def contar_animais_por_situacao():
-    """Retorna a quantidade de animais ativos por situação."""
-
     consulta = """
         SELECT situacao, COUNT(*) AS total
         FROM animais
