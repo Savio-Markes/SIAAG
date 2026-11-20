@@ -12,6 +12,7 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/app.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/components.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/forms.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/layout.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/responsive.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/sidebar.css') }}">
 
@@ -30,7 +31,6 @@
         <!-- MENU LATERAL -->
         <aside class="sidebar" id="menu-principal" aria-label="Navegação principal">
 
-            <!-- Identidade SIAAG -->
             <div class="sidebar-brand">
                 <a href="{{ url_for('dashboard.index') }}" class="sidebar-brand-link">
                     <div class="sidebar-logo-area">
@@ -40,17 +40,13 @@
                             class="sidebar-logo"
                         >
                     </div>
-
-                    
                 </a>
             </div>
 
-            <!-- Navegação -->
             <nav class="sidebar-navigation">
                 <h2 class="navigation-title">MENU PRINCIPAL</h2>
 
                 <ul class="navigation-list">
-
                     <li>
                         <a href="{{ url_for('dashboard.index') }}"
                            class="navigation-link menu-link">
@@ -62,7 +58,7 @@
                     </li>
 
                     <li>
-                        <a href="/animais/painel"
+                        <a href="{{ url_for('animals.painel') }}"
                            class="navigation-link menu-link">
                             <span class="navigation-icon">
                                 <i class="icon-animals"></i>
@@ -100,11 +96,10 @@
                             <span>Usuários</span>
                         </a>
                     </li>
-
                 </ul>
             </nav>
 
-            <!-- Rodapé institucional -->
+            <!-- RODAPÉ INSTITUCIONAL -->
             <div class="sidebar-bottom">
                 <div class="sidebar-institution">
                     <img
@@ -124,17 +119,15 @@
                     <span>Ambiente de desenvolvimento</span>
                 </div>
             </div>
-
         </aside>
 
-        <!-- SOBREPOSIÇÃO DO MENU MOBILE -->
         <div class="sidebar-overlay"></div>
 
         <!-- CONTEÚDO PRINCIPAL -->
         <div class="app-main">
 
             <header class="app-header">
-                <div class="header-content">
+                <div class="header-left">
 
                     <button
                         type="button"
@@ -146,12 +139,62 @@
                         ☰
                     </button>
 
-                    <div class="header-title-area">
+                    <div class="header-title-group">
                         <p class="header-institution">
                             IFPI — Campus Paulistana
                         </p>
                         <h1 class="header-title">Fazenda Escola</h1>
                     </div>
+                </div>
+
+                <!-- AÇÕES DO USUÁRIO -->
+                <div class="header-user-area">
+
+                    <!-- NOTIFICAÇÕES -->
+                    <span
+                        class="header-notifications"
+                        role="img"
+                        aria-label="Notificações"
+                        title="Notificações"
+                    >
+                        <svg viewBox="0 0 24 24" aria-hidden="true">
+                            <path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"></path>
+                            <path d="M10 21h4"></path>
+                        </svg>
+                    </span>
+
+                    <!-- PERFIL -->
+                    <div class="header-user">
+                        <div class="user-avatar" aria-hidden="true">
+                            {{ session.get('usuario_nome', 'U')[:1]|upper }}
+                        </div>
+
+                        <div class="user-information">
+                            <strong>
+                                {{ session.get('usuario_nome', 'Usuário') }}
+                            </strong>
+                            <span>Usuário do sistema</span>
+                        </div>
+                    </div>
+
+                    <!-- LOGOUT -->
+                    {% if session.get('usuario_id') %}
+                    <form
+                        action="{{ url_for('auth.logout') }}"
+                        method="POST"
+                        class="logout-form"
+                        onsubmit="return confirm('Deseja realmente sair do SIAAG?');"
+                    >
+                        <button type="submit" class="logout-button">
+                            <svg viewBox="0 0 24 24" aria-hidden="true">
+                                <path d="M10 17l5-5-5-5"></path>
+                                <path d="M15 12H3"></path>
+                                <path d="M12 3h6a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-6"></path>
+                            </svg>
+                            <span>Sair</span>
+                        </button>
+                    </form>
+                    {% endif %}
 
                 </div>
             </header>
@@ -161,7 +204,6 @@
                 id="conteudo-principal"
                 tabindex="-1"
             >
-
                 <!-- MENSAGENS DO SISTEMA -->
                 <section
                     class="global-messages"
@@ -182,9 +224,7 @@
                     {% endwith %}
                 </section>
 
-                <!-- CONTEÚDO DE CADA PÁGINA -->
                 {% block content %}{% endblock %}
-
             </main>
 
             <footer class="app-footer">

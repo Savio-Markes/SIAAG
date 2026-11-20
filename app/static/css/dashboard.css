@@ -1,51 +1,64 @@
 
 /* =====================================================
    SIAAG — DASHBOARD
-   Identidade visual institucional contemporânea
+   Identidade institucional verde
    ===================================================== */
 
 .dashboard {
     --dash-green: #07552d;
     --dash-green-dark: #063e23;
-    --dash-blue: #2874df;
-    --dash-orange: #ef9632;
-    --dash-purple: #8560d6;
-    --dash-red: #df5353;
-    --dash-bg: #f4f6f4;
-    --dash-border: #e7ebe7;
-    --dash-text: #202923;
+    --dash-border: #e1e9e2;
+    --dash-text: #26352b;
     --dash-muted: #778179;
 
     display: flex;
     flex-direction: column;
-    gap: 27px;
+    gap: 25px;
     width: 100%;
     color: var(--dash-text);
 }
 
-/* BOAS-VINDAS */
+/* BOAS-VINDAS — CABEÇALHO ESCURO */
 
 .dashboard-welcome {
+    position: relative;
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 20px;
-    padding: 8px 2px 3px;
+    overflow: hidden;
+    padding: 29px 30px;
+    background:
+        radial-gradient(
+            ellipse at 90% 0%,
+            rgba(91, 174, 112, .22),
+            transparent 45%
+        ),
+        linear-gradient(
+            120deg,
+            #111111 0%,
+            #1a1a1a 55%,
+            #000000 100%
+        );
+    border: 1px solid rgba(255,255,255,.08);
+    border-left: 4px solid #91c99b;
+    border-radius: 12px;
+    box-shadow: 0 7px 20px rgba(15, 55, 30, .13);
 }
 
 .welcome-label,
 .panel-kicker {
     display: block;
     margin-bottom: 8px;
-    color: var(--dash-green);
+    color: #a9d9b2;
     font-size: 10px;
     font-weight: 800;
-    letter-spacing: 1.15px;
+    letter-spacing: 1.2px;
 }
 
 .dashboard-welcome h1 {
     margin: 0;
-    color: var(--dash-green-dark);
+    color: #ffffff;
     font-size: 27px;
     font-weight: 750;
     letter-spacing: -.7px;
@@ -53,7 +66,7 @@
 
 .dashboard-welcome p {
     margin-top: 7px;
-    color: var(--dash-muted);
+    color: rgba(255,255,255,.72);
     font-size: 13px;
 }
 
@@ -65,20 +78,20 @@
 }
 
 .welcome-mark-label {
-    color: var(--dash-green);
-    font-size: 25px;
+    color: #ffffff;
+    font-size: 29px;
     font-weight: 850;
     letter-spacing: -1.5px;
 }
 
 .welcome-mark-version {
-    color: var(--dash-muted);
+    color: rgba(255,255,255,.65);
     font-size: 9px;
     font-weight: 700;
     letter-spacing: 1px;
 }
 
-/* INDICADORES */
+/* INDICADORES — BRANCOS */
 
 .dashboard-metrics {
     display: grid;
@@ -94,15 +107,16 @@
     min-height: 143px;
     overflow: hidden;
     padding: 19px 20px;
-    background: #fff;
+    background: #ffffff;
     border: 1px solid var(--dash-border);
     border-radius: 10px;
+    box-shadow: 0 3px 12px rgba(29, 65, 39, .04);
     transition: transform .2s ease, box-shadow .2s ease;
 }
 
 .metric-card:hover {
     transform: translateY(-3px);
-    box-shadow: 0 8px 24px rgba(24, 45, 30, .08);
+    box-shadow: 0 8px 24px rgba(24, 45, 30, .09);
 }
 
 .metric-top {
@@ -152,10 +166,10 @@
 }
 
 .metric-blue .metric-icon {
-    color: var(--dash-blue);
+    color: #2874df;
     background: #e9f1ff;
 }
-.metric-blue .metric-accent { background: var(--dash-blue); }
+.metric-blue .metric-accent { background: #2874df; }
 
 .metric-green .metric-icon {
     color: #188449;
@@ -167,15 +181,15 @@
     color: #d77c1c;
     background: #fff3e5;
 }
-.metric-orange .metric-accent { background: var(--dash-orange); }
+.metric-orange .metric-accent { background: #ef9632; }
 
 .metric-purple .metric-icon {
-    color: var(--dash-purple);
+    color: #8560d6;
     background: #f1edfc;
 }
-.metric-purple .metric-accent { background: var(--dash-purple); }
+.metric-purple .metric-accent { background: #8560d6; }
 
-/* PAINÉIS E GRÁFICOS */
+/* PAINÉIS E GRÁFICOS — BRANCOS */
 
 .dashboard-analytics {
     display: grid;
@@ -186,9 +200,10 @@
 .dashboard-panel {
     min-width: 0;
     padding: 21px;
-    background: #fff;
+    background: #ffffff;
     border: 1px solid var(--dash-border);
     border-radius: 10px;
+    box-shadow: 0 3px 12px rgba(29, 65, 39, .035);
 }
 
 .panel-header {
@@ -209,6 +224,7 @@
 
 .panel-header .panel-kicker {
     margin-bottom: 5px;
+    color: #287348;
 }
 
 .panel-symbol {
@@ -223,7 +239,7 @@
 }
 
 .symbol-blue {
-    color: var(--dash-blue);
+    color: #2874df;
     background: #eaf2ff;
 }
 
@@ -300,8 +316,8 @@
     border-radius: 50%;
 }
 
-.blue-dot { background: var(--dash-blue); }
-.orange-dot { background: var(--dash-orange); }
+.blue-dot { background: #2874df; }
+.orange-dot { background: #ef9632; }
 
 .dashboard-empty {
     display: flex;
@@ -337,6 +353,7 @@
 
 .modules-heading .panel-kicker {
     margin-bottom: 5px;
+    color: #287348;
 }
 
 .module-grid {
@@ -354,10 +371,11 @@
     min-height: 145px;
     padding: 17px;
     color: var(--dash-text);
-    background: #fff;
+    background: #ffffff;
     border: 1px solid var(--dash-border);
     border-radius: 9px;
     text-decoration: none;
+    box-shadow: 0 3px 12px rgba(29, 65, 39, .035);
     transition: border-color .2s ease, transform .2s ease;
 }
 
@@ -431,9 +449,9 @@
 
 .dashboard-no-access {
     padding: 25px;
-    background: #fff;
+    background: #ffffff;
     border: 1px solid var(--dash-border);
-    border-left: 4px solid var(--dash-orange);
+    border-left: 4px solid #ef9632;
     border-radius: 8px;
 }
 
@@ -447,17 +465,28 @@
     font-size: 12px;
 }
 
-/* RODAPÉ */
+/* RODAPÉ — VERDE ESCURO */
 
 .dashboard-footer {
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 12px;
-    padding: 15px 2px 3px;
-    border-top: 1px solid var(--dash-border);
-    color: #929b94;
+    padding: 17px 22px;
+    background: linear-gradient(
+        110deg,
+        #07552d,
+        #063e23
+    );
+    border: 1px solid rgba(255,255,255,.08);
+    border-radius: 9px;
+    color: rgba(255,255,255,.78);
     font-size: 10px;
+}
+
+.dashboard-footer span:first-child {
+    color: #ffffff;
+    font-weight: 650;
 }
 
 /* RESPONSIVIDADE */
@@ -485,6 +514,10 @@
 @media (max-width: 520px) {
     .dashboard {
         gap: 21px;
+    }
+
+    .dashboard-welcome {
+        padding: 20px;
     }
 
     .dashboard-welcome h1 {
@@ -532,5 +565,6 @@
     .dashboard-footer {
         align-items: flex-start;
         flex-direction: column;
+        gap: 6px;
     }
 }
