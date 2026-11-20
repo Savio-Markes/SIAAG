@@ -13,6 +13,7 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/components.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/forms.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/responsive.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/sidebar.css') }}">
 
     {% block page_css %}{% endblock %}
 
@@ -26,62 +27,110 @@
 <body>
     <div class="app-layout">
 
-        <aside class="sidebar" aria-label="Navegação principal">
-            <div class="sidebar-brand">
+        <!-- MENU LATERAL -->
+        <aside class="sidebar" id="menu-principal" aria-label="Navegação principal">
 
-                <div class="sidebar-logo-area">
+            <!-- Identidade SIAAG -->
+            <div class="sidebar-brand">
+                <a href="{{ url_for('dashboard.index') }}" class="sidebar-brand-link">
+                    <div class="sidebar-logo-area">
+                        <img
+                            src="{{ url_for('static', filename='img/logo.jpg') }}"
+                            alt="Logo do SIAAG"
+                            class="sidebar-logo"
+                        >
+                    </div>
+
+                    
+                </a>
+            </div>
+
+            <!-- Navegação -->
+            <nav class="sidebar-navigation">
+                <h2 class="navigation-title">MENU PRINCIPAL</h2>
+
+                <ul class="navigation-list">
+
+                    <li>
+                        <a href="{{ url_for('dashboard.index') }}"
+                           class="navigation-link menu-link">
+                            <span class="navigation-icon">
+                                <i class="icon-dashboard"></i>
+                            </span>
+                            <span>Painel inicial</span>
+                        </a>
+                    </li>
+
+                    <li>
+                        <a href="/animais/painel"
+                           class="navigation-link menu-link">
+                            <span class="navigation-icon">
+                                <i class="icon-animals"></i>
+                            </span>
+                            <span>Animais</span>
+                        </a>
+                    </li>
+
+                    <li>
+                        <a href="/estoque/"
+                           class="navigation-link menu-link">
+                            <span class="navigation-icon">
+                                <i class="icon-stock"></i>
+                            </span>
+                            <span>Estoque</span>
+                        </a>
+                    </li>
+
+                    <li>
+                        <a href="/patrimonio/"
+                           class="navigation-link menu-link">
+                            <span class="navigation-icon">
+                                <i class="icon-property"></i>
+                            </span>
+                            <span>Patrimônio</span>
+                        </a>
+                    </li>
+
+                    <li>
+                        <a href="/usuarios/painel"
+                           class="navigation-link menu-link">
+                            <span class="navigation-icon">
+                                <i class="icon-users"></i>
+                            </span>
+                            <span>Usuários</span>
+                        </a>
+                    </li>
+
+                </ul>
+            </nav>
+
+            <!-- Rodapé institucional -->
+            <div class="sidebar-bottom">
+                <div class="sidebar-institution">
                     <img
-                        src="{{ url_for('static', filename='img/logo.jpg') }}"
-                        alt="Logo do SIAAG"
-                        class="sidebar-logo"
+                        src="{{ url_for('static', filename='img/ifpi-simbolo-transparente.png') }}"
+                        alt="Instituto Federal do Piauí"
+                        class="sidebar-ifpi-logo"
                     >
+
+                    <div class="sidebar-institution-text">
+                        <strong>INSTITUTO FEDERAL DO PIAUÍ</strong>
+                        <span>Campus Paulistana</span>
+                    </div>
                 </div>
 
-                <div class="sidebar-brand-text">
-                    <strong>SIAAG</strong>
-                    <span>Administração Agropecuária</span>
+                <div class="sidebar-version">
+                    <span>SIAAG</span>
+                    <span>Ambiente de desenvolvimento</span>
                 </div>
             </div>
 
-            <nav class="sidebar-navigation">
-                <h2 class="navigation-title">Menu principal</h2>
-
-                <ul class="navigation-list">
-                    <li>
-                        <a href="/animais/painel" class="navigation-link menu-link">
-                            Animais
-                        </a>
-                    </li>
-
-                    <li>
-                        <a href="/patrimonio/" class="navigation-link menu-link">
-                            Patrimônio
-                        </a>
-                    </li>
-
-                    <li>
-                        <a href="/estoque/" class="navigation-link menu-link">
-                            Estoque
-                        </a>
-                    </li>
-
-                    <li>
-                        <a href="/usuarios/painel" class="navigation-link menu-link">
-                            Usuários
-                        </a>
-                    </li>
-
-                    <li>
-                        <a href="/" class="navigation-link menu-link">
-                            Painel inicial
-                        </a>
-                    </li>
-                </ul>
-            </nav>
         </aside>
 
+        <!-- SOBREPOSIÇÃO DO MENU MOBILE -->
         <div class="sidebar-overlay"></div>
 
+        <!-- CONTEÚDO PRINCIPAL -->
         <div class="app-main">
 
             <header class="app-header">
@@ -92,20 +141,28 @@
                         class="menu-toggle"
                         aria-label="Abrir menu de navegação"
                         aria-controls="menu-principal"
+                        aria-expanded="false"
                     >
                         ☰
                     </button>
 
-                    <div>
-                        <p class="header-institution">IFPI — Campus Paulistana</p>
+                    <div class="header-title-area">
+                        <p class="header-institution">
+                            IFPI — Campus Paulistana
+                        </p>
                         <h1 class="header-title">Fazenda Escola</h1>
                     </div>
 
                 </div>
             </header>
 
-            <main class="main-content" id="conteudo-principal" tabindex="-1">
+            <main
+                class="main-content"
+                id="conteudo-principal"
+                tabindex="-1"
+            >
 
+                <!-- MENSAGENS DO SISTEMA -->
                 <section
                     class="global-messages"
                     aria-label="Mensagens do sistema"
@@ -125,12 +182,15 @@
                     {% endwith %}
                 </section>
 
+                <!-- CONTEÚDO DE CADA PÁGINA -->
                 {% block content %}{% endblock %}
 
             </main>
 
             <footer class="app-footer">
-                <p>SIAAG — Sistema Integrado de Administração Agropecuária</p>
+                <p>
+                    SIAAG — Sistema Integrado de Administração Agropecuária
+                </p>
                 <p>IFPI — Campus Paulistana</p>
             </footer>
 

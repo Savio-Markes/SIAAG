@@ -1,88 +1,83 @@
 
-// ========================================
-// SIAAG - JAVASCRIPT PRINCIPAL
-// IFPI - Campus Paulistana
-// ========================================
+/* =====================================================
+   SIAAG — JAVASCRIPT PRINCIPAL
+   IFPI — Campus Paulistana
+   Navegação e menu lateral
+   ===================================================== */
 
 document.addEventListener("DOMContentLoaded", function () {
 
-    // Elementos do menu lateral
+    // ELEMENTOS DO MENU
     const sidebar = document.querySelector(".sidebar");
     const menuToggle = document.querySelector(".menu-toggle");
     const sidebarOverlay = document.querySelector(".sidebar-overlay");
 
+    // VERIFICA SE OS ELEMENTOS EXISTEM
+    if (!sidebar || !menuToggle || !sidebarOverlay) {
+        return;
+    }
 
-    // 1. ABRIR E FECHAR O MENU
-
+    // ABRIR MENU
     function abrirMenu() {
-        if (!sidebar || !sidebarOverlay) return;
-
         sidebar.classList.add("open");
         sidebarOverlay.classList.add("active");
 
+        menuToggle.setAttribute("aria-expanded", "true");
         document.body.style.overflow = "hidden";
     }
 
+    // FECHAR MENU
     function fecharMenu() {
-        if (!sidebar || !sidebarOverlay) return;
-
         sidebar.classList.remove("open");
         sidebarOverlay.classList.remove("active");
 
+        menuToggle.setAttribute("aria-expanded", "false");
         document.body.style.overflow = "";
     }
 
+    // ALTERNAR MENU
+    function alternarMenu() {
+        const menuAberto = sidebar.classList.contains("open");
 
-    // 2. BOTÃO DE ABRIR MENU
-
-    if (menuToggle) {
-        menuToggle.addEventListener("click", function () {
-            abrirMenu();
-        });
-    }
-
-
-    // 3. FECHAR AO CLICAR FORA DO MENU
-
-    if (sidebarOverlay) {
-        sidebarOverlay.addEventListener("click", function () {
+        if (menuAberto) {
             fecharMenu();
-        });
+        } else {
+            abrirMenu();
+        }
     }
 
+    // BOTÃO DE ABRIR/FECHAR
+    menuToggle.addEventListener("click", alternarMenu);
 
-    // 4. FECHAR AO SELECIONAR UMA OPÇÃO
+    // FECHAR AO CLICAR NO FUNDO
+    sidebarOverlay.addEventListener("click", fecharMenu);
 
-    if (sidebar) {
-        const menuLinks = sidebar.querySelectorAll(".menu-link");
+    // FECHAR AO ACESSAR UMA OPÇÃO
+    const menuLinks = sidebar.querySelectorAll(".navigation-link");
 
-        menuLinks.forEach(function (link) {
-            link.addEventListener("click", function () {
+    menuLinks.forEach(function (link) {
+        link.addEventListener("click", function () {
+            if (window.innerWidth <= 900) {
                 fecharMenu();
-            });
+            }
         });
-    }
+    });
 
-
-    // 5. FECHAR COM A TECLA ESC
-
+    // FECHAR COM ESC
     document.addEventListener("keydown", function (event) {
-
         if (event.key === "Escape") {
             fecharMenu();
         }
-
     });
 
-
-    // 6. AJUSTE AO VOLTAR PARA DESKTOP
-
+    // FECHAR AO VOLTAR PARA DESKTOP
     window.addEventListener("resize", function () {
-
         if (window.innerWidth > 900) {
             fecharMenu();
         }
-
     });
+
+    // ESTADO INICIAL
+    menuToggle.setAttribute("aria-expanded", "false");
 
 });

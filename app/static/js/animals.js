@@ -1,3 +1,4 @@
+
 document.addEventListener("DOMContentLoaded", () => {
     "use strict";
 
@@ -62,6 +63,66 @@ document.addEventListener("DOMContentLoaded", () => {
             .replace(/\b\w/g, letra => letra.toUpperCase());
     }
 
+    function obterIconeEspecie(especie) {
+        const nome = String(especie || "")
+            .normalize("NFD")
+            .replace(/[\u0300-\u036f]/g, "")
+            .toLowerCase()
+            .trim();
+
+        if (/bovino|boi|vaca/.test(nome)) return "🐄";
+        if (/ovino|ovelha|carneiro/.test(nome)) return "🐑";
+        if (/caprino|cabra|bode/.test(nome)) return "🐐";
+        if (/suino|porco|leitao/.test(nome)) return "🐖";
+        if (/equino|cavalo|egua/.test(nome)) return "🐎";
+        if (/asinino|jumento|burro|mula/.test(nome)) return "🫏";
+        if (/ave|galinha|frango|galo|pato/.test(nome)) return "🐔";
+
+        return "🐾";
+    }
+
+    function criarIdentificacao(animal) {
+        const celula = document.createElement("td");
+
+        const container = document.createElement("div");
+        container.className = "animal-identification";
+
+        const icone = document.createElement("span");
+        icone.className = "animal-species-icon";
+        icone.setAttribute("aria-hidden", "true");
+        icone.textContent = obterIconeEspecie(animal.especie);
+
+        const textos = document.createElement("div");
+        textos.className = "animal-identification-text";
+
+        const identificacao = document.createElement("strong");
+        identificacao.textContent = animal.identificacao || "Sem identificação";
+
+        const nome = document.createElement("span");
+        nome.textContent = animal.nome || "Nome não informado";
+
+        textos.append(identificacao, nome);
+        container.append(icone, textos);
+        celula.appendChild(container);
+
+        return celula;
+    }
+
+    function criarStatus(animal) {
+        const celula = document.createElement("td");
+        const badge = document.createElement("span");
+        const ativo = Number(animal.ativo) === 1;
+
+        badge.className = ativo
+            ? "animal-status-badge"
+            : "animal-status-badge inactive";
+
+        badge.textContent = ativo ? "Ativo" : "Inativo";
+        celula.appendChild(badge);
+
+        return celula;
+    }
+
     async function alterarStatus(animal, acao, botao) {
         const reativando = acao === "reativar";
 
@@ -78,9 +139,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 `${API_URL}${encodeURIComponent(animal.id)}/${acao}`,
                 {
                     method: "POST",
-                    headers: {
-                        "Accept": "application/json"
-                    },
+                    headers: { "Accept": "application/json" },
                     credentials: "same-origin"
                 }
             );
@@ -94,11 +153,7 @@ document.addEventListener("DOMContentLoaded", () => {
             }
 
             await carregarAnimais();
-
-            mostrarFeedback(
-                resultado.mensagem,
-                "success"
-            );
+            mostrarFeedback(resultado.mensagem, "success");
 
         } catch (erro) {
             mostrarFeedback(
@@ -151,21 +206,14 @@ document.addEventListener("DOMContentLoaded", () => {
         animais.forEach(animal => {
             const linha = document.createElement("tr");
 
-            const identificacao = animal.nome
-                ? `${animal.identificacao || "—"} — ${animal.nome}`
-                : animal.identificacao || "—";
-
-            linha.appendChild(criarCelula(identificacao));
+            linha.appendChild(criarIdentificacao(animal));
             linha.appendChild(criarCelula(animal.especie));
             linha.appendChild(criarCelula(animal.raca));
             linha.appendChild(criarCelula(formatarSituacao(animal.situacao)));
             linha.appendChild(criarCelula(animal.localizacao));
-
-            linha.appendChild(criarCelula(
-                Number(animal.ativo) === 1 ? "Ativo" : "Inativo"
-            ));
-
+            linha.appendChild(criarStatus(animal));
             linha.appendChild(criarAcao(animal));
+
             fragmento.appendChild(linha);
         });
 
@@ -264,8 +312,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
             if (!resposta.ok || resultado.sucesso !== true) {
                 throw new Error(
-                    resultado.mensagem ||
-                    "Não foi possível carregar os animais."
+                    resultado.mensagem || "Não foi possível carregar os animais."
                 );
             }
 

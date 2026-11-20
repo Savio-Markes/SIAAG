@@ -1,0 +1,358 @@
+
+/* ==================================================
+   SIAAG — ESTRUTURA GLOBAL
+   ================================================== */
+
+.app-layout {
+    min-height: 100vh;
+}
+
+.sidebar {
+    display: flex;
+    flex-direction: column;
+    background: #173f2b;
+    border-right: 1px solid rgba(255,255,255,.07);
+}
+
+.sidebar-brand {
+    padding: 4px 5px 25px;
+    border-bottom: 1px solid rgba(255,255,255,.13);
+}
+
+.sidebar-logo-area {
+    display: flex;
+    align-items: center;
+}
+
+.sidebar-logo {
+    width: 55px;
+    height: 55px;
+    padding: 5px;
+    object-fit: contain;
+    background: #fff;
+    border-radius: 10px;
+}
+
+.sidebar-brand-text {
+    gap: 2px;
+}
+
+.sidebar-brand-text strong {
+    font-size: 20px;
+    letter-spacing: 1.5px;
+}
+
+.sidebar-brand-text span {
+    font-size: 10px;
+    color: rgba(255,255,255,.65);
+}
+
+.navigation-title {
+    display: block;
+    margin: 28px 10px 13px;
+    color: rgba(255,255,255,.48);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+}
+
+.navigation-list {
+    gap: 6px;
+}
+
+.navigation-link {
+    display: flex;
+    align-items: center;
+    gap: 13px;
+    min-height: 45px;
+    padding: 11px 13px;
+    color: rgba(255,255,255,.78);
+    border: 1px solid transparent;
+    border-radius: 8px;
+    font-size: 13px;
+    transition: .2s ease;
+}
+
+.navigation-link:hover,
+.navigation-link.active {
+    color: #fff;
+    background: rgba(255,255,255,.10);
+    border-color: rgba(255,255,255,.07);
+}
+
+.nav-icon {
+    display: inline-flex;
+    width: 21px;
+    justify-content: center;
+    color: #b8d5bf;
+    font-size: 19px;
+}
+
+.sidebar-bottom {
+    margin-top: auto;
+    padding-top: 25px;
+}
+
+.sidebar-institution {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: 15px 13px;
+    background: rgba(255,255,255,.07);
+    border: 1px solid rgba(255,255,255,.08);
+    border-radius: 9px;
+}
+
+.sidebar-institution span {
+    color: rgba(255,255,255,.48);
+    font-size: 9px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.sidebar-institution strong {
+    color: #fff;
+    font-size: 11px;
+}
+
+.sidebar-institution small {
+    color: rgba(255,255,255,.62);
+    font-size: 10px;
+}
+
+/* CABEÇALHO */
+
+.app-header {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+    min-height: 78px;
+    padding: 12px 32px;
+    background: rgba(255,255,255,.96);
+    border-bottom: 1px solid #e4ebe5;
+    backdrop-filter: blur(12px);
+}
+
+.header-left,
+.header-user-area,
+.header-user {
+    display: flex;
+    align-items: center;
+}
+
+.header-left {
+    gap: 16px;
+}
+
+.header-title-group {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+}
+
+.header-institution {
+    color: #7b897e;
+    font-size: 10px;
+    letter-spacing: .3px;
+}
+
+.header-title {
+    color: #173f2b;
+    font-size: 18px;
+    font-weight: 700;
+}
+
+.menu-toggle {
+    display: none;
+    width: 39px;
+    height: 39px;
+    color: #245c38;
+    background: #edf4ee;
+    border: 1px solid #dce8de;
+    border-radius: 8px;
+    font-size: 18px;
+}
+
+.header-user-area {
+    gap: 22px;
+}
+
+.header-user {
+    gap: 10px;
+}
+
+.user-avatar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 38px;
+    height: 38px;
+    color: #245c38;
+    background: #eaf3ec;
+    border: 1px solid #d9e9dc;
+    border-radius: 50%;
+    font-size: 14px;
+    font-weight: 750;
+    text-transform: uppercase;
+}
+
+.user-information {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+}
+
+.user-information strong {
+    max-width: 180px;
+    overflow: hidden;
+    color: #26352a;
+    font-size: 12px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.user-information span {
+    color: #89958c;
+    font-size: 10px;
+}
+
+.logout-form {
+    margin: 0;
+}
+
+.logout-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    min-height: 38px;
+    padding: 8px 13px;
+    color: #8c3933;
+    background: #fff;
+    border: 1px solid #eadbd9;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 650;
+    transition: .2s ease;
+}
+
+.logout-button:hover {
+    color: #fff;
+    background: #a7443c;
+    border-color: #a7443c;
+}
+
+.logout-icon {
+    font-size: 17px;
+    line-height: 1;
+}
+
+/* RODAPÉ */
+
+.app-footer {
+    display: flex;
+    justify-content: space-between;
+    gap: 15px;
+    padding: 16px 32px;
+    background: #fff;
+    border-top: 1px solid #e4ebe5;
+}
+
+.app-footer p {
+    color: #879389;
+    font-size: 10px;
+}
+
+/* RESPONSIVIDADE */
+
+@media (max-width: 900px) {
+    .app-header {
+        padding: 12px 20px;
+    }
+
+    .menu-toggle {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .sidebar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        z-index: 1000;
+        width: min(280px, 85vw);
+        height: 100vh;
+        transform: translateX(-100%);
+        transition: transform .25s ease;
+    }
+
+    .sidebar.open {
+        transform: translateX(0);
+    }
+
+    .sidebar-overlay {
+        position: fixed;
+        inset: 0;
+        z-index: 999;
+        background: rgba(12,25,16,.45);
+        opacity: 0;
+        visibility: hidden;
+        transition: .25s ease;
+    }
+
+    .sidebar-overlay.active {
+        opacity: 1;
+        visibility: visible;
+    }
+}
+
+@media (max-width: 600px) {
+    .app-header {
+        min-height: 68px;
+        padding: 10px 13px;
+    }
+
+    .header-title {
+        font-size: 15px;
+    }
+
+    .header-institution {
+        font-size: 9px;
+    }
+
+    .header-user-area {
+        gap: 9px;
+    }
+
+    .user-information {
+        display: none;
+    }
+
+    .user-avatar {
+        width: 34px;
+        height: 34px;
+    }
+
+    .logout-button {
+        width: 36px;
+        min-height: 36px;
+        padding: 0;
+        font-size: 0;
+    }
+
+    .logout-icon {
+        font-size: 18px;
+    }
+
+    .app-footer {
+        flex-direction: column;
+        gap: 4px;
+        padding: 14px;
+        text-align: center;
+    }
+}

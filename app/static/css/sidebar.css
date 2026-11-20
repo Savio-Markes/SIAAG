@@ -1,0 +1,258 @@
+
+/* =====================================================
+   SIAAG — SIDEBAR
+   Verde institucional sóbrio e minimalista
+   ===================================================== */
+
+.sidebar {
+    --side-green: #254b36;
+    --side-dark: #1d3d2c;
+    --side-text: #e9eee9;
+    --side-muted: #b6c2b8;
+
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    display: flex;
+    flex: 0 0 242px;
+    flex-direction: column;
+    width: 242px;
+    height: 100vh;
+    padding: 20px 14px 16px;
+    overflow-y: auto;
+
+    color: var(--side-text);
+    background: linear-gradient(
+        180deg,
+        #111111 0%,
+        #1a1a1a 55%,
+        #000000 100%
+    );
+
+    border-right: 1px solid rgba(255,255,255,.06);
+}
+
+/* LOGO SIAAG */
+
+.sidebar-brand {
+    padding: 0 0 19px;
+    border-bottom: 1px solid rgba(255,255,255,.13);
+}
+
+.sidebar-brand-link {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    padding: 17px 50px;
+    color: inherit;
+    background: #fff;
+    border: 1px solid #e8ece8;
+    border-radius: 8px;
+    text-decoration: none;
+}
+
+.sidebar-logo {
+    display: block;
+    width: 100%;
+    max-width: 175px;
+    height: 65px;
+    object-fit: contain;
+    background: transparent;
+}
+
+.sidebar-brand-text {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+.sidebar-brand-text strong {
+    color: #254b36;
+    font-size: 17px;
+    font-weight: 800;
+    letter-spacing: 1.5px;
+}
+
+.sidebar-brand-text small {
+    margin-top: 3px;
+    color: #78837b;
+    font-size: 10px;
+    line-height: 1.5;
+}
+
+/* NAVEGAÇÃO */
+
+.sidebar-navigation {
+    margin-top: 24px;
+}
+
+.navigation-title {
+    display: block;
+    margin: 0 11px 12px;
+    color: #aab9ad;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 1.2px;
+}
+
+.navigation-list {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    list-style: none;
+}
+
+.navigation-list li {
+    width: 100%;
+}
+
+.navigation-link {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+    min-height: 43px;
+    padding: 9px 12px;
+
+    color: #d5ded7;
+    background: transparent;
+    border: 1px solid transparent;
+    border-radius: 7px;
+
+    font-size: 12px;
+    font-weight: 500;
+    text-decoration: none;
+
+    transition: background .18s ease, color .18s ease;
+}
+
+.navigation-link svg {
+    flex: 0 0 20px;
+    width: 20px;
+    height: 20px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.7;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+/* HOVER */
+
+.navigation-link:hover {
+    color: #fff;
+    background: rgba(255,255,255,.07);
+}
+
+/* SELEÇÃO */
+
+.navigation-link.active,
+.navigation-link[aria-current="page"] {
+    color: #294b37;
+    background: #edf1ed;
+    border-color: #edf1ed;
+    font-weight: 700;
+}
+
+.navigation-link.active svg,
+.navigation-link[aria-current="page"] svg {
+    color: #42694e;
+    stroke-width: 1.9;
+}
+
+/* RODAPÉ */
+
+.sidebar-bottom {
+    margin-top: auto;
+    padding: 0;
+    background: #001f05;
+    border-radius: 7px;
+}
+
+.sidebar-institution {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 15px 10px;
+    border-bottom: 1px solid rgba(255,255,255,.09);
+}
+
+.sidebar-ifpi-logo {
+    display: block;
+    flex: 0 0 35px;
+    width: 35px;
+    height: 42px;
+    object-fit: contain;
+}
+
+.sidebar-institution-text {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+
+.sidebar-institution-text strong {
+    color: #f1f4f1;
+    font-size: 8px;
+    font-weight: 800;
+}
+
+.sidebar-institution-text span {
+    color: #aebbb1;
+    font-size: 9px;
+}
+
+.sidebar-version {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 11px 10px;
+    color: #b6c2b8;
+    font-size: 9px;
+}
+
+.sidebar-version span:last-child {
+    color: #899a8d;
+    font-size: 8px;
+    letter-spacing: .6px;
+}
+
+/* ROLAGEM */
+
+.sidebar::-webkit-scrollbar {
+    width: 4px;
+}
+
+.sidebar::-webkit-scrollbar-thumb {
+    background: rgba(255,255,255,.18);
+    border-radius: 10px;
+}
+
+/* MOBILE */
+
+@media (max-width: 900px) {
+    .sidebar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        z-index: 1000;
+        width: min(265px, 85vw);
+        height: 100vh;
+        transform: translateX(-100%);
+        transition: transform .25s ease;
+    }
+
+    .sidebar.open {
+        transform: translateX(0);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .sidebar *,
+    .sidebar *::before,
+    .sidebar *::after {
+        transition: none !important;
+    }
+}

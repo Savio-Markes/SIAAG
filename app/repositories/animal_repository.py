@@ -241,7 +241,6 @@ def excluir_animal(animal_id, excluido_por):
     try:
         with conexao.cursor() as cursor:
 
-            # Bloqueia o registro durante a verificação e exclusão.
             cursor.execute(
                 """
                 SELECT id, identificacao
@@ -256,9 +255,7 @@ def excluir_animal(animal_id, excluido_por):
 
             if not animal:
                 conexao.rollback()
-                return {
-                    "status": "nao_encontrado"
-                }
+                return {"status": "nao_encontrado"}
 
             vinculos = {}
 
@@ -284,7 +281,6 @@ def excluir_animal(animal_id, excluido_por):
                     "vinculos": vinculos
                 }
 
-            # Registra a exclusão antes de remover o cadastro.
             cursor.execute(
                 """
                 INSERT INTO logs_auditoria (
@@ -330,9 +326,7 @@ def excluir_animal(animal_id, excluido_por):
 
         conexao.commit()
 
-        return {
-            "status": "excluido"
-        }
+        return {"status": "excluido"}
 
     except Exception:
         conexao.rollback()
@@ -354,10 +348,14 @@ def contar_animais_ativos():
 
 
 def contar_animais_por_especie():
+    """
+    Conta todas as espécies cadastradas,
+    incluindo animais ativos e inativos.
+    """
+
     consulta = """
         SELECT especie, COUNT(*) AS total
         FROM animais
-        WHERE ativo = 1
         GROUP BY especie
         ORDER BY especie
     """

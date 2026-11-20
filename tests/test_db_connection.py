@@ -27,7 +27,7 @@ def test_conexao_mysql():
             cursor.execute("SHOW TABLES")
             tabelas = cursor.fetchall()
 
-            assert len(tabelas) == 21
+            assert len(tabelas) == 22
 
             print("\nCONEXÃO COM SUCESSO!")
             print("Banco:", banco["banco"])

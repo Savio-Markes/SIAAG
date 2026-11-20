@@ -11,273 +11,233 @@
 
 <div class="dashboard">
 
-    <!-- Título da página -->
-    <div class="dashboard-heading">
+    <section class="dashboard-welcome">
         <div>
-            <h1 class="page-title">Painel principal</h1>
-            <p class="page-description">
-                Acompanhe as informações da administração agropecuária.
-            </p>
-        </div>
-    </div>
-
-
-    <!-- INDICADORES -->
-    <section class="dashboard-section">
-
-        <div class="section-heading">
-            <h2>Visão geral</h2>
+            <span class="welcome-label">IFPI · CAMPUS PAULISTANA</span>
+            <h1>Visão geral da Fazenda Escola</h1>
+            <p>Acompanhe os dados e indicadores da gestão agropecuária.</p>
         </div>
 
-        <div class="dashboard-cards">
-
-            <article class="dashboard-card">
-                <div class="card-icon">🐄</div>
-                <div class="card-information">
-                    <span>Animais ativos</span>
-                    <strong>{{ dashboard.active_animals if dashboard is defined else "—" }}</strong>
-                </div>
-            </article>
-
-            <article class="dashboard-card">
-                <div class="card-icon">📦</div>
-                <div class="card-information">
-                    <span>Produtos em estoque</span>
-                    <strong>{{ dashboard.inventory_products if dashboard is defined else "—" }}</strong>
-                </div>
-            </article>
-
-            <article class="dashboard-card">
-                <div class="card-icon">📋</div>
-                <div class="card-information">
-                    <span>Atividades pendentes</span>
-                    <strong>{{ dashboard.pending_activities if dashboard is defined else "—" }}</strong>
-                </div>
-            </article>
-
-            <article class="dashboard-card">
-                <div class="card-icon">🎓</div>
-                <div class="card-information">
-                    <span>Próximas aulas práticas</span>
-                    <strong>{{ dashboard.upcoming_classes if dashboard is defined else "—" }}</strong>
-                </div>
-            </article>
-
-            <article class="dashboard-card">
-                <div class="card-icon">🔧</div>
-                <div class="card-information">
-                    <span>Patrimônios em manutenção</span>
-                    <strong>{{ dashboard.assets_maintenance if dashboard is defined else "—" }}</strong>
-                </div>
-            </article>
-
+        <div class="welcome-mark">
+            <span class="welcome-mark-label">SIAAG</span>
+            <span class="welcome-mark-version">PAINEL DE GESTÃO</span>
         </div>
+    </section>
+
+    {% if dashboard.pode_visualizar_animais %}
+
+    <section class="dashboard-metrics">
+
+        <article class="metric-card metric-blue">
+            <div class="metric-top">
+                <span class="metric-label">Animais cadastrados</span>
+                <span class="metric-icon">🐄</span>
+            </div>
+            <strong class="metric-value">{{ dashboard.total_animais }}</strong>
+            <span class="metric-description">Total de registros</span>
+            <div class="metric-accent"></div>
+        </article>
+
+        <article class="metric-card metric-green">
+            <div class="metric-top">
+                <span class="metric-label">Animais ativos</span>
+                <span class="metric-icon">✓</span>
+            </div>
+            <strong class="metric-value">{{ dashboard.animais_ativos }}</strong>
+            <span class="metric-description">Registros em atividade</span>
+            <div class="metric-accent"></div>
+        </article>
+
+        <article class="metric-card metric-orange">
+            <div class="metric-top">
+                <span class="metric-label">Animais inativos</span>
+                <span class="metric-icon">Ⅱ</span>
+            </div>
+            <strong class="metric-value">{{ dashboard.animais_inativos }}</strong>
+            <span class="metric-description">Histórico preservado</span>
+            <div class="metric-accent"></div>
+        </article>
+
+        <article class="metric-card metric-purple">
+            <div class="metric-top">
+                <span class="metric-label">Espécies cadastradas</span>
+                <span class="metric-icon">◈</span>
+            </div>
+            <strong class="metric-value">{{ dashboard.especies|length }}</strong>
+            <span class="metric-description">Diversidade do rebanho</span>
+            <div class="metric-accent"></div>
+        </article>
 
     </section>
 
+    <section class="dashboard-analytics">
 
-    <!-- ALERTAS E ATIVIDADES -->
-    <section class="dashboard-section">
-
-        <div class="dashboard-columns">
-
-            <!-- Alertas de estoque -->
-            <div class="dashboard-panel">
-
-                <div class="panel-heading">
-                    <h2>Alertas de estoque</h2>
-                    <a href="{{ url_for('estoque') if false else '#' }}">
-                        Ver detalhes
-                    </a>
+        <article class="dashboard-panel species-panel">
+            <div class="panel-header">
+                <div>
+                    <span class="panel-kicker">COMPOSIÇÃO DO REBANHO</span>
+                    <h2>Animais por espécie</h2>
                 </div>
+                <span class="panel-symbol symbol-blue">◉</span>
+            </div>
 
-                <div class="panel-content">
+            {% if dashboard.especies %}
+                {% set maior_especie = dashboard.especies|map(attribute='total')|max %}
 
-                    {% if dashboard is defined and dashboard.stock_alerts %}
-                        {% for alert in dashboard.stock_alerts %}
-                            <div class="alert-item">
-                                <span class="alert-indicator"></span>
-                                <div>
-                                    <strong>{{ alert.name }}</strong>
-                                    <p>{{ alert.message }}</p>
-                                </div>
+                <div class="chart-list">
+                    {% for especie in dashboard.especies %}
+                    <div class="chart-row">
+                        <div class="chart-row-heading">
+                            <span>{{ especie.especie }}</span>
+                            <strong>{{ especie.total }}</strong>
+                        </div>
+                        <div class="chart-track">
+                            <div
+                                class="chart-fill species-fill color-{{ loop.index0 % 6 }}"
+                                style="width: {{ (especie.total / maior_especie * 100) if maior_especie else 0 }}%">
                             </div>
-                        {% endfor %}
-                    {% else %}
-                        <div class="empty-state">
-                            <p>Nenhum alerta de estoque disponível.</p>
                         </div>
-                    {% endif %}
-
-                </div>
-
-            </div>
-
-
-            <!-- Produtos próximos do vencimento -->
-            <div class="dashboard-panel">
-
-                <div class="panel-heading">
-                    <h2>Produtos próximos do vencimento</h2>
-                </div>
-
-                <div class="panel-content">
-
-                    {% if dashboard is defined and dashboard.expiring_products %}
-                        {% for product in dashboard.expiring_products %}
-                            <div class="information-item">
-                                <strong>{{ product.name }}</strong>
-                                <span>{{ product.expiration_date }}</span>
-                            </div>
-                        {% endfor %}
-                    {% else %}
-                        <div class="empty-state">
-                            <p>Nenhum produto próximo do vencimento.</p>
-                        </div>
-                    {% endif %}
-
-                </div>
-
-            </div>
-
-        </div>
-
-    </section>
-
-
-    <!-- MOVIMENTAÇÕES E ATIVIDADES -->
-    <section class="dashboard-section">
-
-        <div class="dashboard-columns">
-
-            <!-- Atividades recentes -->
-            <div class="dashboard-panel">
-
-                <div class="panel-heading">
-                    <h2>Atividades recentes</h2>
-                </div>
-
-                <div class="panel-content">
-
-                    {% if dashboard is defined and dashboard.recent_activities %}
-                        {% for activity in dashboard.recent_activities %}
-                            <div class="information-item">
-                                <div>
-                                    <strong>{{ activity.name }}</strong>
-                                    <p>{{ activity.description }}</p>
-                                </div>
-                                <span>{{ activity.date }}</span>
-                            </div>
-                        {% endfor %}
-                    {% else %}
-                        <div class="empty-state">
-                            <p>Nenhuma atividade recente disponível.</p>
-                        </div>
-                    {% endif %}
-
-                </div>
-
-            </div>
-
-
-            <!-- Movimentações recentes -->
-            <div class="dashboard-panel">
-
-                <div class="panel-heading">
-                    <h2>Movimentações recentes</h2>
-                </div>
-
-                <div class="panel-content">
-
-                    {% if dashboard is defined and dashboard.recent_movements %}
-                        {% for movement in dashboard.recent_movements %}
-                            <div class="information-item">
-                                <div>
-                                    <strong>{{ movement.name }}</strong>
-                                    <p>{{ movement.description }}</p>
-                                </div>
-                                <span>{{ movement.date }}</span>
-                            </div>
-                        {% endfor %}
-                    {% else %}
-                        <div class="empty-state">
-                            <p>Nenhuma movimentação recente disponível.</p>
-                        </div>
-                    {% endif %}
-
-                </div>
-
-            </div>
-
-        </div>
-
-    </section>
-
-
-    <!-- SITUAÇÃO DOS ANIMAIS -->
-    <section class="dashboard-section">
-
-        <div class="dashboard-panel">
-
-            <div class="panel-heading">
-                <h2>Situação dos animais</h2>
-            </div>
-
-            <div class="panel-content">
-
-                {% if dashboard is defined and dashboard.animal_status %}
-                    {% for status in dashboard.animal_status %}
-                        <div class="information-item">
-                            <strong>{{ status.name }}</strong>
-                            <span>{{ status.quantity }}</span>
-                        </div>
-                    {% endfor %}
-                {% else %}
-                    <div class="empty-state">
-                        <p>Informações sobre os animais indisponíveis.</p>
                     </div>
-                {% endif %}
+                    {% endfor %}
+                </div>
 
-            </div>
-
-        </div>
-
-    </section>
-
-
-    <!-- ATALHOS -->
-    <section class="dashboard-section">
-
-        <div class="section-heading">
-            <h2>Acesso rápido</h2>
-            <p>Acesse os principais módulos do sistema.</p>
-        </div>
-
-        <div class="quick-actions">
-
-            {% if menu_items is defined %}
-                {% for item in menu_items %}
-                    {% if item.id in ['animals', 'inventory', 'activities', 'veterinary', 'assets'] %}
-                        <a href="{{ item.url }}" class="quick-action">
-                            <span>{{ item.icon|default('➜') }}</span>
-                            <strong>{{ item.label }}</strong>
-                        </a>
-                    {% endif %}
-                {% endfor %}
+                <div class="panel-footnote">
+                    <span class="footnote-dot blue-dot"></span>
+                    <span>Distribuição dos animais cadastrados</span>
+                </div>
             {% else %}
-                <div class="empty-state">
-                    <p>Os atalhos serão exibidos conforme as permissões do usuário.</p>
+                <div class="dashboard-empty">
+                    <span>Não há espécies cadastradas.</span>
                 </div>
             {% endif %}
+        </article>
 
-        </div>
+        <article class="dashboard-panel situation-panel">
+            <div class="panel-header">
+                <div>
+                    <span class="panel-kicker">ACOMPANHAMENTO</span>
+                    <h2>Situação dos animais</h2>
+                </div>
+                <span class="panel-symbol symbol-orange">◷</span>
+            </div>
+
+            {% if dashboard.situacoes %}
+                {% set maior_situacao = dashboard.situacoes|map(attribute='total')|max %}
+
+                <div class="chart-list">
+                    {% for situacao in dashboard.situacoes %}
+                    <div class="chart-row">
+                        <div class="chart-row-heading">
+                            <span>{{ situacao.situacao }}</span>
+                            <strong>{{ situacao.total }}</strong>
+                        </div>
+                        <div class="chart-track">
+                            <div
+                                class="chart-fill situation-fill color-{{ loop.index0 % 4 }}"
+                                style="width: {{ (situacao.total / maior_situacao * 100) if maior_situacao else 0 }}%">
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+
+                <div class="panel-footnote">
+                    <span class="footnote-dot orange-dot"></span>
+                    <span>Situação dos registros ativos</span>
+                </div>
+            {% else %}
+                <div class="dashboard-empty">
+                    <span>Não há informações de situação disponíveis.</span>
+                </div>
+            {% endif %}
+        </article>
 
     </section>
+
+    {% else %}
+
+    <section class="dashboard-no-access">
+        <strong>Visão geral indisponível</strong>
+        <p>Seu usuário não possui permissão para visualizar os indicadores de animais.</p>
+    </section>
+
+    {% endif %}
+
+    <section class="dashboard-modules">
+        <div class="modules-heading">
+            <div>
+                <span class="panel-kicker">NAVEGAÇÃO</span>
+                <h2>Módulos do SIAAG</h2>
+                <p>Acesse as áreas de gerenciamento da Fazenda Escola.</p>
+            </div>
+        </div>
+
+        <div class="module-grid">
+
+            <a href="{{ url_for('animals.painel') }}" class="module-card module-animals">
+                <span class="module-icon">♧</span>
+                <span class="module-name">Animais</span>
+                <span class="module-description">Cadastro e acompanhamento</span>
+                <span class="module-arrow">→</span>
+            </a>
+
+            <div class="module-card">
+                <span class="module-icon module-orange-icon">✚</span>
+                <span class="module-name">Saúde animal</span>
+                <span class="module-description">Gestão veterinária</span>
+                <span class="module-status">Em estruturação</span>
+            </div>
+
+            <div class="module-card">
+                <span class="module-icon module-blue-icon">▣</span>
+                <span class="module-name">Estoque</span>
+                <span class="module-description">Produtos e movimentações</span>
+                <span class="module-status">Em estruturação</span>
+            </div>
+
+            <div class="module-card">
+                <span class="module-icon module-purple-icon">▤</span>
+                <span class="module-name">Atividades</span>
+                <span class="module-description">Rotinas agropecuárias</span>
+                <span class="module-status">Em estruturação</span>
+            </div>
+
+            <div class="module-card">
+                <span class="module-icon module-green-icon">⌂</span>
+                <span class="module-name">Aulas práticas</span>
+                <span class="module-description">Atividades acadêmicas</span>
+                <span class="module-status">Em estruturação</span>
+            </div>
+
+            <div class="module-card">
+                <span class="module-icon module-orange-icon">⌬</span>
+                <span class="module-name">Pesquisa</span>
+                <span class="module-description">Projetos e experimentos</span>
+                <span class="module-status">Em estruturação</span>
+            </div>
+
+            <div class="module-card">
+                <span class="module-icon module-blue-icon">▱</span>
+                <span class="module-name">Patrimônio</span>
+                <span class="module-description">Bens e manutenção</span>
+                <span class="module-status">Em estruturação</span>
+            </div>
+
+            <div class="module-card">
+                <span class="module-icon module-purple-icon">▥</span>
+                <span class="module-name">Relatórios</span>
+                <span class="module-description">Dados e indicadores</span>
+                <span class="module-status">Em estruturação</span>
+            </div>
+
+        </div>
+    </section>
+
+    <footer class="dashboard-footer">
+        <span>SIAAG · Sistema Integrado de Administração Agropecuária</span>
+        <span>IFPI — Campus Paulistana</span>
+    </footer>
 
 </div>
 
-{% endblock %}
-
-{% block page_js %}
-<script src="{{ url_for('static', filename='js/main.js') }}" defer></script>
 {% endblock %}
