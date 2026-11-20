@@ -5,14 +5,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="theme-color" content="#173f2b">
-    <meta name="description" content="Acesso ao SIAAG — IFPI Campus Paulistana.">
 
-    <title>Entrar | SIAAG</title>
+    <title>Acesso | SIAAG</title>
 
     <link rel="stylesheet"
           href="{{ url_for('static', filename='css/app.css') }}">
     <link rel="stylesheet"
-          href="{{ url_for('static', filename='css/auth/login.css') }}">
+          href="{{ url_for('static', filename='css/login.css') }}">
 
     <script
         src="{{ url_for('static', filename='js/auth/login.js') }}"
@@ -23,51 +22,57 @@
 <body class="login-body">
 
 <main class="login-page">
-
     <section class="login-layout">
 
+        <!-- IDENTIDADE INSTITUCIONAL -->
         <aside class="login-brand-panel">
+
+            <div class="brand-background"></div>
+            <div class="brand-overlay"></div>
+
+            <header class="institution-header">
+                <img
+                    src="{{ url_for('static', filename='img/ifpi-simbolo-transparente.png') }}"
+                    alt="Símbolo do Instituto Federal do Piauí"
+                    class="ifpi-symbol"
+                >
+            </header>
+
             <div class="brand-content">
 
-                <div class="brand-logo">
-                    <img
-                        src="{{ url_for('static', filename='img/logo.jpg') }}"
-                        alt="Logo SIAAG"
-                    >
-                </div>
+                <h1>
+                    Sistema Integrado de
+                    <strong>Gestão Agropecuária</strong>
+                </h1>
 
-                <span class="brand-overline">GESTÃO AGROPECUÁRIA</span>
-
-                <h1>Gestão inteligente.<br>Resultados reais.</h1>
+                <span class="brand-accent"></span>
 
                 <p>
-                    Tecnologia e organização a serviço da
-                    administração da Fazenda Escola.
+                    Gestão da Fazenda Escola do
+                    <strong>IFPI – Campus Paulistana</strong>
                 </p>
 
-                <div class="brand-divider"></div>
-
-                <span class="brand-institution">
-                    INSTITUTO FEDERAL DO PIAUÍ
-                </span>
-
-                <span class="brand-campus">Campus Paulistana</span>
             </div>
 
-            <span class="brand-version">SIAAG · Sistema institucional</span>
         </aside>
 
+        <!-- ACESSO AO SISTEMA -->
         <section class="login-panel" aria-labelledby="login-title">
 
             <div class="login-content">
 
+                <div class="system-brand">
+                    <img
+                        src="{{ url_for('static', filename='img/logo.jpg') }}"
+                        alt="SIAAG"
+                    >
+
+                    <p>Sistema Integrado de Gestão Agropecuária</p>
+                </div>
+
                 <div class="login-heading">
-                    <span class="login-eyebrow">ÁREA RESTRITA</span>
-                    <h2 id="login-title">Bem-vindo(a)!</h2>
-                    <p>
-                        Entre com suas credenciais para acessar
-                        o sistema.
-                    </p>
+                    <h2 id="login-title">Acesse o sistema</h2>
+                    <p>Informe suas credenciais para continuar.</p>
                 </div>
 
                 <div
@@ -100,55 +105,43 @@
                 >
 
                     <div class="login-field">
-                        <label for="login">Login ou e-mail</label>
-
                         <div class="login-input-wrapper">
-                            <span class="field-icon" aria-hidden="true">
-                                <svg viewBox="0 0 24 24" fill="none">
-                                    <circle cx="12" cy="8" r="4"
-                                        stroke="currentColor" stroke-width="1.7"/>
-                                    <path d="M4 21C4 17 7.5 14.5 12 14.5S20 17 20 21"
-                                        stroke="currentColor" stroke-width="1.7"
-                                        stroke-linecap="round"/>
-                                </svg>
-                            </span>
+
+                            <svg viewBox="0 0 24 24" aria-hidden="true">
+                                <circle cx="12" cy="8" r="4"></circle>
+                                <path d="M4 21c0-4 3.5-6.5 8-6.5s8 2.5 8 6.5"></path>
+                            </svg>
 
                             <input
                                 type="text"
                                 id="login"
                                 name="login"
-                                placeholder="Digite seu login"
+                                placeholder="Usuário"
                                 autocomplete="username"
                                 maxlength="100"
                                 required
                                 autofocus
+                                aria-label="Usuário"
                             >
                         </div>
                     </div>
 
                     <div class="login-field">
-                        <label for="senha">Senha</label>
-
                         <div class="login-input-wrapper">
-                            <span class="field-icon" aria-hidden="true">
-                                <svg viewBox="0 0 24 24" fill="none">
-                                    <rect x="4" y="10" width="16" height="11"
-                                        rx="2" stroke="currentColor"
-                                        stroke-width="1.7"/>
-                                    <path d="M8 10V7A4 4 0 0 1 16 7V10"
-                                        stroke="currentColor"
-                                        stroke-width="1.7"
-                                        stroke-linecap="round"/>
-                                </svg>
-                            </span>
+
+                            <svg viewBox="0 0 24 24" aria-hidden="true">
+                                <rect x="4" y="10" width="16" height="11" rx="2"></rect>
+                                <path d="M8 10V7a4 4 0 0 1 8 0v3"></path>
+                            </svg>
 
                             <input
                                 type="password"
                                 id="senha"
                                 name="senha"
-                                placeholder="Digite sua senha"
+                                placeholder="Senha"
                                 autocomplete="current-password"
                                 required
+                                aria-label="Senha"
                             >
 
                             <button
@@ -168,7 +161,7 @@
                         class="login-submit"
                         id="loginSubmit"
                     >
-                        <span id="loginSubmitText">Entrar no sistema</span>
+                        <span id="loginSubmitText">Entrar</span>
 
                         <span id="loginLoading" hidden>
                             <span class="login-spinner"></span>
@@ -178,22 +171,19 @@
 
                 </form>
 
-                <div class="login-security">
-                    <span class="security-icon">✓</span>
-                    <span>Acesso exclusivo a usuários autorizados.</span>
+                <div class="login-decoration" aria-hidden="true">
+                    <span></span>
+                    <svg viewBox="0 0 32 32">
+                        <path d="M26 5C13 5 5 11 5 22c0 3 1 5 2 6 2-8 7-13 15-17-5 5-9 10-11 16 10 0 17-7 15-22Z"></path>
+                    </svg>
+                    <span></span>
                 </div>
 
             </div>
 
-            <footer class="login-footer">
-                <span>SIAAG</span>
-                <span>IFPI · Campus Paulistana</span>
-            </footer>
-
         </section>
 
     </section>
-
 </main>
 
 </body>

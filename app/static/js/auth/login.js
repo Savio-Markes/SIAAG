@@ -9,7 +9,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (!form) return;
 
-    // Exibir ou ocultar senha
     if (passwordInput && togglePassword) {
         togglePassword.addEventListener("click", () => {
             const mostrar = passwordInput.type === "password";
@@ -31,7 +30,6 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    // Estado de carregamento durante autenticação
     form.addEventListener("submit", () => {
         if (!form.checkValidity()) return;
 
