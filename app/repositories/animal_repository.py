@@ -1,3 +1,4 @@
+
 # Desenvolvido por: Fábio Barbosa
 
 from app.extensions import get_db
@@ -216,6 +217,122 @@ def reativar_animal(animal_id):
 
         conexao.commit()
         return reativado
+
+    except Exception:
+        conexao.rollback()
+        raise
+
+
+def excluir_animal(animal_id, excluido_por):
+    """
+    Exclui definitivamente um animal somente se não houver
+    registros vinculados. Registra a operação na auditoria.
+    """
+
+    tabelas_vinculadas = {
+        "pesagens": "pesagens_animal",
+        "atendimentos": "atendimentos_veterinarios",
+        "ocorrencias": "ocorrencias_animais",
+        "atividades": "atividades"
+    }
+
+    conexao = get_db()
+
+    try:
+        with conexao.cursor() as cursor:
+
+            # Bloqueia o registro durante a verificação e exclusão.
+            cursor.execute(
+                """
+                SELECT id, identificacao
+                FROM animais
+                WHERE id = %s
+                FOR UPDATE
+                """,
+                (animal_id,)
+            )
+
+            animal = cursor.fetchone()
+
+            if not animal:
+                conexao.rollback()
+                return {
+                    "status": "nao_encontrado"
+                }
+
+            vinculos = {}
+
+            for nome, tabela in tabelas_vinculadas.items():
+                cursor.execute(
+                    f"""
+                    SELECT COUNT(*) AS total
+                    FROM {tabela}
+                    WHERE animal_id = %s
+                    """,
+                    (animal_id,)
+                )
+
+                total = cursor.fetchone()["total"]
+
+                if total:
+                    vinculos[nome] = total
+
+            if vinculos:
+                conexao.rollback()
+                return {
+                    "status": "possui_historico",
+                    "vinculos": vinculos
+                }
+
+            # Registra a exclusão antes de remover o cadastro.
+            cursor.execute(
+                """
+                INSERT INTO logs_auditoria (
+                    usuario_id,
+                    data_hora,
+                    modulo,
+                    acao,
+                    entidade,
+                    registro_id,
+                    resultado,
+                    detalhes_resumidos
+                ) VALUES (
+                    %s,
+                    NOW(),
+                    'animais',
+                    'excluir_animal',
+                    'animais',
+                    %s,
+                    'sucesso',
+                    %s
+                )
+                """,
+                (
+                    excluido_por,
+                    animal_id,
+                    (
+                        "Exclusão definitiva do animal "
+                        f"{animal['identificacao']} (ID {animal_id}), "
+                        "sem registros vinculados."
+                    )
+                )
+            )
+
+            cursor.execute(
+                "DELETE FROM animais WHERE id = %s",
+                (animal_id,)
+            )
+
+            if cursor.rowcount != 1:
+                raise RuntimeError(
+                    "Não foi possível concluir a exclusão."
+                )
+
+        conexao.commit()
+
+        return {
+            "status": "excluido"
+        }
 
     except Exception:
         conexao.rollback()

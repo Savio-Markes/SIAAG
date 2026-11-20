@@ -197,3 +197,55 @@ def reativar_animal(animal_id):
         )
 
     return True
+
+
+def excluir_animal(animal_id, excluido_por):
+    """
+    Solicita a exclusão definitiva ao repositório.
+
+    A exclusão só é permitida quando não existem registros
+    históricos vinculados ao animal.
+    """
+
+    resultado = animal_repository.excluir_animal(
+        animal_id=animal_id,
+        excluido_por=excluido_por
+    )
+
+    status = resultado.get("status")
+
+    if status == "nao_encontrado":
+        raise AnimalServiceError("Animal não encontrado.")
+
+    if status == "possui_historico":
+        nomes = {
+            "pesagens": "pesagem(ns)",
+            "atendimentos": "atendimento(s) veterinário(s)",
+            "ocorrencias": "ocorrência(s)",
+            "atividades": "atividade(s)"
+        }
+
+        vinculos = resultado.get("vinculos", {})
+
+        detalhes = [
+            f"{total} {nomes.get(tipo, tipo)}"
+            for tipo, total in vinculos.items()
+        ]
+
+        mensagem = (
+            "A exclusão não pode ser realizada. "
+            "O animal possui histórico vinculado: "
+            + ", ".join(detalhes)
+            + ". O cadastro deve ser preservado."
+        )
+
+        raise AnimalServiceError(mensagem)
+
+    if status != "excluido":
+        raise AnimalServiceError(
+            "Não foi possível concluir a exclusão do animal."
+        )
+
+    return True
+
+

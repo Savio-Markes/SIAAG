@@ -222,3 +222,33 @@ def reativar(animal_id):
             "sucesso": False,
             "mensagem": str(erro)
         }), status
+
+    
+@animals_bp.route("/<int:animal_id>/excluir", methods=["POST"])
+@permission_required("animais.editar")
+def excluir(animal_id):
+    try:
+        animal_service.excluir_animal(
+            animal_id=animal_id,
+            excluido_por=session["usuario_id"]
+        )
+
+        return jsonify({
+            "sucesso": True,
+            "mensagem": "Animal excluído com sucesso."
+        }), 200
+
+    except animal_service.AnimalServiceError as erro:
+        mensagem = str(erro)
+
+        if mensagem == "Animal não encontrado.":
+            status = 404
+        elif "histórico vinculado" in mensagem:
+            status = 409
+        else:
+            status = 400
+
+        return jsonify({
+            "sucesso": False,
+            "mensagem": mensagem
+        }), status

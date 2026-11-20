@@ -13,8 +13,9 @@
 {% block content %}
 <section class="animal-detail-container">
 
+    <!-- CABEÇALHO -->
     <header class="animal-detail-header">
-        <div>
+        <div class="animal-detail-heading">
             <span class="animal-detail-subtitle">GESTÃO AGROPECUÁRIA</span>
             <h2>Ficha do Animal</h2>
             <p>Consulte as informações cadastrais e o acompanhamento do animal.</p>
@@ -22,7 +23,8 @@
 
         <div class="animal-detail-actions">
             <a href="/animais/painel" class="detail-btn detail-btn-back">
-                ← Voltar para animais
+                <span aria-hidden="true">←</span>
+                Voltar para animais
             </a>
 
             <a
@@ -53,9 +55,16 @@
                 {{ animal.get('situacao') or 'Não informado' }}
             </span>
 
-            <h2>{{ animal.get('identificacao') or 'Identificação não informada' }}</h2>
+            <h2>
+                {{ animal.get('identificacao') or 'Identificação não informada' }}
+            </h2>
 
             <p>{{ animal.get('nome') or 'Sem nome cadastrado' }}</p>
+        </div>
+
+        <div class="animal-profile-id">
+            <span>REGISTRO</span>
+            <strong>#{{ animal.get('id') }}</strong>
         </div>
     </section>
 
@@ -63,6 +72,7 @@
     <section class="detail-section">
         <div class="section-heading">
             <div>
+                <span class="section-eyebrow">INFORMAÇÕES GERAIS</span>
                 <h3>Dados cadastrais</h3>
                 <p>Informações gerais do animal registrado no sistema.</p>
             </div>
@@ -132,6 +142,7 @@
     <section class="detail-section">
         <div class="section-heading">
             <div>
+                <span class="section-eyebrow">SAÚDE ANIMAL</span>
                 <h3>Histórico veterinário</h3>
                 <p>Registros de atendimentos e acompanhamento veterinário.</p>
             </div>
@@ -151,6 +162,7 @@
     <section class="detail-section">
         <div class="section-heading">
             <div>
+                <span class="section-eyebrow">ACOMPANHAMENTO</span>
                 <h3>Histórico de pesagens</h3>
                 <p>Acompanhamento dos registros de peso do animal.</p>
             </div>
@@ -159,7 +171,10 @@
         <div class="history-placeholder">
             <span aria-hidden="true">⚖️</span>
             <h4>Nenhuma pesagem disponível</h4>
-            <p>Os registros de pesagem serão exibidos nesta seção quando disponíveis.</p>
+            <p>
+                Os registros de pesagem serão exibidos nesta seção
+                quando disponíveis.
+            </p>
         </div>
     </section>
 
@@ -167,6 +182,7 @@
     <section class="detail-section">
         <div class="section-heading">
             <div>
+                <span class="section-eyebrow">GESTÃO DE ATIVIDADES</span>
                 <h3>Atividades relacionadas</h3>
                 <p>Atividades agropecuárias vinculadas ao animal.</p>
             </div>
@@ -182,6 +198,35 @@
         </div>
     </section>
 
+    <!-- ZONA DE EXCLUSÃO -->
+    <section class="animal-delete-section">
+        <div class="animal-delete-content">
+            <div class="animal-delete-icon" aria-hidden="true">
+                <span>!</span>
+            </div>
+
+            <div>
+                <span class="animal-delete-label">ÁREA DE RISCO</span>
+                <h3>Exclusão definitiva do cadastro</h3>
+                <p>
+                    Esta ação remove permanentemente o cadastro do animal.
+                    A exclusão será bloqueada se houver pesagens,
+                    atendimentos veterinários, ocorrências ou atividades
+                    vinculadas.
+                </p>
+            </div>
+        </div>
+
+        <button
+            type="button"
+            id="btnExcluirAnimal"
+            class="detail-btn detail-btn-delete"
+        >
+            Excluir animal
+        </button>
+    </section>
+
+    <!-- FEEDBACK -->
     <div
         id="animalDetailFeedback"
         class="animal-detail-feedback"
