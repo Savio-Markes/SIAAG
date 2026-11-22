@@ -13,7 +13,7 @@
     <header class="page-header">
         <div>
             <h1>Movimentações do estoque</h1>
-            <p>Acompanhe as entradas e saídas dos produtos cadastrados.</p>
+            <p>Acompanhe as entradas, saídas e ajustes dos produtos cadastrados.</p>
         </div>
 
         <a href="/estoque" class="button-secondary">
@@ -46,6 +46,7 @@
                     <option value="">Todas</option>
                     <option value="entrada">Entrada</option>
                     <option value="saida">Saída</option>
+                    <option value="ajuste">Ajuste</option>
                 </select>
             </div>
         </div>
@@ -67,25 +68,55 @@
                 <tbody id="listaMovimentacoes">
                     {% if movimentacoes %}
                         {% for movimento in movimentacoes %}
-                        <tr>
-                            <td>{{ movimento.produto_nome or 'Não informado' }}</td>
-                            <td>{{ movimento.lote_codigo or '—' }}</td>
+                        <tr
+                            data-produto="{{ movimento.produto_nome or '' }}"
+                            data-tipo="{{ movimento.tipo or '' }}"
+                        >
+                            <td>
+                                {{ movimento.produto_nome or 'Não informado' }}
+                            </td>
+
+                            <td>
+                                {{ movimento.lote_codigo or '—' }}
+                            </td>
+
                             <td>
                                 <span class="status-badge">
-                                    {{ movimento.tipo or 'Não informado' }}
+                                    {% if movimento.tipo == 'entrada' %}
+                                        Entrada
+                                    {% elif movimento.tipo == 'saida' %}
+                                        Saída
+                                    {% elif movimento.tipo == 'ajuste' %}
+                                        Ajuste -
+                                        {% if movimento.sentido_ajuste == 'acrescimo' %}
+                                            Acréscimo
+                                        {% elif movimento.sentido_ajuste == 'reducao' %}
+                                            Redução
+                                        {% else %}
+                                            Não especificado
+                                        {% endif %}
+                                    {% else %}
+                                        {{ movimento.tipo or 'Não informado' }}
+                                    {% endif %}
                                 </span>
                             </td>
+
                             <td>
                                 {{ movimento.quantidade }}
                                 {{ movimento.unidade or '' }}
                             </td>
+
                             <td>
                                 {{ movimento.data_hora or '—' }}
                             </td>
+
                             <td>
                                 {{ movimento.responsavel_nome or '—' }}
                             </td>
-                            <td>{{ movimento.motivo or '—' }}</td>
+
+                            <td>
+                                {{ movimento.motivo or '—' }}
+                            </td>
                         </tr>
                         {% endfor %}
                     {% else %}
@@ -101,4 +132,52 @@
 
     </section>
 </section>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+    const filtroProduto = document.getElementById("filtroProduto");
+    const filtroTipo = document.getElementById("filtroTipo");
+    const linhas = document.querySelectorAll(
+        "#listaMovimentacoes tr[data-produto]"
+    );
+
+    function filtrarMovimentacoes() {
+        const produto = filtroProduto.value
+            .trim()
+            .toLowerCase();
+
+        const tipo = filtroTipo.value;
+
+        linhas.forEach(function (linha) {
+            const nomeProduto = (
+                linha.dataset.produto || ""
+            ).toLowerCase();
+
+            const tipoMovimento = linha.dataset.tipo || "";
+
+            const correspondeProduto =
+                nomeProduto.includes(produto);
+
+            const correspondeTipo =
+                !tipo || tipoMovimento === tipo;
+
+            linha.hidden = !(
+                correspondeProduto && correspondeTipo
+            );
+        });
+    }
+
+    filtroProduto.addEventListener(
+        "input",
+        filtrarMovimentacoes
+    );
+
+    filtroTipo.addEventListener(
+        "change",
+        filtrarMovimentacoes
+    );
+
+});
+</script>
 {% endblock %}

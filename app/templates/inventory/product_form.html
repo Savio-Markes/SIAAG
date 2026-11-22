@@ -1,7 +1,10 @@
-
 {% extends "base.html" %}
 
-{% block title %}Cadastro de Produto | SIAAG{% endblock %}
+{% set modo_edicao = editando|default(false) %}
+
+{% block title %}
+    {{ "Editar produto" if modo_edicao else "Cadastro de Produto" }} | SIAAG
+{% endblock %}
 
 {% block page_css %}
 <link rel="stylesheet" href="{{ url_for('static', filename='css/stock.css') }}">
@@ -12,11 +15,15 @@
 
     <header class="page-header">
         <div>
-            <h1>Cadastrar produto</h1>
-            <p>Adicione um novo produto ao estoque da Fazenda Escola.</p>
+            <h1>{{ "Editar produto" if modo_edicao else "Cadastrar produto" }}</h1>
+            <p>
+                {{ "Atualize as informações cadastrais do produto."
+                   if modo_edicao
+                   else "Adicione um novo produto ao estoque da Fazenda Escola." }}
+            </p>
         </div>
 
-        <a href="/estoque" class="button-secondary">
+        <a href="{{ url_for('inventory.index') }}" class="button-secondary">
             Voltar ao estoque
         </a>
     </header>
@@ -26,16 +33,13 @@
         <div class="panel-header">
             <div>
                 <h2>Informações do produto</h2>
-                <p>Preencha os dados para cadastrar o produto.</p>
+                <p>
+                    {{ "Altere os dados necessários e salve as modificações."
+                       if modo_edicao
+                       else "Preencha os dados para cadastrar o produto." }}
+                </p>
             </div>
         </div>
-
-        <div
-            id="produtoFeedback"
-            class="form-feedback"
-            role="status"
-            aria-live="polite"
-        ></div>
 
         <form
             id="produtoForm"
@@ -54,27 +58,34 @@
                         id="nome"
                         name="nome"
                         maxlength="150"
+                        value="{{ produto.nome if modo_edicao else '' }}"
                         required
                     >
                 </div>
 
                 <div class="form-field">
-                    <label for="categoria_id">Categoria</label>
-                    <select
-                        id="categoria_id"
-                        name="categoria_id"
-                        required
-                    >
-                        <option value="">Selecione uma categoria</option>
+                    <label for="categoria_nome">Categoria</label>
 
-                        {% if categorias is defined %}
-                            {% for categoria in categorias %}
-                            <option value="{{ categoria.id }}">
-                                {{ categoria.nome }}
-                            </option>
-                            {% endfor %}
-                        {% endif %}
-                    </select>
+                    <input
+                        type="text"
+                        id="categoria_nome"
+                        name="categoria_nome"
+                        list="listaCategorias"
+                        maxlength="100"
+                        placeholder="Selecione ou digite uma categoria"
+                        autocomplete="off"
+                        value="{{ produto.categoria_nome or '' if modo_edicao else '' }}"
+                    >
+
+                    <datalist id="listaCategorias">
+                        {% for categoria in categorias %}
+                        <option value="{{ categoria.nome }}">
+                        {% endfor %}
+                    </datalist>
+
+                    <small>
+                        Escolha uma sugestão ou digite uma nova categoria.
+                    </small>
                 </div>
 
                 <div class="form-field">
@@ -83,7 +94,7 @@
                         id="descricao"
                         name="descricao"
                         rows="4"
-                    ></textarea>
+                    >{{ produto.descricao or '' if modo_edicao else '' }}</textarea>
                 </div>
             </fieldset>
 
@@ -98,6 +109,7 @@
                         name="unidade"
                         maxlength="30"
                         placeholder="Ex.: kg, litro, unidade"
+                        value="{{ produto.unidade if modo_edicao else '' }}"
                         required
                     >
                 </div>
@@ -110,6 +122,7 @@
                         name="estoque_minimo"
                         min="0"
                         step="0.001"
+                        value="{{ produto.estoque_minimo if modo_edicao else '' }}"
                         required
                     >
                 </div>
@@ -120,6 +133,9 @@
                         id="controla_lote_validade"
                         name="controla_lote_validade"
                         value="1"
+                        {% if modo_edicao and produto.controla_lote_validade %}
+                            checked
+                        {% endif %}
                     >
                     <label for="controla_lote_validade">
                         Controlar lote e validade deste produto
@@ -127,30 +143,14 @@
                 </div>
             </fieldset>
 
-            <fieldset class="form-section">
-                <legend>3. Situação do cadastro</legend>
-
-                <div class="form-field checkbox-field">
-                    <input
-                        type="checkbox"
-                        id="ativo"
-                        name="ativo"
-                        value="1"
-                        checked
-                    >
-                    <label for="ativo">
-                        Produto ativo
-                    </label>
-                </div>
-            </fieldset>
-
             <div class="form-actions">
-                <a href="/estoque" class="button-secondary">
+                <a href="{{ url_for('inventory.index') }}"
+                   class="button-secondary">
                     Cancelar
                 </a>
 
                 <button type="submit" class="button-primary">
-                    Cadastrar produto
+                    {{ "Salvar alterações" if modo_edicao else "Cadastrar produto" }}
                 </button>
             </div>
 

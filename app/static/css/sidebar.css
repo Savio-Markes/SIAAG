@@ -115,16 +115,13 @@
     width: 100%;
     min-height: 43px;
     padding: 9px 12px;
-
     color: #d5ded7;
     background: transparent;
     border: 1px solid transparent;
     border-radius: 7px;
-
     font-size: 12px;
     font-weight: 500;
     text-decoration: none;
-
     transition: background .18s ease, color .18s ease;
 }
 
@@ -139,14 +136,10 @@
     stroke-linejoin: round;
 }
 
-/* HOVER */
-
 .navigation-link:hover {
     color: #fff;
     background: rgba(255,255,255,.07);
 }
-
-/* SELEÇÃO */
 
 .navigation-link.active,
 .navigation-link[aria-current="page"] {
@@ -162,13 +155,18 @@
     stroke-width: 1.9;
 }
 
-/* RODAPÉ */
+/* RODAPÉ INSTITUCIONAL */
 
 .sidebar-bottom {
     margin-top: auto;
     padding: 0;
-    background: #001f05;
-    border-radius: 7px;
+    background: linear-gradient(
+        110deg,
+        #064523,
+        #032f1b
+    );
+    border: 1px solid rgba(255,255,255,.08);
+    border-radius: 9px;
 }
 
 .sidebar-institution {

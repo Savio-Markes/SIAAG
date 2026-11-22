@@ -1,4 +1,3 @@
-
 # Desenvolvido por: Fábio Barbosa
 
 from flask import Flask, render_template
@@ -18,11 +17,13 @@ def create_app():
     from app.dashboard.routes import dashboard_bp
     from app.users.routes import users_bp
     from app.animals.routes import animals_bp
+    from app.inventory.routes import inventory_bp
 
     app.register_blueprint(auth_bp)
     app.register_blueprint(dashboard_bp)
     app.register_blueprint(users_bp)
     app.register_blueprint(animals_bp)
+    app.register_blueprint(inventory_bp)
 
     # ROTA TEMPORÁRIA PARA TESTE DO FORMULÁRIO DE PATRIMÔNIO
 

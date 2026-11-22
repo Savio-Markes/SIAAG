@@ -1,4 +1,3 @@
-
 {% extends "base.html" %}
 
 {% block title %}Nova Movimentação | SIAAG{% endblock %}
@@ -13,10 +12,10 @@
     <header class="page-header">
         <div>
             <h1>Nova movimentação</h1>
-            <p>Registre a entrada ou saída de produtos do estoque.</p>
+            <p>Registre entradas, saídas e ajustes do estoque.</p>
         </div>
 
-        <a href="/estoque" class="button-secondary">
+        <a href="{{ url_for('inventory.index') }}" class="button-secondary">
             Voltar ao estoque
         </a>
     </header>
@@ -26,7 +25,7 @@
         <div class="panel-header">
             <div>
                 <h2>Dados da movimentação</h2>
-                <p>Preencha as informações para registrar a movimentação.</p>
+                <p>Preencha as informações para registrar a operação.</p>
             </div>
         </div>
 
@@ -41,7 +40,7 @@
             id="movimentacaoForm"
             class="data-form"
             method="POST"
-            action=""
+            action="{{ url_for('inventory.nova_movimentacao') }}"
         >
 
             <fieldset class="form-section">
@@ -49,6 +48,7 @@
 
                 <div class="form-field">
                     <label for="produto_id">Produto</label>
+
                     <select
                         id="produto_id"
                         name="produto_id"
@@ -56,35 +56,37 @@
                     >
                         <option value="">Selecione um produto</option>
 
-                        {% if produtos is defined %}
-                            {% for produto in produtos %}
-                            <option
-                                value="{{ produto.id }}"
-                                data-unidade="{{ produto.unidade }}"
-                            >
-                                {{ produto.nome }}
-                            </option>
-                            {% endfor %}
-                        {% endif %}
+                        {% for produto in produtos %}
+                        <option
+                            value="{{ produto.id }}"
+                            data-unidade="{{ produto.unidade }}"
+                            data-controla-lote="{{ produto.controla_lote_validade }}"
+                        >
+                            {{ produto.nome }}
+                        </option>
+                        {% endfor %}
                     </select>
                 </div>
 
-                <div class="form-field">
+                <div class="form-field" id="campoLote">
                     <label for="lote_id">Lote</label>
-                    <select id="lote_id" name="lote_id">
-                        <option value="">Selecione um lote, se aplicável</option>
 
-                        {% if lotes is defined %}
-                            {% for lote in lotes %}
-                            <option
-                                value="{{ lote.id }}"
-                                data-produto="{{ lote.produto_id }}"
-                            >
-                                {{ lote.codigo_lote }}
-                            </option>
-                            {% endfor %}
-                        {% endif %}
+                    <select id="lote_id" name="lote_id">
+                        <option value="">Selecione um lote</option>
+
+                        {% for lote in lotes %}
+                        <option
+                            value="{{ lote.id }}"
+                            data-produto="{{ lote.produto_id }}"
+                        >
+                            {{ lote.codigo_lote or ('Lote #' ~ lote.id) }}
+                        </option>
+                        {% endfor %}
                     </select>
+
+                    <small id="loteAjuda">
+                        Selecione o lote correspondente ao produto.
+                    </small>
                 </div>
             </fieldset>
 
@@ -93,15 +95,41 @@
 
                 <div class="form-field">
                     <label for="tipo">Tipo de movimentação</label>
+
                     <select id="tipo" name="tipo" required>
                         <option value="">Selecione</option>
                         <option value="entrada">Entrada</option>
                         <option value="saida">Saída</option>
+                        <option value="ajuste">Ajuste de estoque</option>
                     </select>
+                </div>
+
+                <div
+                    class="form-field"
+                    id="campoSentidoAjuste"
+                    hidden
+                >
+                    <label for="sentido_ajuste">Tipo de ajuste</label>
+
+                    <select
+                        id="sentido_ajuste"
+                        name="sentido_ajuste"
+                        disabled
+                    >
+                        <option value="">Selecione</option>
+                        <option value="acrescimo">Acréscimo</option>
+                        <option value="reducao">Redução</option>
+                    </select>
+
+                    <small>
+                        Informe se a quantidade será acrescentada ou
+                        reduzida do saldo atual.
+                    </small>
                 </div>
 
                 <div class="form-field">
                     <label for="quantidade">Quantidade</label>
+
                     <input
                         type="number"
                         id="quantidade"
@@ -113,18 +141,20 @@
                 </div>
 
                 <div class="form-field">
-                    <label for="unidade">Unidade</label>
+                    <label for="unidade">Unidade do produto</label>
+
                     <input
                         type="text"
                         id="unidade"
-                        name="unidade"
                         maxlength="30"
-                        required
+                        readonly
+                        placeholder="Selecione um produto"
                     >
                 </div>
 
                 <div class="form-field">
                     <label for="data_hora">Data e hora</label>
+
                     <input
                         type="datetime-local"
                         id="data_hora"
@@ -138,29 +168,40 @@
                 <legend>3. Responsável e motivo</legend>
 
                 <div class="form-field">
-                    <label for="responsavel_id">ID do responsável</label>
+                    <label>Responsável pela operação</label>
+
                     <input
-                        type="number"
-                        id="responsavel_id"
-                        name="responsavel_id"
-                        min="1"
-                        required
+                        type="text"
+                        value="Usuário autenticado"
+                        readonly
+                        disabled
                     >
+
+                    <small>
+                        O responsável será identificado automaticamente
+                        pela sessão do sistema.
+                    </small>
                 </div>
 
                 <div class="form-field">
-                    <label for="motivo">Motivo da movimentação</label>
+                    <label for="motivo">Justificativa da movimentação</label>
+
                     <textarea
                         id="motivo"
                         name="motivo"
                         rows="4"
+                        maxlength="500"
                         required
+                        placeholder="Descreva o motivo da operação..."
                     ></textarea>
                 </div>
             </fieldset>
 
             <div class="form-actions">
-                <a href="/estoque" class="button-secondary">
+                <a
+                    href="{{ url_for('inventory.index') }}"
+                    class="button-secondary"
+                >
                     Cancelar
                 </a>
 
@@ -172,4 +213,124 @@
         </form>
     </section>
 </section>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+    const produtoSelect = document.getElementById("produto_id");
+    const loteSelect = document.getElementById("lote_id");
+    const campoLote = document.getElementById("campoLote");
+
+    const tipoSelect = document.getElementById("tipo");
+    const campoSentidoAjuste = document.getElementById(
+        "campoSentidoAjuste"
+    );
+    const sentidoAjusteSelect = document.getElementById(
+        "sentido_ajuste"
+    );
+
+    const unidadeInput = document.getElementById("unidade");
+    const dataHoraInput = document.getElementById("data_hora");
+    const formulario = document.getElementById("movimentacaoForm");
+
+    function atualizarProduto() {
+
+        const opcao = produtoSelect.selectedOptions[0];
+
+        unidadeInput.value = opcao
+            ? opcao.dataset.unidade || ""
+            : "";
+
+        const controlaLote = opcao
+            ? opcao.dataset.controlaLote === "1"
+            : false;
+
+        campoLote.hidden = !controlaLote;
+        loteSelect.required = controlaLote;
+        loteSelect.disabled = !controlaLote;
+
+        if (!controlaLote) {
+            loteSelect.value = "";
+        }
+
+        Array.from(loteSelect.options).forEach(function (option) {
+
+            if (!option.value) {
+                return;
+            }
+
+            option.hidden = (
+                !controlaLote ||
+                option.dataset.produto !== produtoSelect.value
+            );
+        });
+    }
+
+    function atualizarTipoMovimentacao() {
+
+        const ehAjuste = tipoSelect.value === "ajuste";
+
+        campoSentidoAjuste.hidden = !ehAjuste;
+        sentidoAjusteSelect.disabled = !ehAjuste;
+        sentidoAjusteSelect.required = ehAjuste;
+
+        if (!ehAjuste) {
+            sentidoAjusteSelect.value = "";
+        }
+    }
+
+    function preencherDataHora() {
+
+        if (dataHoraInput.value) {
+            return;
+        }
+
+        const agora = new Date();
+
+        const deslocamento = agora.getTimezoneOffset() * 60000;
+
+        const dataLocal = new Date(
+            agora.getTime() - deslocamento
+        ).toISOString().slice(0, 16);
+
+        dataHoraInput.value = dataLocal;
+    }
+
+    produtoSelect.addEventListener("change", atualizarProduto);
+    tipoSelect.addEventListener("change", atualizarTipoMovimentacao);
+
+    formulario.addEventListener("submit", function (evento) {
+
+        if (
+            tipoSelect.value === "ajuste" &&
+            !sentidoAjusteSelect.value
+        ) {
+            evento.preventDefault();
+
+            sentidoAjusteSelect.focus();
+
+            alert(
+                "Selecione se o ajuste será de acréscimo ou redução."
+            );
+        }
+
+        if (
+            produtoSelect.selectedOptions[0] &&
+            produtoSelect.selectedOptions[0].dataset.controlaLote === "1" &&
+            !loteSelect.value
+        ) {
+            evento.preventDefault();
+
+            loteSelect.focus();
+
+            alert("Selecione o lote do produto.");
+        }
+    });
+
+    atualizarProduto();
+    atualizarTipoMovimentacao();
+    preencherDataHora();
+
+});
+</script>
 {% endblock %}
