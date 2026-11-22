@@ -1,4 +1,3 @@
-
 document.addEventListener("DOMContentLoaded", () => {
     "use strict";
 
@@ -18,7 +17,12 @@ document.addEventListener("DOMContentLoaded", () => {
         anterior: document.getElementById("btnPaginaAnterior"),
         proxima: document.getElementById("btnProximaPagina"),
         limpar: document.getElementById("btnLimparFiltros"),
-        novoAnimal: document.getElementById("btnNovoAnimal")
+        novoAnimal: document.getElementById("btnNovoAnimal"),
+        kpiTotal: document.getElementById("kpiTotalAnimais"),
+        kpiAtivos: document.getElementById("kpiAnimaisAtivos"),
+        kpiInativos: document.getElementById("kpiAnimaisInativos"),
+        graficoEspecies: document.getElementById("graficoEspecies"),
+        graficoSituacoes: document.getElementById("graficoSituacoes")
     };
 
     let pagina = 1;
@@ -96,7 +100,8 @@ document.addEventListener("DOMContentLoaded", () => {
         textos.className = "animal-identification-text";
 
         const identificacao = document.createElement("strong");
-        identificacao.textContent = animal.identificacao || "Sem identificação";
+        identificacao.textContent =
+            animal.identificacao || "Sem identificação";
 
         const nome = document.createElement("span");
         nome.textContent = animal.nome || "Nome não informado";
@@ -121,6 +126,69 @@ document.addEventListener("DOMContentLoaded", () => {
         celula.appendChild(badge);
 
         return celula;
+    }
+
+    function renderizarGrafico(container, dados, classe = "") {
+        container.replaceChildren();
+
+        if (!Array.isArray(dados) || dados.length === 0) {
+            const vazio = document.createElement("div");
+            vazio.className = "animals-chart-empty";
+            vazio.textContent = "Não há registros para este gráfico.";
+            container.appendChild(vazio);
+            return;
+        }
+
+        const maior = Math.max(
+            ...dados.map(item => Number(item.total) || 0),
+            1
+        );
+
+        dados.forEach(item => {
+            const total = Number(item.total) || 0;
+
+            const linha = document.createElement("div");
+            linha.className = "animals-chart-row";
+
+            const nome = document.createElement("span");
+            nome.className = "animals-chart-label";
+            nome.textContent = item.especie || item.situacao || "Não informado";
+
+            const trilho = document.createElement("div");
+            trilho.className = "animals-chart-track";
+
+            const barra = document.createElement("div");
+            barra.className = `animals-chart-fill ${classe}`;
+            barra.style.width = `${(total / maior) * 100}%`;
+
+            trilho.appendChild(barra);
+
+            const valor = document.createElement("span");
+            valor.className = "animals-chart-value";
+            valor.textContent = String(total);
+
+            linha.append(nome, trilho, valor);
+            container.appendChild(linha);
+        });
+    }
+
+    function atualizarIndicadores(indicadores) {
+        if (!indicadores) return;
+
+        elementos.kpiTotal.textContent = indicadores.total ?? 0;
+        elementos.kpiAtivos.textContent = indicadores.ativos ?? 0;
+        elementos.kpiInativos.textContent = indicadores.inativos ?? 0;
+
+        renderizarGrafico(
+            elementos.graficoEspecies,
+            indicadores.especies
+        );
+
+        renderizarGrafico(
+            elementos.graficoSituacoes,
+            indicadores.situacoes,
+            "active"
+        );
     }
 
     async function alterarStatus(animal, acao, botao) {
@@ -209,7 +277,9 @@ document.addEventListener("DOMContentLoaded", () => {
             linha.appendChild(criarIdentificacao(animal));
             linha.appendChild(criarCelula(animal.especie));
             linha.appendChild(criarCelula(animal.raca));
-            linha.appendChild(criarCelula(formatarSituacao(animal.situacao)));
+            linha.appendChild(
+                criarCelula(formatarSituacao(animal.situacao))
+            );
             linha.appendChild(criarCelula(animal.localizacao));
             linha.appendChild(criarStatus(animal));
             linha.appendChild(criarAcao(animal));
@@ -282,7 +352,10 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         parametros.set("limite", String(LIMITE));
-        parametros.set("deslocamento", String((pagina - 1) * LIMITE));
+        parametros.set(
+            "deslocamento",
+            String((pagina - 1) * LIMITE)
+        );
 
         try {
             const resposta = await fetch(
@@ -307,7 +380,9 @@ document.addEventListener("DOMContentLoaded", () => {
             }
 
             if (resposta.status === 403) {
-                throw new Error("Você não tem permissão para visualizar os animais.");
+                throw new Error(
+                    "Você não tem permissão para visualizar os animais."
+                );
             }
 
             if (!resposta.ok || resultado.sucesso !== true) {
@@ -324,6 +399,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
             renderizarAnimais(resultado.dados);
             atualizarPaginacao(resultado.dados.length);
+            atualizarIndicadores(resultado.indicadores);
 
         } catch (erro) {
             console.error("Erro ao carregar animais:", erro);

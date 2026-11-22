@@ -5,53 +5,156 @@
 
 {% block page_css %}
 <link rel="stylesheet" href="{{ url_for('static', filename='css/stock.css') }}">
+<style>
+.stock-dashboard{display:flex;flex-direction:column;gap:22px}
+.stock-kpis{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:13px}
+.stock-kpi{position:relative;overflow:hidden;min-height:112px;padding:18px;background:#fff;border:1px solid #e1e9e2;border-radius:10px;box-shadow:0 3px 12px rgba(29,65,39,.04)}
+.stock-kpi:after{content:"";position:absolute;bottom:0;left:0;width:100%;height:3px;background:var(--kpi-color,#2874df)}
+.stock-kpi .kpi-label{display:block;color:#778179;font-size:11px;font-weight:650;margin-bottom:10px}
+.stock-kpi strong{display:block;color:var(--kpi-color,#2874df);font-size:27px;line-height:1.15;font-weight:800}
+.stock-kpi small{display:block;color:#89938c;font-size:10px;margin-top:7px}
+.stock-analytics{display:grid;grid-template-columns:1.1fr 1fr;gap:15px}
+.stock-chart-card{min-width:0;padding:21px;background:#fff;border:1px solid #e1e9e2;border-radius:10px;box-shadow:0 3px 12px rgba(29,65,39,.035)}
+.stock-chart-heading{margin-bottom:18px;padding-bottom:14px;border-bottom:1px solid #edf1ed}
+.stock-chart-heading h2{margin:0 0 5px;color:#26352b;font-size:15px;font-weight:750}
+.stock-chart-heading p{margin:0;color:#849087;font-size:11px}
+.stock-bars,.stock-movement-list{display:flex;flex-direction:column;gap:15px}
+.stock-bar-row{display:grid;grid-template-columns:minmax(90px,1fr) 2fr 30px;align-items:center;gap:10px}
+.stock-bar-label{overflow:hidden;color:#526056;font-size:11px;text-overflow:ellipsis;white-space:nowrap}
+.stock-bar-track,.stock-movement-track{height:11px;overflow:hidden;background:#edf2ee;border-radius:20px}
+.stock-bar-fill{height:100%;min-width:2px;border-radius:20px;background:linear-gradient(90deg,#1b7441,#68b77a)}
+.stock-bar-value,.stock-movement-value{color:#31563d;font-size:11px;font-weight:800;text-align:right}
+.stock-movement-item{display:grid;grid-template-columns:100px 1fr 42px;align-items:center;gap:10px}
+.stock-movement-name{color:#526056;font-size:11px;font-weight:650}
+.stock-movement-fill{height:100%;border-radius:20px}
+.stock-movement-fill.entry{background:#23965a}
+.stock-movement-fill.exit{background:#2874df}
+.stock-movement-fill.adjust{background:#ef9632}
+.stock-chart-empty{padding:20px;color:#89938c;background:#f7faf7;border-radius:8px;font-size:11px;text-align:center}
+.stock-alert{display:flex;align-items:center;gap:9px;margin-bottom:16px;padding:11px 13px;color:#895716;background:#fff7e9;border:1px solid #f4e2bd;border-radius:8px;font-size:11px}
+.stock-alert strong{color:#b36b12}
+@media(max-width:1100px){.stock-kpis{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:800px){.stock-analytics{grid-template-columns:1fr}}
+@media(max-width:600px){.stock-kpis{grid-template-columns:repeat(2,minmax(0,1fr))}.stock-kpi{min-height:98px;padding:14px}.stock-kpi strong{font-size:23px}.stock-chart-card{padding:16px}.stock-bar-row{grid-template-columns:85px 1fr 25px;gap:7px}.stock-movement-item{grid-template-columns:82px 1fr 30px;gap:7px}}
+</style>
 {% endblock %}
 
 {% block content %}
-<section class="stock-page">
+<section class="stock-page stock-dashboard">
 
     <header class="page-header">
         <div>
+            <span style="display:block;margin-bottom:7px;color:#a9d9b2;font-size:10px;font-weight:800;letter-spacing:1.3px">GESTÃO AGROPECUÁRIA</span>
             <h1>Controle de estoque</h1>
-            <p>Gerencie os produtos e acompanhe os materiais da Fazenda Escola.</p>
+            <p>Visão geral dos produtos, disponibilidade e movimentações da Fazenda Escola.</p>
         </div>
-
         <div class="header-actions">
-            <a href="{{ url_for('inventory.movimentacoes') }}" class="button-secondary">
-                Histórico de movimentações
-            </a>
-
-            <a href="{{ url_for('inventory.nova_movimentacao') }}" class="button-secondary">
-                Nova movimentação
-            </a>
-
-            <a href="{{ url_for('inventory.novo_produto') }}" class="button-primary">
-                + Novo produto
-            </a>
+            <a href="{{ url_for('inventory.movimentacoes') }}" class="button-secondary">Histórico de movimentações</a>
+            <a href="{{ url_for('inventory.nova_movimentacao') }}" class="button-secondary">Nova movimentação</a>
+            <a href="{{ url_for('inventory.novo_produto') }}" class="button-primary">+ Novo produto</a>
         </div>
     </header>
 
-    <section class="stock-summary">
-
-        <article class="summary-card">
-            <span class="summary-label">Produtos cadastrados</span>
+    <section class="stock-kpis" aria-label="Indicadores do estoque">
+        <article class="stock-kpi" style="--kpi-color:#2874df">
+            <span class="kpi-label">Produtos cadastrados</span>
             <strong>{{ total_produtos|default(0) }}</strong>
+            <small>Total de registros</small>
         </article>
-
-        <article class="summary-card">
-            <span class="summary-label">Produtos ativos</span>
+        <article class="stock-kpi" style="--kpi-color:#23965a">
+            <span class="kpi-label">Produtos ativos</span>
             <strong>{{ produtos_ativos|default(0) }}</strong>
+            <small>Disponíveis para movimentação</small>
         </article>
-
-        <article class="summary-card">
-            <span class="summary-label">Estoque baixo</span>
+        <article class="stock-kpi" style="--kpi-color:#8560d6">
+            <span class="kpi-label">Produtos inativos</span>
+            <strong>{{ produtos_inativos|default(0) }}</strong>
+            <small>Cadastros inativados</small>
+        </article>
+        <article class="stock-kpi" style="--kpi-color:#ef9632">
+            <span class="kpi-label">Estoque baixo</span>
             <strong>{{ estoque_baixo|default(0) }}</strong>
+            <small>No limite ou abaixo do mínimo</small>
+        </article>
+        <article class="stock-kpi" style="--kpi-color:#19a9b7">
+            <span class="kpi-label">Movimentações</span>
+            <strong>{{ total_movimentacoes|default(0) }}</strong>
+            <small>Entradas, saídas e ajustes</small>
+        </article>
+    </section>
+
+    {% if estoque_baixo %}
+    <div class="stock-alert" role="status">
+        <strong>⚠ Atenção:</strong>
+        {{ estoque_baixo }} produto(s) ativo(s) estão no limite ou abaixo do estoque mínimo.
+    </div>
+    {% endif %}
+
+    <section class="stock-analytics" aria-label="Gráficos do estoque">
+
+        <article class="stock-chart-card">
+            <div class="stock-chart-heading">
+                <h2>Produtos por categoria</h2>
+                <p>Distribuição dos produtos apresentados na listagem atual.</p>
+            </div>
+
+            {% if categorias_grafico %}
+                {% set maior_categoria = categorias_grafico|map(attribute='total')|max %}
+                <div class="stock-bars">
+                    {% for item in categorias_grafico %}
+                    <div class="stock-bar-row">
+                        <span class="stock-bar-label" title="{{ item.nome }}">{{ item.nome }}</span>
+                        <div class="stock-bar-track" role="img" aria-label="{{ item.nome }}: {{ item.total }} produto(s)">
+                            <div class="stock-bar-fill" style="width:{{ (item.total / maior_categoria * 100) if maior_categoria else 0 }}%"></div>
+                        </div>
+                        <span class="stock-bar-value">{{ item.total }}</span>
+                    </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="stock-chart-empty">Não há produtos para compor este gráfico.</div>
+            {% endif %}
         </article>
 
+        <article class="stock-chart-card">
+            <div class="stock-chart-heading">
+                <h2>Movimentações registradas</h2>
+                <p>Quantidade total de operações por tipo.</p>
+            </div>
+
+            {% set maior_movimento = [total_entradas, total_saidas, total_ajustes]|max %}
+
+            {% if total_movimentacoes %}
+            <div class="stock-movement-list">
+                <div class="stock-movement-item">
+                    <span class="stock-movement-name">Entradas</span>
+                    <div class="stock-movement-track">
+                        <div class="stock-movement-fill entry" style="width:{{ (total_entradas / maior_movimento * 100) if maior_movimento else 0 }}%"></div>
+                    </div>
+                    <span class="stock-movement-value">{{ total_entradas }}</span>
+                </div>
+                <div class="stock-movement-item">
+                    <span class="stock-movement-name">Saídas</span>
+                    <div class="stock-movement-track">
+                        <div class="stock-movement-fill exit" style="width:{{ (total_saidas / maior_movimento * 100) if maior_movimento else 0 }}%"></div>
+                    </div>
+                    <span class="stock-movement-value">{{ total_saidas }}</span>
+                </div>
+                <div class="stock-movement-item">
+                    <span class="stock-movement-name">Ajustes</span>
+                    <div class="stock-movement-track">
+                        <div class="stock-movement-fill adjust" style="width:{{ (total_ajustes / maior_movimento * 100) if maior_movimento else 0 }}%"></div>
+                    </div>
+                    <span class="stock-movement-value">{{ total_ajustes }}</span>
+                </div>
+            </div>
+            {% else %}
+                <div class="stock-chart-empty">Ainda não há movimentações registradas.</div>
+            {% endif %}
+        </article>
     </section>
 
     <section class="content-panel">
-
         <div class="panel-header">
             <div>
                 <h2>Produtos cadastrados</h2>
@@ -59,32 +162,18 @@
             </div>
         </div>
 
-        <form method="GET" action="{{ url_for('inventory.index') }}"
-              class="filters-container">
-
+        <form method="GET" action="{{ url_for('inventory.index') }}" class="filters-container">
             <div class="form-field">
                 <label for="busca">Pesquisar produto</label>
-                <input
-                    type="search"
-                    id="busca"
-                    name="busca"
-                    value="{{ filtros.busca|default('') }}"
-                    placeholder="Digite o nome do produto..."
-                >
+                <input type="search" id="busca" name="busca" value="{{ filtros.busca|default('') }}" placeholder="Digite o nome do produto...">
             </div>
 
             <div class="form-field">
                 <label for="categoria_id">Categoria</label>
                 <select id="categoria_id" name="categoria_id">
                     <option value="">Todas as categorias</option>
-
                     {% for categoria in categorias %}
-                    <option
-                        value="{{ categoria.id }}"
-                        {% if filtros.categoria_id|default('')|string == categoria.id|string %}
-                            selected
-                        {% endif %}
-                    >
+                    <option value="{{ categoria.id }}" {% if filtros.categoria_id|default('')|string == categoria.id|string %}selected{% endif %}>
                         {{ categoria.nome }}
                     </option>
                     {% endfor %}
@@ -95,29 +184,19 @@
                 <label for="ativo">Situação</label>
                 <select id="ativo" name="ativo">
                     <option value="">Todas</option>
-                    <option value="1"
-                        {% if filtros.ativo|default('') == '1' %}selected{% endif %}>
-                        Ativos
-                    </option>
-                    <option value="0"
-                        {% if filtros.ativo|default('') == '0' %}selected{% endif %}>
-                        Inativos
-                    </option>
+                    <option value="1" {% if filtros.ativo|default('') == '1' %}selected{% endif %}>Ativos</option>
+                    <option value="0" {% if filtros.ativo|default('') == '0' %}selected{% endif %}>Inativos</option>
                 </select>
             </div>
 
             <div class="form-field">
                 <label>&nbsp;</label>
-                <button type="submit" class="button-primary">
-                    Filtrar
-                </button>
+                <button type="submit" class="button-primary">Filtrar</button>
             </div>
-
         </form>
 
         <div class="table-responsive">
             <table class="data-table">
-
                 <thead>
                     <tr>
                         <th>Produto</th>
@@ -130,36 +209,22 @@
                         <th>Ações</th>
                     </tr>
                 </thead>
-
                 <tbody>
-
                     {% if produtos %}
                         {% for produto in produtos %}
                         <tr>
-
                             <td>{{ produto.nome }}</td>
                             <td>{{ produto.categoria_nome or '—' }}</td>
-
-                            <td>
-                                {{ produto.quantidade_atual|quantidade }}
-                            </td>
-
+                            <td>{{ produto.quantidade_atual|quantidade }}</td>
                             <td>{{ produto.unidade or '—' }}</td>
-
-                            <td>
-                                {{ produto.estoque_minimo|quantidade }}
-                            </td>
-
+                            <td>{{ produto.estoque_minimo|quantidade }}</td>
                             <td>
                                 {% if produto.controla_lote_validade %}
-                                    <span class="status-badge status-active">
-                                        Por lote
-                                    </span>
+                                    <span class="status-badge status-active">Por lote</span>
                                 {% else %}
                                     <span>Sem lote</span>
                                 {% endif %}
                             </td>
-
                             <td>
                                 {% if produto.ativo %}
                                     <span class="status-badge status-active">Ativo</span>
@@ -167,65 +232,35 @@
                                     <span class="status-badge status-inactive">Inativo</span>
                                 {% endif %}
                             </td>
-
                             <td>
                                 <div class="header-actions">
-
-                                    <a
-                                        href="{{ url_for('inventory.editar_produto', produto_id=produto.id) }}"
-                                        class="button-secondary"
-                                    >
-                                        Editar
-                                    </a>
+                                    <a href="{{ url_for('inventory.editar_produto', produto_id=produto.id) }}" class="button-secondary">Editar</a>
 
                                     {% if produto.controla_lote_validade %}
-                                    <a
-                                        href="{{ url_for('inventory.listar_lotes', produto_id=produto.id) }}"
-                                        class="button-primary"
-                                    >
-                                        Lotes
-                                    </a>
+                                    <a href="{{ url_for('inventory.listar_lotes', produto_id=produto.id) }}" class="button-primary">Lotes</a>
                                     {% endif %}
 
                                     {% if produto.ativo %}
-                                    <form
-                                        method="POST"
-                                        action="{{ url_for('inventory.inativar_produto', produto_id=produto.id) }}"
-                                    >
-                                        <button type="submit" class="button-secondary">
-                                            Inativar
-                                        </button>
+                                    <form method="POST" action="{{ url_for('inventory.inativar_produto', produto_id=produto.id) }}">
+                                        <button type="submit" class="button-secondary">Inativar</button>
                                     </form>
                                     {% else %}
-                                    <form
-                                        method="POST"
-                                        action="{{ url_for('inventory.reativar_produto', produto_id=produto.id) }}"
-                                    >
-                                        <button type="submit" class="button-secondary">
-                                            Reativar
-                                        </button>
+                                    <form method="POST" action="{{ url_for('inventory.reativar_produto', produto_id=produto.id) }}">
+                                        <button type="submit" class="button-secondary">Reativar</button>
                                     </form>
                                     {% endif %}
-
                                 </div>
                             </td>
-
                         </tr>
                         {% endfor %}
-
                     {% else %}
                         <tr>
-                            <td colspan="8" class="empty-state">
-                                Nenhum produto encontrado.
-                            </td>
+                            <td colspan="8" class="empty-state">Nenhum produto encontrado.</td>
                         </tr>
                     {% endif %}
-
                 </tbody>
             </table>
         </div>
-
     </section>
-
 </section>
 {% endblock %}

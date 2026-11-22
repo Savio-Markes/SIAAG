@@ -249,3 +249,18 @@ def excluir_animal(animal_id, excluido_por):
     return True
 
 
+def obter_indicadores():
+    """Retorna indicadores gerais do módulo de animais."""
+
+    total = animal_repository.contar_animais()
+    ativos = animal_repository.contar_animais_ativos()
+    especies = animal_repository.contar_animais_por_especie()
+    situacoes = animal_repository.contar_animais_por_situacao()
+
+    return {
+        "total": total,
+        "ativos": ativos,
+        "inativos": total - ativos,
+        "especies": especies,
+        "situacoes": situacoes
+    }

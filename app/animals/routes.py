@@ -81,12 +81,16 @@ def listar():
 
         total = animal_service.contar_animais(filtros=filtros)
 
+        # Indicadores gerais, independentes dos filtros da tabela.
+        indicadores = animal_service.obter_indicadores()
+
         return jsonify({
             "sucesso": True,
             "dados": animais,
             "total": total,
             "limite": limite,
-            "deslocamento": deslocamento
+            "deslocamento": deslocamento,
+            "indicadores": indicadores
         }), 200
 
     except ValueError:
@@ -223,7 +227,7 @@ def reativar(animal_id):
             "mensagem": str(erro)
         }), status
 
-    
+
 @animals_bp.route("/<int:animal_id>/excluir", methods=["POST"])
 @permission_required("animais.editar")
 def excluir(animal_id):
