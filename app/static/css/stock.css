@@ -1,13 +1,13 @@
-
 /* =========================================
    SIAAG - GERENCIAMENTO DE ESTOQUE
+   Identidade visual institucional
 ========================================= */
 
 .stock-container {
     width: 100%;
-    max-width: 1400px;
+    max-width: 1440px;
     margin: 0 auto;
-    padding: 30px 24px 50px;
+    padding: 28px 30px 45px;
     color: var(--text, #26352a);
 }
 
@@ -18,35 +18,39 @@
     align-items: center;
     justify-content: space-between;
     flex-wrap: wrap;
-    gap: 22px;
-    margin-bottom: 28px;
+    gap: 20px;
+    margin-bottom: 30px;
 }
 
 .stock-eyebrow {
     display: block;
-    margin-bottom: 8px;
+    margin-bottom: 7px;
     color: var(--primary, #245c38);
-    font-size: 11px;
+    font-size: 10px;
     font-weight: 800;
-    letter-spacing: 1.3px;
+    letter-spacing: 1.4px;
+    text-transform: uppercase;
 }
 
 .stock-header h1 {
-    margin: 0 0 8px;
-    font-size: 28px;
+    margin: 0 0 7px;
+    color: var(--text, #26352a);
+    font-size: 27px;
     font-weight: 750;
+    letter-spacing: -0.7px;
 }
 
 .stock-header p {
     margin: 0;
     color: var(--muted, #718075);
-    font-size: 14px;
+    font-size: 13px;
+    line-height: 1.6;
 }
 
 .stock-header-actions {
     display: flex;
     flex-wrap: wrap;
-    gap: 10px;
+    gap: 9px;
 }
 
 /* BOTÕES */
@@ -55,15 +59,24 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    min-height: 42px;
-    padding: 10px 16px;
+    gap: 7px;
+    min-height: 40px;
+    padding: 9px 15px;
     border: 1px solid transparent;
-    border-radius: 8px;
-    font-size: 13px;
+    border-radius: 7px;
+    font-family: inherit;
+    font-size: 12px;
     font-weight: 650;
     text-decoration: none;
     cursor: pointer;
-    transition: 0.2s ease;
+    transition: background 0.2s ease,
+                border-color 0.2s ease,
+                color 0.2s ease,
+                transform 0.2s ease;
+}
+
+.stock-btn:active {
+    transform: translateY(1px);
 }
 
 .stock-btn-primary {
@@ -84,17 +97,19 @@
 
 .stock-btn-secondary:hover {
     border-color: var(--primary, #245c38);
+    background: #f7faf7;
     color: var(--primary, #245c38);
 }
 
 .stock-btn-light {
     border-color: var(--border, #e0e8e1);
-    background: #fff;
+    background: transparent;
     color: var(--muted, #718075);
 }
 
 .stock-btn-light:hover {
     border-color: var(--primary, #245c38);
+    background: #f7faf7;
     color: var(--primary, #245c38);
 }
 
@@ -103,20 +118,27 @@
 .stock-summary {
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 18px;
-    margin-bottom: 24px;
+    gap: 16px;
+    margin-bottom: 22px;
 }
 
 .stock-summary-card {
     display: flex;
     align-items: center;
-    gap: 16px;
+    gap: 15px;
     min-width: 0;
-    padding: 22px;
+    padding: 20px;
     border: 1px solid var(--border, #e0e8e1);
-    border-radius: 12px;
+    border-radius: 10px;
     background: var(--surface, #fff);
-    box-shadow: var(--shadow, 0 4px 18px rgba(31,68,42,.06));
+    box-shadow: 0 2px 9px rgba(31, 68, 42, 0.035);
+    transition: border-color 0.2s ease,
+                box-shadow 0.2s ease;
+}
+
+.stock-summary-card:hover {
+    border-color: #cbdccf;
+    box-shadow: 0 4px 14px rgba(31, 68, 42, 0.06);
 }
 
 .summary-icon {
@@ -124,11 +146,11 @@
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
-    width: 48px;
-    height: 48px;
-    border-radius: 11px;
+    width: 44px;
+    height: 44px;
+    border-radius: 9px;
     background: var(--primary-light, #eaf3ec);
-    font-size: 23px;
+    font-size: 21px;
 }
 
 .warning-icon {
@@ -143,22 +165,23 @@
     display: block;
     margin-bottom: 5px;
     color: var(--muted, #718075);
-    font-size: 12px;
+    font-size: 11px;
     font-weight: 600;
 }
 
 .stock-summary-card strong {
     display: block;
     color: var(--primary-dark, #19452b);
-    font-size: 25px;
+    font-size: 24px;
     font-weight: 750;
+    line-height: 1.2;
 }
 
 .stock-summary-card small {
     display: block;
     margin-top: 4px;
     color: var(--muted, #718075);
-    font-size: 11px;
+    font-size: 10px;
 }
 
 /* ALERTA DE ESTOQUE */
@@ -166,12 +189,12 @@
 .stock-alert {
     display: flex;
     align-items: center;
-    gap: 14px;
-    margin-bottom: 24px;
-    padding: 16px 20px;
-    border: 1px solid #f0d7a9;
-    border-radius: 10px;
-    background: #fff8eb;
+    gap: 13px;
+    margin-bottom: 22px;
+    padding: 15px 18px;
+    border: 1px solid #f0dfbd;
+    border-radius: 9px;
+    background: #fffaf1;
     color: #805514;
 }
 
@@ -180,29 +203,31 @@
 }
 
 .stock-alert-icon {
-    font-size: 24px;
+    flex-shrink: 0;
+    font-size: 22px;
 }
 
 .stock-alert strong {
     display: block;
     margin-bottom: 4px;
-    font-size: 14px;
+    font-size: 13px;
 }
 
 .stock-alert p {
     margin: 0;
     font-size: 12px;
+    line-height: 1.5;
 }
 
 /* CONTEÚDO */
 
 .stock-content {
-    margin-bottom: 24px;
-    padding: 25px;
+    margin-bottom: 22px;
+    padding: 23px;
     border: 1px solid var(--border, #e0e8e1);
-    border-radius: 12px;
+    border-radius: 10px;
     background: var(--surface, #fff);
-    box-shadow: var(--shadow, 0 4px 18px rgba(31,68,42,.06));
+    box-shadow: 0 2px 9px rgba(31, 68, 42, 0.035);
 }
 
 .stock-section-header {
@@ -210,25 +235,28 @@
     align-items: center;
     justify-content: space-between;
     flex-wrap: wrap;
-    gap: 15px;
-    margin-bottom: 22px;
+    gap: 13px;
+    margin-bottom: 20px;
 }
 
 .stock-section-header h2 {
-    margin: 0 0 6px;
+    margin: 0 0 5px;
     color: var(--primary-dark, #19452b);
-    font-size: 18px;
+    font-size: 17px;
+    font-weight: 700;
+    letter-spacing: -0.2px;
 }
 
 .stock-section-header p {
     margin: 0;
     color: var(--muted, #718075);
-    font-size: 13px;
+    font-size: 12px;
+    line-height: 1.5;
 }
 
 .stock-text-link {
     color: var(--primary, #245c38);
-    font-size: 13px;
+    font-size: 12px;
     font-weight: 700;
     text-decoration: none;
 }
@@ -241,10 +269,14 @@
 
 .stock-filters {
     display: grid;
-    grid-template-columns: minmax(200px, 1.5fr) repeat(2, minmax(160px, 1fr)) auto;
+    grid-template-columns: minmax(200px, 1.5fr) repeat(2, minmax(150px, 1fr)) auto;
     align-items: end;
-    gap: 14px;
-    margin-bottom: 20px;
+    gap: 12px;
+    margin-bottom: 19px;
+    padding: 16px;
+    border: 1px solid #edf1ed;
+    border-radius: 9px;
+    background: #fafcfa;
 }
 
 .stock-search,
@@ -257,29 +289,30 @@
 
 .stock-filters label {
     color: var(--text, #26352a);
-    font-size: 12px;
+    font-size: 11px;
     font-weight: 650;
 }
 
 .stock-filters input,
 .stock-filters select {
     width: 100%;
-    min-height: 42px;
-    padding: 10px 12px;
+    min-height: 39px;
+    padding: 9px 11px;
     border: 1px solid var(--border, #e0e8e1);
-    border-radius: 8px;
+    border-radius: 7px;
     outline: none;
     background: #fff;
     color: var(--text, #26352a);
     font-family: inherit;
-    font-size: 13px;
-    transition: 0.2s ease;
+    font-size: 12px;
+    transition: border-color 0.2s ease,
+                box-shadow 0.2s ease;
 }
 
 .stock-filters input:focus,
 .stock-filters select:focus {
     border-color: var(--primary, #245c38);
-    box-shadow: 0 0 0 3px rgba(36, 92, 56, 0.1);
+    box-shadow: 0 0 0 3px rgba(36, 92, 56, 0.08);
 }
 
 /* TABELA */
@@ -288,7 +321,7 @@
     width: 100%;
     overflow-x: auto;
     border: 1px solid var(--border, #e0e8e1);
-    border-radius: 9px;
+    border-radius: 8px;
 }
 
 .stock-table {
@@ -299,26 +332,28 @@
 }
 
 .stock-table thead {
-    background: var(--primary-light, #eaf3ec);
+    background: #f4f8f4;
 }
 
 .stock-table th {
-    padding: 15px 14px;
+    padding: 13px 14px;
     color: var(--primary-dark, #19452b);
-    font-size: 11px;
+    font-size: 10px;
     font-weight: 750;
+    letter-spacing: 0.35px;
     white-space: nowrap;
 }
 
 .stock-table td {
-    padding: 15px 14px;
-    border-top: 1px solid var(--border, #e0e8e1);
+    padding: 13px 14px;
+    border-top: 1px solid #edf1ed;
     color: var(--text, #26352a);
-    font-size: 12px;
+    font-size: 11px;
+    line-height: 1.5;
 }
 
 .stock-table tbody tr {
-    transition: background 0.2s ease;
+    transition: background 0.18s ease;
 }
 
 .stock-table tbody tr:hover {
@@ -337,10 +372,11 @@
 .stock-status {
     display: inline-flex;
     align-items: center;
-    padding: 5px 10px;
+    justify-content: center;
+    padding: 5px 9px;
     border-radius: 20px;
     font-size: 10px;
-    font-weight: 750;
+    font-weight: 700;
     white-space: nowrap;
 }
 
@@ -365,14 +401,15 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    padding: 7px 10px;
+    padding: 6px 9px;
     border: 1px solid var(--border, #e0e8e1);
     border-radius: 6px;
     background: #fff;
     color: var(--primary, #245c38);
-    font-size: 11px;
+    font-size: 10px;
     font-weight: 700;
     text-decoration: none;
+    white-space: nowrap;
     transition: 0.2s ease;
 }
 
@@ -388,34 +425,37 @@
     align-items: center;
     justify-content: space-between;
     flex-wrap: wrap;
-    gap: 15px;
-    margin-top: 18px;
+    gap: 14px;
+    margin-top: 16px;
 }
 
 .stock-table-footer > span {
     color: var(--muted, #718075);
-    font-size: 12px;
+    font-size: 11px;
 }
 
 .stock-pagination {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 8px;
 }
 
 .stock-pagination button {
-    min-height: 34px;
-    padding: 7px 11px;
+    min-height: 33px;
+    padding: 6px 11px;
     border: 1px solid var(--border, #e0e8e1);
     border-radius: 6px;
     background: #fff;
     color: var(--text, #26352a);
+    font-family: inherit;
     font-size: 11px;
     cursor: pointer;
+    transition: 0.2s ease;
 }
 
 .stock-pagination button:hover:not(:disabled) {
     border-color: var(--primary, #245c38);
+    background: #f7faf7;
     color: var(--primary, #245c38);
 }
 
@@ -426,7 +466,7 @@
 
 .stock-pagination span {
     color: var(--text, #26352a);
-    font-size: 12px;
+    font-size: 11px;
     font-weight: 700;
 }
 
@@ -434,10 +474,11 @@
 
 .stock-feedback {
     display: none;
-    margin-bottom: 16px;
-    padding: 13px 15px;
-    border-radius: 8px;
-    font-size: 13px;
+    margin-bottom: 15px;
+    padding: 12px 14px;
+    border-radius: 7px;
+    font-size: 12px;
+    line-height: 1.5;
 }
 
 .stock-feedback.sucesso {
@@ -461,7 +502,7 @@
 /* MOVIMENTAÇÕES RECENTES */
 
 .stock-recent-movements {
-    min-height: 120px;
+    min-height: 110px;
 }
 
 .stock-empty-state {
@@ -469,45 +510,75 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    min-height: 130px;
+    min-height: 125px;
     padding: 20px;
     border: 1px dashed var(--border, #e0e8e1);
-    border-radius: 9px;
-    background: #fbfdfb;
+    border-radius: 8px;
+    background: #fafcfa;
     text-align: center;
 }
 
 .stock-empty-state span {
-    margin-bottom: 10px;
-    font-size: 27px;
+    margin-bottom: 9px;
+    font-size: 25px;
 }
 
 .stock-empty-state p {
     margin: 0;
     color: var(--muted, #718075);
-    font-size: 12px;
+    font-size: 11px;
+    line-height: 1.5;
+}
+
+/* ACESSIBILIDADE */
+
+.stock-btn:focus-visible,
+.stock-action-link:focus-visible,
+.stock-pagination button:focus-visible,
+.stock-text-link:focus-visible {
+    outline: 3px solid rgba(36, 92, 56, 0.2);
+    outline-offset: 2px;
 }
 
 /* RESPONSIVIDADE */
 
-@media (max-width: 1000px) {
+@media (max-width: 1100px) {
     .stock-filters {
         grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 
     .stock-summary {
+        gap: 12px;
+    }
+}
+
+@media (max-width: 800px) {
+    .stock-container {
+        padding: 24px 20px 35px;
+    }
+
+    .stock-summary {
         grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .stock-summary-card {
+        padding: 17px;
+    }
+
+    .stock-content {
+        padding: 19px;
     }
 }
 
 @media (max-width: 650px) {
     .stock-container {
-        padding: 20px 14px 35px;
+        padding: 20px 14px 30px;
     }
 
     .stock-header {
         align-items: flex-start;
         flex-direction: column;
+        gap: 16px;
     }
 
     .stock-header h1 {
@@ -524,15 +595,24 @@
 
     .stock-summary {
         grid-template-columns: 1fr;
-        gap: 12px;
+        gap: 10px;
+    }
+
+    .stock-summary-card {
+        padding: 16px;
     }
 
     .stock-content {
-        padding: 17px;
+        padding: 16px;
+    }
+
+    .stock-section-header {
+        align-items: flex-start;
     }
 
     .stock-filters {
         grid-template-columns: 1fr;
+        padding: 13px;
     }
 
     .stock-filters .stock-btn {

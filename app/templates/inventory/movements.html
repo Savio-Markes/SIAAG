@@ -16,7 +16,7 @@
             <p>Acompanhe as entradas, saídas e ajustes dos produtos cadastrados.</p>
         </div>
 
-        <a href="/estoque" class="button-secondary">
+        <a href="{{ url_for('inventory.index') }}" class="button-secondary">
             Voltar ao estoque
         </a>
     </header>
@@ -102,7 +102,7 @@
                             </td>
 
                             <td>
-                                {{ movimento.quantidade }}
+                                {{ movimento.quantidade|quantidade }}
                                 {{ movimento.unidade or '' }}
                             </td>
 
@@ -138,11 +138,13 @@ document.addEventListener("DOMContentLoaded", function () {
 
     const filtroProduto = document.getElementById("filtroProduto");
     const filtroTipo = document.getElementById("filtroTipo");
+
     const linhas = document.querySelectorAll(
         "#listaMovimentacoes tr[data-produto]"
     );
 
     function filtrarMovimentacoes() {
+
         const produto = filtroProduto.value
             .trim()
             .toLowerCase();
@@ -150,6 +152,7 @@ document.addEventListener("DOMContentLoaded", function () {
         const tipo = filtroTipo.value;
 
         linhas.forEach(function (linha) {
+
             const nomeProduto = (
                 linha.dataset.produto || ""
             ).toLowerCase();

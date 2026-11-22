@@ -1,4 +1,7 @@
+
 # Desenvolvido por: Fábio Barbosa
+
+from decimal import Decimal, InvalidOperation
 
 from flask import Flask, render_template
 
@@ -6,11 +9,31 @@ from config import Config
 from app.extensions import close_db
 
 
+def formatar_quantidade(valor):
+    """Formata quantidades, removendo zeros decimais desnecessários."""
+
+    try:
+        numero = Decimal(str(valor if valor is not None else 0))
+
+        texto = format(numero.normalize(), "f")
+
+        if "." in texto:
+            texto = texto.rstrip("0").rstrip(".")
+
+        return texto.replace(".", ",")
+
+    except (InvalidOperation, ValueError, TypeError):
+        return valor
+
+
 def create_app():
     app = Flask(__name__)
     app.config.from_object(Config)
 
     app.teardown_appcontext(close_db)
+
+    # Filtro global para formatação de quantidades.
+    app.add_template_filter(formatar_quantidade, "quantidade")
 
     # Registro dos módulos
     from app.auth.routes import auth_bp

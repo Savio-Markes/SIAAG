@@ -17,17 +17,22 @@
         </div>
 
         <div class="header-actions">
-            <a href="/estoque/movimentacoes" class="button-secondary">
+            <a href="{{ url_for('inventory.movimentacoes') }}" class="button-secondary">
                 Histórico de movimentações
             </a>
 
-            <a href="/estoque/produtos/novo" class="button-primary">
+            <a href="{{ url_for('inventory.nova_movimentacao') }}" class="button-secondary">
+                Nova movimentação
+            </a>
+
+            <a href="{{ url_for('inventory.novo_produto') }}" class="button-primary">
                 + Novo produto
             </a>
         </div>
     </header>
 
     <section class="stock-summary">
+
         <article class="summary-card">
             <span class="summary-label">Produtos cadastrados</span>
             <strong>{{ total_produtos|default(0) }}</strong>
@@ -42,6 +47,7 @@
             <span class="summary-label">Estoque baixo</span>
             <strong>{{ estoque_baixo|default(0) }}</strong>
         </article>
+
     </section>
 
     <section class="content-panel">
@@ -49,48 +55,69 @@
         <div class="panel-header">
             <div>
                 <h2>Produtos cadastrados</h2>
-                <p>Consulte e acompanhe os produtos disponíveis.</p>
+                <p>Consulte produtos, saldos e lotes disponíveis.</p>
             </div>
         </div>
 
-        <div class="filters-container">
+        <form method="GET" action="{{ url_for('inventory.index') }}"
+              class="filters-container">
 
             <div class="form-field">
-                <label for="filtroProduto">Pesquisar produto</label>
+                <label for="busca">Pesquisar produto</label>
                 <input
                     type="search"
-                    id="filtroProduto"
+                    id="busca"
+                    name="busca"
+                    value="{{ filtros.busca|default('') }}"
                     placeholder="Digite o nome do produto..."
                 >
             </div>
 
             <div class="form-field">
-                <label for="filtroCategoria">Categoria</label>
-                <select id="filtroCategoria">
+                <label for="categoria_id">Categoria</label>
+                <select id="categoria_id" name="categoria_id">
                     <option value="">Todas as categorias</option>
-                    {% if categorias is defined %}
-                        {% for categoria in categorias %}
-                        <option value="{{ categoria.nome|lower }}">
-                            {{ categoria.nome }}
-                        </option>
-                        {% endfor %}
-                    {% endif %}
+
+                    {% for categoria in categorias %}
+                    <option
+                        value="{{ categoria.id }}"
+                        {% if filtros.categoria_id|default('')|string == categoria.id|string %}
+                            selected
+                        {% endif %}
+                    >
+                        {{ categoria.nome }}
+                    </option>
+                    {% endfor %}
                 </select>
             </div>
 
             <div class="form-field">
-                <label for="filtroSituacao">Situação</label>
-                <select id="filtroSituacao">
+                <label for="ativo">Situação</label>
+                <select id="ativo" name="ativo">
                     <option value="">Todas</option>
-                    <option value="ativo">Ativo</option>
-                    <option value="inativo">Inativo</option>
+                    <option value="1"
+                        {% if filtros.ativo|default('') == '1' %}selected{% endif %}>
+                        Ativos
+                    </option>
+                    <option value="0"
+                        {% if filtros.ativo|default('') == '0' %}selected{% endif %}>
+                        Inativos
+                    </option>
                 </select>
             </div>
 
-        </div>
+            <div class="form-field">
+                <label>&nbsp;</label>
+                <button type="submit" class="button-primary">
+                    Filtrar
+                </button>
+            </div>
+
+        </form>
 
         <div class="table-responsive">
-            <table class="data-table" id="tabelaEstoque">
+            <table class="data-table">
+
                 <thead>
                     <tr>
                         <th>Produto</th>
@@ -98,20 +125,41 @@
                         <th>Quantidade</th>
                         <th>Unidade</th>
                         <th>Estoque mínimo</th>
+                        <th>Controle</th>
                         <th>Situação</th>
+                        <th>Ações</th>
                     </tr>
                 </thead>
 
-                <tbody id="listaProdutos">
+                <tbody>
 
                     {% if produtos %}
                         {% for produto in produtos %}
                         <tr>
+
                             <td>{{ produto.nome }}</td>
                             <td>{{ produto.categoria_nome or '—' }}</td>
-                            <td>{{ produto.quantidade_atual|default(0) }}</td>
+
+                            <td>
+                                {{ produto.quantidade_atual|quantidade }}
+                            </td>
+
                             <td>{{ produto.unidade or '—' }}</td>
-                            <td>{{ produto.estoque_minimo|default(0) }}</td>
+
+                            <td>
+                                {{ produto.estoque_minimo|quantidade }}
+                            </td>
+
+                            <td>
+                                {% if produto.controla_lote_validade %}
+                                    <span class="status-badge status-active">
+                                        Por lote
+                                    </span>
+                                {% else %}
+                                    <span>Sem lote</span>
+                                {% endif %}
+                            </td>
+
                             <td>
                                 {% if produto.ativo %}
                                     <span class="status-badge status-active">Ativo</span>
@@ -119,12 +167,56 @@
                                     <span class="status-badge status-inactive">Inativo</span>
                                 {% endif %}
                             </td>
+
+                            <td>
+                                <div class="header-actions">
+
+                                    <a
+                                        href="{{ url_for('inventory.editar_produto', produto_id=produto.id) }}"
+                                        class="button-secondary"
+                                    >
+                                        Editar
+                                    </a>
+
+                                    {% if produto.controla_lote_validade %}
+                                    <a
+                                        href="{{ url_for('inventory.listar_lotes', produto_id=produto.id) }}"
+                                        class="button-primary"
+                                    >
+                                        Lotes
+                                    </a>
+                                    {% endif %}
+
+                                    {% if produto.ativo %}
+                                    <form
+                                        method="POST"
+                                        action="{{ url_for('inventory.inativar_produto', produto_id=produto.id) }}"
+                                    >
+                                        <button type="submit" class="button-secondary">
+                                            Inativar
+                                        </button>
+                                    </form>
+                                    {% else %}
+                                    <form
+                                        method="POST"
+                                        action="{{ url_for('inventory.reativar_produto', produto_id=produto.id) }}"
+                                    >
+                                        <button type="submit" class="button-secondary">
+                                            Reativar
+                                        </button>
+                                    </form>
+                                    {% endif %}
+
+                                </div>
+                            </td>
+
                         </tr>
                         {% endfor %}
+
                     {% else %}
                         <tr>
-                            <td colspan="6" class="empty-state">
-                                Nenhum produto cadastrado no estoque.
+                            <td colspan="8" class="empty-state">
+                                Nenhum produto encontrado.
                             </td>
                         </tr>
                     {% endif %}

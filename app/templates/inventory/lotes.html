@@ -1,0 +1,203 @@
+
+{% extends "base.html" %}
+
+{% block title %}Lotes do produto | SIAAG{% endblock %}
+
+{% block page_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/stock.css') }}">
+{% endblock %}
+
+{% block content %}
+<section class="stock-page">
+
+    <header class="page-header">
+        <div>
+            <h1>Controle de lotes</h1>
+            <p>Gerencie os lotes e as respectivas entradas do produto.</p>
+        </div>
+
+        <a href="{{ url_for('inventory.index') }}" class="button-secondary">
+            Voltar ao estoque
+        </a>
+    </header>
+
+    <section class="stock-summary">
+
+        <article class="summary-card">
+            <span class="summary-label">Produto</span>
+            <strong>{{ produto.nome }}</strong>
+        </article>
+
+        <article class="summary-card">
+            <span class="summary-label">Saldo total</span>
+            <strong>
+                {{ produto.quantidade_atual|quantidade }}
+                {{ produto.unidade }}
+            </strong>
+        </article>
+
+        <article class="summary-card">
+            <span class="summary-label">Lotes cadastrados</span>
+            <strong>{{ lotes|length }}</strong>
+        </article>
+
+    </section>
+
+    <section class="content-panel">
+
+        <div class="panel-header">
+            <div>
+                <h2>Cadastrar novo lote</h2>
+                <p>A quantidade inicial será registrada como entrada no estoque.</p>
+            </div>
+        </div>
+
+        <form
+            method="POST"
+            action="{{ url_for('inventory.cadastrar_lote', produto_id=produto.id) }}"
+            class="data-form"
+        >
+
+            <fieldset class="form-section">
+                <legend>Identificação do lote</legend>
+
+                <div class="form-field">
+                    <label for="codigo_lote">Código do lote</label>
+                    <input
+                        type="text"
+                        id="codigo_lote"
+                        name="codigo_lote"
+                        maxlength="100"
+                        placeholder="Informe o código do fabricante"
+                    >
+                    <small>
+                        Campo opcional. Se não houver código, o sistema
+                        identificará o lote pelo número de registro.
+                    </small>
+                </div>
+
+                <div class="form-field">
+                    <label for="validade">Data de validade</label>
+                    <input
+                        type="date"
+                        id="validade"
+                        name="validade"
+                    >
+                    <small>
+                        Preencha quando o produto possuir prazo de validade.
+                    </small>
+                </div>
+
+                <div class="form-field">
+                    <label for="quantidade_inicial">
+                        Quantidade inicial ({{ produto.unidade }})
+                    </label>
+                    <input
+                        type="number"
+                        id="quantidade_inicial"
+                        name="quantidade_inicial"
+                        min="0.001"
+                        step="0.001"
+                        required
+                    >
+                </div>
+
+            </fieldset>
+
+            <div class="form-actions">
+                <a href="{{ url_for('inventory.index') }}"
+                   class="button-secondary">
+                    Cancelar
+                </a>
+
+                <button type="submit" class="button-primary">
+                    Cadastrar lote e registrar entrada
+                </button>
+            </div>
+
+        </form>
+
+    </section>
+
+    <section class="content-panel">
+
+        <div class="panel-header">
+            <div>
+                <h2>Lotes cadastrados</h2>
+                <p>Acompanhe a quantidade disponível em cada lote.</p>
+            </div>
+        </div>
+
+        <div class="table-responsive">
+            <table class="data-table">
+
+                <thead>
+                    <tr>
+                        <th>Código</th>
+                        <th>Validade</th>
+                        <th>Quantidade inicial</th>
+                        <th>Saldo atual</th>
+                        <th>Situação</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    {% if lotes %}
+                        {% for lote in lotes %}
+                        <tr>
+
+                            <td>
+                                {{ lote.codigo_lote or ('Lote #' ~ lote.id) }}
+                            </td>
+
+                            <td>
+                                {% if lote.validade %}
+                                    {{ lote.validade.strftime('%d/%m/%Y') }}
+                                {% else %}
+                                    —
+                                {% endif %}
+                            </td>
+
+                            <td>
+                                {{ lote.quantidade_inicial|quantidade }}
+                                {{ produto.unidade }}
+                            </td>
+
+                            <td>
+                                {{ lote.saldo_atual|quantidade }}
+                                {{ produto.unidade }}
+                            </td>
+
+                            <td>
+                                {% if lote.saldo_atual > 0 %}
+                                    <span class="status-badge status-active">
+                                        Disponível
+                                    </span>
+                                {% else %}
+                                    <span class="status-badge status-inactive">
+                                        Esgotado
+                                    </span>
+                                {% endif %}
+                            </td>
+
+                        </tr>
+                        {% endfor %}
+
+                    {% else %}
+                        <tr>
+                            <td colspan="5" class="empty-state">
+                                Nenhum lote cadastrado para este produto.
+                            </td>
+                        </tr>
+                    {% endif %}
+
+                </tbody>
+
+            </table>
+        </div>
+
+    </section>
+
+</section>
+{% endblock %}

@@ -1,3 +1,4 @@
+
 # Desenvolvido por: Fábio Barbosa
 
 from flask import (
@@ -29,8 +30,6 @@ inventory_bp = Blueprint(
 @inventory_bp.route("/")
 @permission_required("estoque.visualizar")
 def index():
-    """Exibe a listagem principal do estoque."""
-
     filtros = {}
 
     busca = request.args.get("busca", "").strip()
@@ -52,10 +51,7 @@ def index():
     )
 
     total_produtos = service.contar_produtos()
-
-    produtos_ativos = service.contar_produtos(
-        {"ativo": 1}
-    )
+    produtos_ativos = service.contar_produtos({"ativo": 1})
 
     produtos_estoque_ativo = service.listar_produtos(
         filtros={"ativo": 1},
@@ -75,6 +71,7 @@ def index():
         "inventory/list.html",
         produtos=produtos,
         categorias=categorias,
+        filtros=filtros,
         total_produtos=total_produtos,
         produtos_ativos=produtos_ativos,
         estoque_baixo=estoque_baixo
@@ -88,10 +85,8 @@ def index():
 @inventory_bp.route("/produtos/novo", methods=["GET", "POST"])
 @permission_required("estoque.criar_produto")
 def novo_produto():
-    """Exibe o formulário e realiza o cadastro de produtos."""
 
     if request.method == "POST":
-
         dados = request.form.to_dict()
         dados.pop("ativo", None)
 
@@ -101,30 +96,64 @@ def novo_produto():
                 criado_por=session["usuario_id"]
             )
 
-            flash(
-                "Produto cadastrado com sucesso!",
-                "sucesso"
-            )
+            flash("Produto cadastrado com sucesso!", "sucesso")
 
-            return redirect(
-                url_for("inventory.index")
-            )
+            return redirect(url_for("inventory.index"))
 
         except service.InventoryServiceError as erro:
             flash(str(erro), "erro")
 
         except Exception:
-            flash(
-                "Ocorreu um erro ao cadastrar o produto.",
-                "erro"
-            )
+            flash("Ocorreu um erro ao cadastrar o produto.", "erro")
 
     categorias = service.listar_categorias()
 
     return render_template(
         "inventory/product_form.html",
-        categorias=categorias
+        categorias=categorias,
+        editando=False
     )
+
+
+@inventory_bp.route(
+    "/produtos/<int:produto_id>/editar",
+    methods=["GET", "POST"]
+)
+@permission_required("estoque.criar_produto")
+def editar_produto(produto_id):
+
+    try:
+        produto = service.buscar_produto(produto_id)
+
+        if request.method == "POST":
+            dados = request.form.to_dict()
+            dados.pop("ativo", None)
+
+            # Checkbox desmarcado não aparece no formulário.
+            dados["controla_lote_validade"] = (
+                "1"
+                if "controla_lote_validade" in request.form
+                else "0"
+            )
+
+            service.editar_produto(produto_id, dados)
+
+            flash("Produto atualizado com sucesso!", "sucesso")
+
+            return redirect(url_for("inventory.index"))
+
+        categorias = service.listar_categorias()
+
+        return render_template(
+            "inventory/product_form.html",
+            produto=produto,
+            categorias=categorias,
+            editando=True
+        )
+
+    except service.InventoryServiceError as erro:
+        flash(str(erro), "erro")
+        return redirect(url_for("inventory.index"))
 
 
 # ============================================================
@@ -133,15 +162,46 @@ def novo_produto():
 
 @inventory_bp.route(
     "/produtos/<int:produto_id>/lotes",
+    methods=["GET"]
+)
+@permission_required("estoque.visualizar")
+def listar_lotes(produto_id):
+
+    try:
+        produto = service.buscar_produto(produto_id)
+
+        if int(produto["controla_lote_validade"]) != 1:
+            flash(
+                "Este produto não utiliza controle de lote.",
+                "erro"
+            )
+            return redirect(url_for("inventory.index"))
+
+        lotes = service.listar_lotes_produto(produto_id)
+
+        return render_template(
+            "inventory/lotes.html",
+            produto=produto,
+            lotes=lotes
+        )
+
+    except service.InventoryServiceError as erro:
+        flash(str(erro), "erro")
+        return redirect(url_for("inventory.index"))
+
+
+@inventory_bp.route(
+    "/produtos/<int:produto_id>/lotes",
     methods=["POST"]
 )
 @permission_required("estoque.movimentar")
 def cadastrar_lote(produto_id):
-    """Cadastra um lote e registra sua entrada inicial."""
 
     dados = request.get_json(silent=True)
 
-    if dados is None:
+    envio_por_formulario = dados is None
+
+    if envio_por_formulario:
         dados = request.form.to_dict()
 
     dados["produto_id"] = produto_id
@@ -154,14 +214,21 @@ def cadastrar_lote(produto_id):
             responsavel_id=responsavel_id
         )
 
-        # O service retorna os identificadores do lote
-        # e da movimentação inicial.
         if isinstance(resultado, dict):
             lote_id = resultado["lote_id"]
             movimentacao_id = resultado.get("movimentacao_id")
         else:
             lote_id = resultado
             movimentacao_id = None
+
+        if envio_por_formulario:
+            flash(
+                "Lote cadastrado e entrada inicial registrada com sucesso!",
+                "sucesso"
+            )
+            return redirect(
+                url_for("inventory.listar_lotes", produto_id=produto_id)
+            )
 
         return jsonify({
             "sucesso": True,
@@ -171,12 +238,26 @@ def cadastrar_lote(produto_id):
         }), 201
 
     except service.InventoryServiceError as erro:
+
+        if envio_por_formulario:
+            flash(str(erro), "erro")
+            return redirect(
+                url_for("inventory.listar_lotes", produto_id=produto_id)
+            )
+
         return jsonify({
             "sucesso": False,
             "mensagem": str(erro)
         }), 400
 
     except Exception:
+
+        if envio_por_formulario:
+            flash("Erro ao cadastrar o lote.", "erro")
+            return redirect(
+                url_for("inventory.listar_lotes", produto_id=produto_id)
+            )
+
         return jsonify({
             "sucesso": False,
             "mensagem": "Erro ao cadastrar o lote."
@@ -190,7 +271,6 @@ def cadastrar_lote(produto_id):
 @inventory_bp.route("/movimentacoes")
 @permission_required("estoque.visualizar")
 def movimentacoes():
-    """Exibe o histórico de movimentações."""
 
     produto_id = request.args.get("produto_id", type=int)
     tipo = request.args.get("tipo", "").strip()
@@ -209,10 +289,7 @@ def movimentacoes():
 
     except service.InventoryServiceError as erro:
         flash(str(erro), "erro")
-
-        return redirect(
-            url_for("inventory.index")
-        )
+        return redirect(url_for("inventory.index"))
 
 
 @inventory_bp.route(
@@ -221,13 +298,9 @@ def movimentacoes():
 )
 @permission_required("estoque.movimentar")
 def nova_movimentacao():
-    """Exibe o formulário e registra entradas, saídas e ajustes."""
 
     if request.method == "POST":
-
         dados = request.form.to_dict()
-
-        # O responsável é sempre obtido da sessão autenticada.
         dados.pop("responsavel_id", None)
 
         try:
@@ -236,14 +309,9 @@ def nova_movimentacao():
                 responsavel_id=session["usuario_id"]
             )
 
-            flash(
-                "Movimentação registrada com sucesso!",
-                "sucesso"
-            )
+            flash("Movimentação registrada com sucesso!", "sucesso")
 
-            return redirect(
-                url_for("inventory.movimentacoes")
-            )
+            return redirect(url_for("inventory.movimentacoes"))
 
         except service.InventoryServiceError as erro:
             flash(str(erro), "erro")
@@ -263,11 +331,9 @@ def nova_movimentacao():
 
     for produto in produtos:
         if int(produto["controla_lote_validade"]) == 1:
-            lotes_produto = service.listar_lotes_produto(
-                produto["id"]
+            lotes.extend(
+                service.listar_lotes_produto(produto["id"])
             )
-
-            lotes.extend(lotes_produto)
 
     return render_template(
         "inventory/movement_form.html",
@@ -286,28 +352,18 @@ def nova_movimentacao():
 )
 @permission_required("estoque.criar_produto")
 def inativar_produto(produto_id):
-    """Inativa um produto sem excluir seu histórico."""
 
     try:
         service.inativar_produto(produto_id)
-
-        flash(
-            "Produto inativado com sucesso.",
-            "sucesso"
-        )
+        flash("Produto inativado com sucesso.", "sucesso")
 
     except service.InventoryServiceError as erro:
         flash(str(erro), "erro")
 
     except Exception:
-        flash(
-            "Não foi possível inativar o produto.",
-            "erro"
-        )
+        flash("Não foi possível inativar o produto.", "erro")
 
-    return redirect(
-        url_for("inventory.index")
-    )
+    return redirect(url_for("inventory.index"))
 
 
 @inventory_bp.route(
@@ -316,25 +372,15 @@ def inativar_produto(produto_id):
 )
 @permission_required("estoque.criar_produto")
 def reativar_produto(produto_id):
-    """Reativa um produto anteriormente inativado."""
 
     try:
         service.reativar_produto(produto_id)
-
-        flash(
-            "Produto reativado com sucesso.",
-            "sucesso"
-        )
+        flash("Produto reativado com sucesso.", "sucesso")
 
     except service.InventoryServiceError as erro:
         flash(str(erro), "erro")
 
     except Exception:
-        flash(
-            "Não foi possível reativar o produto.",
-            "erro"
-        )
+        flash("Não foi possível reativar o produto.", "erro")
 
-    return redirect(
-        url_for("inventory.index")
-    )
+    return redirect(url_for("inventory.index"))
