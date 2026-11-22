@@ -47,9 +47,14 @@
                 <h2 class="navigation-title">MENU PRINCIPAL</h2>
 
                 <ul class="navigation-list">
+
+                    <!-- DASHBOARD -->
                     <li>
-                        <a href="{{ url_for('dashboard.index') }}"
-                           class="navigation-link menu-link">
+                        <a
+                            href="{{ url_for('dashboard.index') }}"
+                            class="navigation-link menu-link {% if request.endpoint == 'dashboard.index' %}active{% endif %}"
+                            {% if request.endpoint == 'dashboard.index' %}aria-current="page"{% endif %}
+                        >
                             <span class="navigation-icon">
                                 <i class="icon-dashboard"></i>
                             </span>
@@ -57,9 +62,13 @@
                         </a>
                     </li>
 
+                    <!-- ANIMAIS -->
                     <li>
-                        <a href="{{ url_for('animals.painel') }}"
-                           class="navigation-link menu-link">
+                        <a
+                            href="{{ url_for('animals.painel') }}"
+                            class="navigation-link menu-link {% if request.path.startswith('/animais') %}active{% endif %}"
+                            {% if request.path.startswith('/animais') %}aria-current="page"{% endif %}
+                        >
                             <span class="navigation-icon">
                                 <i class="icon-animals"></i>
                             </span>
@@ -67,9 +76,13 @@
                         </a>
                     </li>
 
+                    <!-- ESTOQUE -->
                     <li>
-                        <a href="/estoque/"
-                           class="navigation-link menu-link">
+                        <a
+                            href="/estoque/"
+                            class="navigation-link menu-link {% if request.path.startswith('/estoque') %}active{% endif %}"
+                            {% if request.path.startswith('/estoque') %}aria-current="page"{% endif %}
+                        >
                             <span class="navigation-icon">
                                 <i class="icon-stock"></i>
                             </span>
@@ -77,9 +90,13 @@
                         </a>
                     </li>
 
+                    <!-- PATRIMÔNIO -->
                     <li>
-                        <a href="/patrimonio/"
-                           class="navigation-link menu-link">
+                        <a
+                            href="/patrimonio/"
+                            class="navigation-link menu-link {% if request.path.startswith('/patrimonio') %}active{% endif %}"
+                            {% if request.path.startswith('/patrimonio') %}aria-current="page"{% endif %}
+                        >
                             <span class="navigation-icon">
                                 <i class="icon-property"></i>
                             </span>
@@ -87,20 +104,26 @@
                         </a>
                     </li>
 
+                    <!-- USUÁRIOS -->
                     <li>
-                        <a href="/usuarios/painel"
-                           class="navigation-link menu-link">
+                        <a
+                            href="/usuarios/painel"
+                            class="navigation-link menu-link {% if request.path.startswith('/usuarios') %}active{% endif %}"
+                            {% if request.path.startswith('/usuarios') %}aria-current="page"{% endif %}
+                        >
                             <span class="navigation-icon">
                                 <i class="icon-users"></i>
                             </span>
                             <span>Usuários</span>
                         </a>
                     </li>
+
                 </ul>
             </nav>
 
             <!-- RODAPÉ INSTITUCIONAL -->
             <div class="sidebar-bottom">
+
                 <div class="sidebar-institution">
                     <img
                         src="{{ url_for('static', filename='img/ifpi-simbolo-transparente.png') }}"
@@ -118,6 +141,7 @@
                     <span>SIAAG</span>
                     <span>Ambiente de desenvolvimento</span>
                 </div>
+
             </div>
         </aside>
 
@@ -145,12 +169,12 @@
                         </p>
                         <h1 class="header-title">Fazenda Escola</h1>
                     </div>
+
                 </div>
 
                 <!-- AÇÕES DO USUÁRIO -->
                 <div class="header-user-area">
 
-                    <!-- NOTIFICAÇÕES -->
                     <span
                         class="header-notifications"
                         role="img"
@@ -204,6 +228,7 @@
                 id="conteudo-principal"
                 tabindex="-1"
             >
+
                 <!-- MENSAGENS DO SISTEMA -->
                 <section
                     class="global-messages"
@@ -225,8 +250,8 @@
                 </section>
 
                 {% block content %}{% endblock %}
-            </main>
 
+            </main>
         </div>
     </div>
 </body>
