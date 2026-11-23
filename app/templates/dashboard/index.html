@@ -1,3 +1,4 @@
+
 {% extends "base.html" %}
 
 {% block title %}Dashboard | SIAAG{% endblock %}
@@ -47,7 +48,7 @@
             <div class="metric-accent"></div>
         </article>
 
-        <article class="metric-card metric-orange">
+        <article class="metric-card metric-neutral">
             <div class="metric-top">
                 <span class="metric-label">Animais inativos</span>
                 <span class="metric-icon">Ⅱ</span>
@@ -155,7 +156,6 @@
 
     {% endif %}
 
-
     {% if dashboard.pode_visualizar_estoque %}
 
     <section class="dashboard-stock-section">
@@ -192,7 +192,7 @@
                 <div class="metric-accent"></div>
             </article>
 
-            <article class="metric-card metric-orange">
+            <article class="metric-card metric-neutral">
                 <div class="metric-top">
                     <span class="metric-label">Produtos inativos</span>
                     <span class="metric-icon">Ⅱ</span>
@@ -202,7 +202,7 @@
                 <div class="metric-accent"></div>
             </article>
 
-            <article class="metric-card metric-purple">
+            <article class="metric-card metric-warning">
                 <div class="metric-top">
                     <span class="metric-label">Estoque baixo</span>
                     <span class="metric-icon">!</span>
@@ -319,7 +319,7 @@
         </section>
 
         {% if dashboard.estoque_baixo > 0 %}
-        <div class="dashboard-stock-alert">
+        <div class="dashboard-stock-alert status-warning">
             <span class="stock-alert-icon">!</span>
             <div>
                 <strong>Atenção ao estoque</strong>
@@ -335,14 +335,12 @@
 
     {% endif %}
 
-
     {% if not dashboard.pode_visualizar_animais and not dashboard.pode_visualizar_estoque %}
-    <section class="dashboard-no-access">
+    <section class="dashboard-no-access status-neutral">
         <strong>Visão geral indisponível</strong>
         <p>Seu usuário não possui permissão para visualizar os indicadores de animais ou estoque.</p>
     </section>
     {% endif %}
-
 
     <section class="dashboard-modules">
         <div class="modules-heading">
