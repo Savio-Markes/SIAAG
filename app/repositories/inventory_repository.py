@@ -975,3 +975,82 @@ def registrar_movimentacao_atomica(dados):
     except Exception:
         conexao.rollback()
         raise
+# ============================================================
+# INDICADORES DA DASHBOARD
+# ============================================================
+
+def obter_indicadores_dashboard():
+    """Obtém indicadores reais do estoque para a dashboard."""
+
+    saldo_sql = _consulta_saldo()
+    conexao = get_db()
+
+    with conexao.cursor() as cursor:
+
+        # Total de produtos, ativos e inativos
+        cursor.execute("""
+            SELECT
+                COUNT(*) AS total,
+                COALESCE(SUM(ativo = 1), 0) AS ativos,
+                COALESCE(SUM(ativo = 0), 0) AS inativos
+            FROM produtos
+        """)
+
+        resumo = cursor.fetchone()
+
+        # Produtos ativos no limite ou abaixo do estoque mínimo
+        cursor.execute(f"""
+            SELECT COUNT(*) AS total
+            FROM produtos p
+            WHERE p.ativo = 1
+              AND ({saldo_sql}) <= p.estoque_minimo
+        """)
+
+        estoque_baixo = cursor.fetchone()["total"]
+
+        # Produtos agrupados por categoria
+        cursor.execute("""
+            SELECT
+                COALESCE(cp.nome, 'Sem categoria') AS categoria,
+                COUNT(p.id) AS total
+            FROM produtos p
+            LEFT JOIN categorias_produto cp
+                ON cp.id = p.categoria_id
+            GROUP BY cp.id, cp.nome
+            ORDER BY total DESC, categoria ASC
+        """)
+
+        categorias = cursor.fetchall()
+
+        # Quantidade de movimentações por tipo
+        cursor.execute("""
+            SELECT
+                tipo,
+                COUNT(*) AS total
+            FROM movimentacoes_estoque
+            GROUP BY tipo
+        """)
+
+        resultados_movimentacoes = cursor.fetchall()
+
+    movimentacoes = {
+        "entrada": 0,
+        "saida": 0,
+        "ajuste": 0
+    }
+
+    for item in resultados_movimentacoes:
+        tipo = item["tipo"]
+
+        if tipo in movimentacoes:
+            movimentacoes[tipo] = item["total"]
+
+    return {
+        "total_produtos": resumo["total"],
+        "produtos_ativos": resumo["ativos"],
+        "produtos_inativos": resumo["inativos"],
+        "estoque_baixo": estoque_baixo,
+        "categorias_estoque": categorias,
+        "movimentacoes_estoque": movimentacoes,
+        "total_movimentacoes": sum(movimentacoes.values())
+    }

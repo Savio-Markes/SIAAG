@@ -568,3 +568,106 @@
         gap: 6px;
     }
 }
+/* =====================================================
+   DASHBOARD — INDICADORES DO ESTOQUE
+   ===================================================== */
+
+.dashboard-stock-section {
+    display: flex;
+    flex-direction: column;
+    gap: 17px;
+}
+
+.dashboard-section-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 15px;
+}
+
+.dashboard-section-heading .panel-kicker {
+    margin-bottom: 5px;
+    color: #287348;
+}
+
+.dashboard-section-heading h2 {
+    margin: 0;
+    color: #26352b;
+    font-size: 18px;
+    font-weight: 750;
+}
+
+.dashboard-section-link {
+    color: #176b3b;
+    font-size: 11px;
+    font-weight: 750;
+    text-decoration: none;
+    white-space: nowrap;
+}
+
+.dashboard-section-link:hover {
+    text-decoration: underline;
+}
+
+/* Barras de movimentação */
+
+.movement-entry {
+    background: #23965a;
+}
+
+.movement-exit {
+    background: #ef9632;
+}
+
+.movement-adjustment {
+    background: #8560d6;
+}
+
+/* Alerta de estoque baixo */
+
+.dashboard-stock-alert {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 17px 19px;
+    background: #fffaf2;
+    border: 1px solid #f0dfc4;
+    border-left: 4px solid #e59a32;
+    border-radius: 9px;
+}
+
+.stock-alert-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 35px;
+    height: 35px;
+    color: #bd7418;
+    background: #ffefd7;
+    border-radius: 9px;
+    font-size: 18px;
+    font-weight: 800;
+}
+
+.dashboard-stock-alert strong {
+    color: #63451e;
+    font-size: 13px;
+}
+
+.dashboard-stock-alert p {
+    margin-top: 4px;
+    color: #8b7454;
+    font-size: 11px;
+}
+
+@media (max-width: 600px) {
+    .dashboard-section-heading {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .dashboard-stock-alert {
+        align-items: flex-start;
+    }
+}

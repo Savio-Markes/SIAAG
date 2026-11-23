@@ -1,4 +1,3 @@
-
 {% extends "base.html" %}
 
 {% block title %}Dashboard | SIAAG{% endblock %}
@@ -154,14 +153,196 @@
 
     </section>
 
-    {% else %}
+    {% endif %}
 
-    <section class="dashboard-no-access">
-        <strong>Visão geral indisponível</strong>
-        <p>Seu usuário não possui permissão para visualizar os indicadores de animais.</p>
+
+    {% if dashboard.pode_visualizar_estoque %}
+
+    <section class="dashboard-stock-section">
+
+        <div class="dashboard-section-heading">
+            <div>
+                <span class="panel-kicker">GESTÃO DE INSUMOS</span>
+                <h2>Indicadores do estoque</h2>
+            </div>
+            <a href="{{ url_for('inventory.index') }}" class="dashboard-section-link">
+                Acessar estoque →
+            </a>
+        </div>
+
+        <section class="dashboard-metrics">
+
+            <article class="metric-card metric-blue">
+                <div class="metric-top">
+                    <span class="metric-label">Produtos cadastrados</span>
+                    <span class="metric-icon">▣</span>
+                </div>
+                <strong class="metric-value">{{ dashboard.total_produtos }}</strong>
+                <span class="metric-description">Total de registros</span>
+                <div class="metric-accent"></div>
+            </article>
+
+            <article class="metric-card metric-green">
+                <div class="metric-top">
+                    <span class="metric-label">Produtos ativos</span>
+                    <span class="metric-icon">✓</span>
+                </div>
+                <strong class="metric-value">{{ dashboard.produtos_ativos }}</strong>
+                <span class="metric-description">Disponíveis para movimentação</span>
+                <div class="metric-accent"></div>
+            </article>
+
+            <article class="metric-card metric-orange">
+                <div class="metric-top">
+                    <span class="metric-label">Produtos inativos</span>
+                    <span class="metric-icon">Ⅱ</span>
+                </div>
+                <strong class="metric-value">{{ dashboard.produtos_inativos }}</strong>
+                <span class="metric-description">Cadastros preservados</span>
+                <div class="metric-accent"></div>
+            </article>
+
+            <article class="metric-card metric-purple">
+                <div class="metric-top">
+                    <span class="metric-label">Estoque baixo</span>
+                    <span class="metric-icon">!</span>
+                </div>
+                <strong class="metric-value">{{ dashboard.estoque_baixo }}</strong>
+                <span class="metric-description">No limite ou abaixo do mínimo</span>
+                <div class="metric-accent"></div>
+            </article>
+
+        </section>
+
+        <section class="dashboard-analytics">
+
+            <article class="dashboard-panel">
+                <div class="panel-header">
+                    <div>
+                        <span class="panel-kicker">CADASTRO</span>
+                        <h2>Produtos por categoria</h2>
+                    </div>
+                    <span class="panel-symbol symbol-blue">▣</span>
+                </div>
+
+                {% if dashboard.categorias_estoque %}
+                    {% set maior_categoria = dashboard.categorias_estoque|map(attribute='total')|max %}
+
+                    <div class="chart-list">
+                        {% for categoria in dashboard.categorias_estoque %}
+                        <div class="chart-row">
+                            <div class="chart-row-heading">
+                                <span>{{ categoria.categoria }}</span>
+                                <strong>{{ categoria.total }}</strong>
+                            </div>
+                            <div class="chart-track">
+                                <div
+                                    class="chart-fill color-{{ loop.index0 % 6 }}"
+                                    style="width: {{ (categoria.total / maior_categoria * 100) if maior_categoria else 0 }}%">
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+
+                    <div class="panel-footnote">
+                        <span class="footnote-dot blue-dot"></span>
+                        <span>Distribuição dos produtos cadastrados</span>
+                    </div>
+                {% else %}
+                    <div class="dashboard-empty">
+                        <span>Não há produtos cadastrados.</span>
+                    </div>
+                {% endif %}
+            </article>
+
+            <article class="dashboard-panel">
+                <div class="panel-header">
+                    <div>
+                        <span class="panel-kicker">MOVIMENTAÇÕES</span>
+                        <h2>Histórico do estoque</h2>
+                    </div>
+                    <span class="panel-symbol symbol-orange">↕</span>
+                </div>
+
+                {% set total_mov = dashboard.total_movimentacoes %}
+
+                <div class="chart-list">
+
+                    <div class="chart-row">
+                        <div class="chart-row-heading">
+                            <span>Entradas</span>
+                            <strong>{{ dashboard.movimentacoes_estoque.entrada }}</strong>
+                        </div>
+                        <div class="chart-track">
+                            <div
+                                class="chart-fill movement-entry"
+                                style="width: {{ (dashboard.movimentacoes_estoque.entrada / total_mov * 100) if total_mov else 0 }}%">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="chart-row">
+                        <div class="chart-row-heading">
+                            <span>Saídas</span>
+                            <strong>{{ dashboard.movimentacoes_estoque.saida }}</strong>
+                        </div>
+                        <div class="chart-track">
+                            <div
+                                class="chart-fill movement-exit"
+                                style="width: {{ (dashboard.movimentacoes_estoque.saida / total_mov * 100) if total_mov else 0 }}%">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="chart-row">
+                        <div class="chart-row-heading">
+                            <span>Ajustes</span>
+                            <strong>{{ dashboard.movimentacoes_estoque.ajuste }}</strong>
+                        </div>
+                        <div class="chart-track">
+                            <div
+                                class="chart-fill movement-adjustment"
+                                style="width: {{ (dashboard.movimentacoes_estoque.ajuste / total_mov * 100) if total_mov else 0 }}%">
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="panel-footnote">
+                    <span class="footnote-dot orange-dot"></span>
+                    <span>{{ dashboard.total_movimentacoes }} movimentações registradas</span>
+                </div>
+            </article>
+
+        </section>
+
+        {% if dashboard.estoque_baixo > 0 %}
+        <div class="dashboard-stock-alert">
+            <span class="stock-alert-icon">!</span>
+            <div>
+                <strong>Atenção ao estoque</strong>
+                <p>
+                    Existem {{ dashboard.estoque_baixo }} produto(s)
+                    no limite ou abaixo do estoque mínimo.
+                </p>
+            </div>
+        </div>
+        {% endif %}
+
     </section>
 
     {% endif %}
+
+
+    {% if not dashboard.pode_visualizar_animais and not dashboard.pode_visualizar_estoque %}
+    <section class="dashboard-no-access">
+        <strong>Visão geral indisponível</strong>
+        <p>Seu usuário não possui permissão para visualizar os indicadores de animais ou estoque.</p>
+    </section>
+    {% endif %}
+
 
     <section class="dashboard-modules">
         <div class="modules-heading">
@@ -188,12 +369,12 @@
                 <span class="module-status">Em estruturação</span>
             </div>
 
-            <div class="module-card">
+            <a href="{{ url_for('inventory.index') }}" class="module-card">
                 <span class="module-icon module-blue-icon">▣</span>
                 <span class="module-name">Estoque</span>
                 <span class="module-description">Produtos e movimentações</span>
-                <span class="module-status">Em estruturação</span>
-            </div>
+                <span class="module-arrow">→</span>
+            </a>
 
             <div class="module-card">
                 <span class="module-icon module-purple-icon">▤</span>
