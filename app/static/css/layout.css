@@ -67,10 +67,12 @@
     font-weight: 700;
 }
 
-/* BOTÃO DO MENU */
+/* ==================================================
+   BOTÃO DO MENU
+   ================================================== */
 
 .menu-toggle {
-    display: none;
+    display: inline-flex;
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
@@ -82,9 +84,17 @@
     border-radius: 8px;
     font-size: 18px;
     cursor: pointer;
+    transition: background .2s ease, border-color .2s ease;
 }
 
-/* ÁREA DO USUÁRIO */
+.menu-toggle:hover {
+    background: #dfece1;
+    border-color: #c5d9c9;
+}
+
+/* ==================================================
+   ÁREA DO USUÁRIO
+   ================================================== */
 
 .header-user-area {
     display: flex;
@@ -129,7 +139,9 @@
     stroke-linejoin: round;
 }
 
-/* PERFIL */
+/* ==================================================
+   PERFIL
+   ================================================== */
 
 .header-user {
     gap: 10px;
@@ -175,7 +187,9 @@
     font-size: 10px;
 }
 
-/* LOGOUT */
+/* ==================================================
+   LOGOUT
+   ================================================== */
 
 .logout-form {
     display: flex;
@@ -243,12 +257,6 @@
 @media (max-width: 1023px) {
     .app-header {
         padding: 12px 24px;
-    }
-}
-
-@media (max-width: 900px) {
-    .menu-toggle {
-        display: inline-flex;
     }
 }
 

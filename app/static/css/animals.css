@@ -150,6 +150,172 @@
     font-weight: 750;
 }
 
+/* INDICADORES */
+
+.animals-dashboard {
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
+}
+
+.animals-kpis {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 13px;
+}
+
+.animals-kpi {
+    position: relative;
+    overflow: hidden;
+    min-height: 112px;
+    padding: 18px;
+    background: #fff;
+    border: 1px solid #e1e9e2;
+    border-radius: 10px;
+    box-shadow: 0 3px 12px rgba(29,65,39,.04);
+}
+
+.animals-kpi::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 3px;
+    background: var(--kpi-color);
+}
+
+.animals-kpi .kpi-label {
+    display: block;
+    margin-bottom: 10px;
+    color: #778179;
+    font-size: 11px;
+    font-weight: 650;
+}
+
+.animals-kpi strong {
+    display: block;
+    color: var(--kpi-color);
+    font-size: 27px;
+    line-height: 1.15;
+    font-weight: 800;
+}
+
+.animals-kpi small {
+    display: block;
+    margin-top: 7px;
+    color: #89938c;
+    font-size: 10px;
+}
+
+/* CORES DOS INDICADORES */
+
+.animals-kpis .animals-kpi:nth-child(1) {
+    --kpi-color: #2874df;
+}
+
+.animals-kpis .animals-kpi:nth-child(2) {
+    --kpi-color: #23965a;
+}
+
+/* INATIVOS — CINZA NEUTRO
+   !important substitui a variável definida inline no HTML. */
+
+.animals-kpis .animals-kpi:nth-child(3) {
+    --kpi-color: #94a3b8 !important;
+}
+
+/* GRÁFICOS */
+
+.animals-analytics {
+    display: grid;
+    grid-template-columns: 1.1fr 1fr;
+    gap: 15px;
+}
+
+.animals-chart-card {
+    min-width: 0;
+    padding: 21px;
+    background: #fff;
+    border: 1px solid #e1e9e2;
+    border-radius: 10px;
+    box-shadow: 0 3px 12px rgba(29,65,39,.035);
+}
+
+.animals-chart-heading {
+    margin-bottom: 18px;
+    padding-bottom: 14px;
+    border-bottom: 1px solid #edf1ed;
+}
+
+.animals-chart-heading h3 {
+    margin: 0 0 5px;
+    color: #26352b;
+    font-size: 15px;
+    font-weight: 750;
+}
+
+.animals-chart-heading p {
+    margin: 0;
+    color: #849087;
+    font-size: 11px;
+}
+
+.animals-chart-bars {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.animals-chart-row {
+    display: grid;
+    grid-template-columns: minmax(85px, 1fr) 2fr 30px;
+    align-items: center;
+    gap: 10px;
+}
+
+.animals-chart-label {
+    overflow: hidden;
+    color: #526056;
+    font-size: 11px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.animals-chart-track {
+    height: 11px;
+    overflow: hidden;
+    background: #edf2ee;
+    border-radius: 20px;
+}
+
+.animals-chart-fill {
+    height: 100%;
+    min-width: 2px;
+    border-radius: 20px;
+    background: linear-gradient(90deg,#1b7441,#68b77a);
+}
+
+.animals-chart-fill.active {
+    background: #23965a;
+}
+
+.animals-chart-value {
+    color: #31563d;
+    font-size: 11px;
+    font-weight: 800;
+    text-align: right;
+}
+
+.animals-chart-empty {
+    padding: 20px;
+    color: #89938c;
+    background: #f7faf7;
+    border-radius: 8px;
+    font-size: 11px;
+    text-align: center;
+}
+
 /* FILTROS */
 
 .animals-filters {
@@ -359,8 +525,15 @@
 }
 
 .animal-status-badge.inactive {
-    background: #fff0ee;
-    color: #b44a43;
+    background: #f1f5f9;
+    color: #64748b;
+    border: 1px solid #dbe2ea;
+}
+
+.animal-status-badge.active {
+    background: #e8f5ed;
+    color: #188449;
+    border: 1px solid #cce8d5;
 }
 
 /* AÇÕES */
@@ -486,6 +659,12 @@
     }
 }
 
+@media (max-width: 900px) {
+    .animals-analytics {
+        grid-template-columns: 1fr;
+    }
+}
+
 @media (max-width: 800px) {
     .animals-page {
         padding: 22px 20px 35px;
@@ -514,6 +693,28 @@
 
     .animals-header .btn-primary {
         width: 100%;
+    }
+
+    .animals-kpis {
+        grid-template-columns: 1fr;
+    }
+
+    .animals-kpi {
+        min-height: 98px;
+        padding: 14px;
+    }
+
+    .animals-kpi strong {
+        font-size: 23px;
+    }
+
+    .animals-chart-card {
+        padding: 16px;
+    }
+
+    .animals-chart-row {
+        grid-template-columns: 85px 1fr 25px;
+        gap: 7px;
     }
 
     .animals-card {

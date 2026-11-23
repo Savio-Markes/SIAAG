@@ -8,9 +8,9 @@
 {% endblock %}
 
 {% block content %}
-
 <div class="dashboard">
 
+    <!-- CABEÇALHO -->
     <section class="dashboard-welcome">
         <div>
             <span class="welcome-label">IFPI · CAMPUS PAULISTANA</span>
@@ -24,138 +24,172 @@
         </div>
     </section>
 
-    {% if dashboard.pode_visualizar_animais %}
-
-    <section class="dashboard-metrics">
-
-        <article class="metric-card metric-blue">
-            <div class="metric-top">
-                <span class="metric-label">Animais cadastrados</span>
-                <span class="metric-icon">🐄</span>
+    <!-- AVISOS E ALERTAS -->
+    {% if dashboard.pode_visualizar_estoque and dashboard.estoque_baixo > 0 %}
+    <section class="dashboard-notifications">
+        <div class="dashboard-notification status-warning">
+            <span class="notification-icon">!</span>
+            <div class="notification-content">
+                <strong>Atenção ao estoque</strong>
+                <p>
+                    Existem {{ dashboard.estoque_baixo }} produto(s)
+                    no limite ou abaixo do estoque mínimo.
+                </p>
             </div>
-            <strong class="metric-value">{{ dashboard.total_animais }}</strong>
-            <span class="metric-description">Total de registros</span>
-            <div class="metric-accent"></div>
-        </article>
-
-        <article class="metric-card metric-green">
-            <div class="metric-top">
-                <span class="metric-label">Animais ativos</span>
-                <span class="metric-icon">✓</span>
-            </div>
-            <strong class="metric-value">{{ dashboard.animais_ativos }}</strong>
-            <span class="metric-description">Registros em atividade</span>
-            <div class="metric-accent"></div>
-        </article>
-
-        <article class="metric-card metric-neutral">
-            <div class="metric-top">
-                <span class="metric-label">Animais inativos</span>
-                <span class="metric-icon">Ⅱ</span>
-            </div>
-            <strong class="metric-value">{{ dashboard.animais_inativos }}</strong>
-            <span class="metric-description">Histórico preservado</span>
-            <div class="metric-accent"></div>
-        </article>
-
-        <article class="metric-card metric-purple">
-            <div class="metric-top">
-                <span class="metric-label">Espécies cadastradas</span>
-                <span class="metric-icon">◈</span>
-            </div>
-            <strong class="metric-value">{{ dashboard.especies|length }}</strong>
-            <span class="metric-description">Diversidade do rebanho</span>
-            <div class="metric-accent"></div>
-        </article>
-
+            <a href="{{ url_for('inventory.index') }}" class="notification-link">
+                Ver estoque →
+            </a>
+        </div>
     </section>
-
-    <section class="dashboard-analytics">
-
-        <article class="dashboard-panel species-panel">
-            <div class="panel-header">
-                <div>
-                    <span class="panel-kicker">COMPOSIÇÃO DO REBANHO</span>
-                    <h2>Animais por espécie</h2>
-                </div>
-                <span class="panel-symbol symbol-blue">◉</span>
-            </div>
-
-            {% if dashboard.especies %}
-                {% set maior_especie = dashboard.especies|map(attribute='total')|max %}
-
-                <div class="chart-list">
-                    {% for especie in dashboard.especies %}
-                    <div class="chart-row">
-                        <div class="chart-row-heading">
-                            <span>{{ especie.especie }}</span>
-                            <strong>{{ especie.total }}</strong>
-                        </div>
-                        <div class="chart-track">
-                            <div
-                                class="chart-fill species-fill color-{{ loop.index0 % 6 }}"
-                                style="width: {{ (especie.total / maior_especie * 100) if maior_especie else 0 }}%">
-                            </div>
-                        </div>
-                    </div>
-                    {% endfor %}
-                </div>
-
-                <div class="panel-footnote">
-                    <span class="footnote-dot blue-dot"></span>
-                    <span>Distribuição dos animais cadastrados</span>
-                </div>
-            {% else %}
-                <div class="dashboard-empty">
-                    <span>Não há espécies cadastradas.</span>
-                </div>
-            {% endif %}
-        </article>
-
-        <article class="dashboard-panel situation-panel">
-            <div class="panel-header">
-                <div>
-                    <span class="panel-kicker">ACOMPANHAMENTO</span>
-                    <h2>Situação dos animais</h2>
-                </div>
-                <span class="panel-symbol symbol-orange">◷</span>
-            </div>
-
-            {% if dashboard.situacoes %}
-                {% set maior_situacao = dashboard.situacoes|map(attribute='total')|max %}
-
-                <div class="chart-list">
-                    {% for situacao in dashboard.situacoes %}
-                    <div class="chart-row">
-                        <div class="chart-row-heading">
-                            <span>{{ situacao.situacao }}</span>
-                            <strong>{{ situacao.total }}</strong>
-                        </div>
-                        <div class="chart-track">
-                            <div
-                                class="chart-fill situation-fill color-{{ loop.index0 % 4 }}"
-                                style="width: {{ (situacao.total / maior_situacao * 100) if maior_situacao else 0 }}%">
-                            </div>
-                        </div>
-                    </div>
-                    {% endfor %}
-                </div>
-
-                <div class="panel-footnote">
-                    <span class="footnote-dot orange-dot"></span>
-                    <span>Situação dos registros ativos</span>
-                </div>
-            {% else %}
-                <div class="dashboard-empty">
-                    <span>Não há informações de situação disponíveis.</span>
-                </div>
-            {% endif %}
-        </article>
-
-    </section>
-
     {% endif %}
 
+    <!-- INDICADORES DOS ANIMAIS -->
+    {% if dashboard.pode_visualizar_animais %}
+
+    <section class="dashboard-animal-section">
+
+        <div class="dashboard-section-heading">
+            <div>
+                <span class="panel-kicker">GESTÃO DO REBANHO</span>
+                <h2>Indicadores dos animais</h2>
+            </div>
+            <a href="{{ url_for('animals.painel') }}" class="dashboard-section-link">
+                Acessar animais →
+            </a>
+        </div>
+
+        <section class="dashboard-metrics">
+
+            <article class="metric-card metric-blue">
+                <div class="metric-top">
+                    <span class="metric-label">Animais cadastrados</span>
+                    <span class="metric-icon">🐄</span>
+                </div>
+                <strong class="metric-value">{{ dashboard.total_animais }}</strong>
+                <span class="metric-description">Total de registros</span>
+                <div class="metric-accent"></div>
+            </article>
+
+            <article class="metric-card metric-green">
+                <div class="metric-top">
+                    <span class="metric-label">Animais ativos</span>
+                    <span class="metric-icon">✓</span>
+                </div>
+                <strong class="metric-value">{{ dashboard.animais_ativos }}</strong>
+                <span class="metric-description">Registros em atividade</span>
+                <div class="metric-accent"></div>
+            </article>
+
+            <article class="metric-card metric-neutral">
+                <div class="metric-top">
+                    <span class="metric-label">Animais inativos</span>
+                    <span class="metric-icon">Ⅱ</span>
+                </div>
+                <strong class="metric-value">{{ dashboard.animais_inativos }}</strong>
+                <span class="metric-description">Histórico preservado</span>
+                <div class="metric-accent"></div>
+            </article>
+
+            <article class="metric-card metric-purple">
+                <div class="metric-top">
+                    <span class="metric-label">Espécies cadastradas</span>
+                    <span class="metric-icon">◈</span>
+                </div>
+                <strong class="metric-value">{{ dashboard.especies|length }}</strong>
+                <span class="metric-description">Diversidade do rebanho</span>
+                <div class="metric-accent"></div>
+            </article>
+
+        </section>
+
+        <!-- GRÁFICOS DOS ANIMAIS -->
+        <section class="dashboard-analytics">
+
+            <article class="dashboard-panel species-panel">
+                <div class="panel-header">
+                    <div>
+                        <span class="panel-kicker">COMPOSIÇÃO DO REBANHO</span>
+                        <h2>Animais por espécie</h2>
+                    </div>
+                    <span class="panel-symbol symbol-blue">◉</span>
+                </div>
+
+                {% if dashboard.especies %}
+                    {% set maior_especie = dashboard.especies|map(attribute='total')|max %}
+
+                    <div class="chart-list">
+                        {% for especie in dashboard.especies %}
+                        <div class="chart-row">
+                            <div class="chart-row-heading">
+                                <span>{{ especie.especie }}</span>
+                                <strong>{{ especie.total }}</strong>
+                            </div>
+                            <div class="chart-track">
+                                <div
+                                    class="chart-fill species-fill color-{{ loop.index0 % 6 }}"
+                                    style="width: {{ (especie.total / maior_especie * 100) if maior_especie else 0 }}%">
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+
+                    <div class="panel-footnote">
+                        <span class="footnote-dot blue-dot"></span>
+                        <span>Distribuição dos animais cadastrados</span>
+                    </div>
+                {% else %}
+                    <div class="dashboard-empty">
+                        <span>Não há espécies cadastradas.</span>
+                    </div>
+                {% endif %}
+            </article>
+
+            <article class="dashboard-panel situation-panel">
+                <div class="panel-header">
+                    <div>
+                        <span class="panel-kicker">ACOMPANHAMENTO</span>
+                        <h2>Situação dos animais</h2>
+                    </div>
+                    <span class="panel-symbol symbol-orange">◷</span>
+                </div>
+
+                {% if dashboard.situacoes %}
+                    {% set maior_situacao = dashboard.situacoes|map(attribute='total')|max %}
+
+                    <div class="chart-list">
+                        {% for situacao in dashboard.situacoes %}
+                        <div class="chart-row">
+                            <div class="chart-row-heading">
+                                <span>{{ situacao.situacao }}</span>
+                                <strong>{{ situacao.total }}</strong>
+                            </div>
+                            <div class="chart-track">
+                                <div
+                                    class="chart-fill situation-fill color-{{ loop.index0 % 4 }}"
+                                    style="width: {{ (situacao.total / maior_situacao * 100) if maior_situacao else 0 }}%">
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+
+                    <div class="panel-footnote">
+                        <span class="footnote-dot orange-dot"></span>
+                        <span>Situação dos registros ativos</span>
+                    </div>
+                {% else %}
+                    <div class="dashboard-empty">
+                        <span>Não há informações de situação disponíveis.</span>
+                    </div>
+                {% endif %}
+            </article>
+
+        </section>
+    </section>
+    {% endif %}
+
+    <!-- INDICADORES DO ESTOQUE -->
     {% if dashboard.pode_visualizar_estoque %}
 
     <section class="dashboard-stock-section">
@@ -214,6 +248,7 @@
 
         </section>
 
+        <!-- GRÁFICOS DO ESTOQUE -->
         <section class="dashboard-analytics">
 
             <article class="dashboard-panel">
@@ -317,24 +352,10 @@
             </article>
 
         </section>
-
-        {% if dashboard.estoque_baixo > 0 %}
-        <div class="dashboard-stock-alert status-warning">
-            <span class="stock-alert-icon">!</span>
-            <div>
-                <strong>Atenção ao estoque</strong>
-                <p>
-                    Existem {{ dashboard.estoque_baixo }} produto(s)
-                    no limite ou abaixo do estoque mínimo.
-                </p>
-            </div>
-        </div>
-        {% endif %}
-
     </section>
-
     {% endif %}
 
+    <!-- AUSÊNCIA DE PERMISSÕES -->
     {% if not dashboard.pode_visualizar_animais and not dashboard.pode_visualizar_estoque %}
     <section class="dashboard-no-access status-neutral">
         <strong>Visão geral indisponível</strong>
@@ -342,6 +363,7 @@
     </section>
     {% endif %}
 
+    <!-- MÓDULOS -->
     <section class="dashboard-modules">
         <div class="modules-heading">
             <div>
@@ -412,11 +434,11 @@
         </div>
     </section>
 
+    <!-- RODAPÉ -->
     <footer class="dashboard-footer">
         <span>SIAAG · Sistema Integrado de Administração Agropecuária</span>
         <span>IFPI — Campus Paulistana</span>
     </footer>
 
 </div>
-
 {% endblock %}
