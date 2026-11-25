@@ -1,3 +1,4 @@
+
 CREATE DATABASE IF NOT EXISTS siaag;
 USE siaag;
 
@@ -55,7 +56,7 @@ CREATE TABLE animais (
     identificacao VARCHAR(100) NOT NULL,
     nome VARCHAR(100),
     especie VARCHAR(100),
-    raca VARCHAR(100),
+    raca VARCHAR(100) NOT NULL,
     sexo VARCHAR(20),
     nascimento DATE,
     origem VARCHAR(150),
@@ -159,6 +160,7 @@ CREATE TABLE movimentacoes_estoque (
     produto_id INT NOT NULL,
     lote_id INT,
     tipo VARCHAR(20),
+    sentido_ajuste ENUM('acrescimo', 'reducao') DEFAULT NULL,
     quantidade DECIMAL(12,3),
     data_hora DATETIME,
     responsavel_id INT,
@@ -168,7 +170,26 @@ CREATE TABLE movimentacoes_estoque (
     FOREIGN KEY (responsavel_id) REFERENCES usuarios(id)
 );
 
--- 13. ATIVIDADES
+-- 13. NOTIFICACOES
+CREATE TABLE notificacoes (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    usuario_id INT NOT NULL,
+    titulo VARCHAR(150) NOT NULL,
+    mensagem TEXT NOT NULL,
+    tipo VARCHAR(30) DEFAULT 'informacao',
+    link VARCHAR(255) DEFAULT NULL,
+    lida TINYINT(1) NOT NULL DEFAULT 0,
+    criada_em DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    lida_em DATETIME DEFAULT NULL,
+    INDEX idx_notificacoes_usuario_lida (usuario_id, lida),
+    INDEX idx_notificacoes_criada_em (criada_em),
+    CONSTRAINT fk_notificacoes_usuario
+        FOREIGN KEY (usuario_id)
+        REFERENCES usuarios(id)
+        ON DELETE CASCADE
+);
+
+-- 14. ATIVIDADES
 CREATE TABLE atividades (
     id INT AUTO_INCREMENT PRIMARY KEY,
     titulo VARCHAR(150),
@@ -188,7 +209,7 @@ CREATE TABLE atividades (
     FOREIGN KEY (animal_id) REFERENCES animais(id)
 );
 
--- 14. ATIVIDADE_INSUMOS
+-- 15. ATIVIDADE_INSUMOS
 CREATE TABLE atividade_insumos (
     id INT AUTO_INCREMENT PRIMARY KEY,
     atividade_id INT NOT NULL,
@@ -203,7 +224,7 @@ CREATE TABLE atividade_insumos (
     FOREIGN KEY (movimentacao_id) REFERENCES movimentacoes_estoque(id)
 );
 
--- 15. AULAS_PRATICAS
+-- 16. AULAS_PRATICAS
 CREATE TABLE aulas_praticas (
     id INT AUTO_INCREMENT PRIMARY KEY,
     titulo VARCHAR(150),
@@ -222,7 +243,7 @@ CREATE TABLE aulas_praticas (
     FOREIGN KEY (professor_id) REFERENCES usuarios(id)
 );
 
--- 16. RECURSOS_AULA
+-- 17. RECURSOS_AULA
 CREATE TABLE recursos_aula (
     id INT AUTO_INCREMENT PRIMARY KEY,
     aula_id INT NOT NULL,
@@ -236,7 +257,7 @@ CREATE TABLE recursos_aula (
     FOREIGN KEY (movimentacao_id) REFERENCES movimentacoes_estoque(id)
 );
 
--- 17. PARTICIPANTES_AULA
+-- 18. PARTICIPANTES_AULA
 CREATE TABLE participantes_aula (
     id INT AUTO_INCREMENT PRIMARY KEY,
     aula_id INT NOT NULL,
@@ -247,7 +268,7 @@ CREATE TABLE participantes_aula (
     FOREIGN KEY (usuario_id) REFERENCES usuarios(id)
 );
 
--- 18. PROJETOS_PESQUISA
+-- 19. PROJETOS_PESQUISA
 CREATE TABLE projetos_pesquisa (
     id INT AUTO_INCREMENT PRIMARY KEY,
     titulo VARCHAR(200),
@@ -264,7 +285,7 @@ CREATE TABLE projetos_pesquisa (
     FOREIGN KEY (responsavel_id) REFERENCES usuarios(id)
 );
 
--- 19. PARTICIPANTES_PROJETO
+-- 20. PARTICIPANTES_PROJETO
 CREATE TABLE participantes_projeto (
     id INT AUTO_INCREMENT PRIMARY KEY,
     projeto_id INT NOT NULL,
@@ -275,7 +296,7 @@ CREATE TABLE participantes_projeto (
     FOREIGN KEY (usuario_id) REFERENCES usuarios(id)
 );
 
--- 20. PATRIMONIOS
+-- 21. PATRIMONIOS
 CREATE TABLE patrimonios (
     id INT AUTO_INCREMENT PRIMARY KEY,
     codigo_tombamento VARCHAR(100),
@@ -293,7 +314,7 @@ CREATE TABLE patrimonios (
     FOREIGN KEY (responsavel_id) REFERENCES usuarios(id)
 );
 
--- 21. MANUTENCOES_PATRIMONIO
+-- 22. MANUTENCOES_PATRIMONIO
 CREATE TABLE manutencoes_patrimonio (
     id INT AUTO_INCREMENT PRIMARY KEY,
     patrimonio_id INT NOT NULL,
@@ -311,7 +332,3 @@ CREATE TABLE manutencoes_patrimonio (
     FOREIGN KEY (patrimonio_id) REFERENCES patrimonios(id),
     FOREIGN KEY (criado_por) REFERENCES usuarios(id)
 );
-
--- CONFERIR AS TABELAS
-ALTER TABLE animais
-MODIFY COLUMN raca VARCHAR(100) NOT NULL;

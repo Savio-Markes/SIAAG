@@ -33,6 +33,8 @@
 .stock-chart-empty{padding:20px;color:#89938c;background:#f7faf7;border-radius:8px;font-size:11px;text-align:center}
 .stock-alert{display:flex;align-items:center;gap:9px;margin-bottom:16px;padding:11px 13px;color:#895716;background:#fff7e9;border:1px solid #f4e2bd;border-radius:8px;font-size:11px}
 .stock-alert strong{color:#b36b12}
+.product-detail-link{color:#17683a;font-weight:750;text-decoration:none}
+.product-detail-link:hover{text-decoration:underline;color:#23965a}
 @media(max-width:1100px){.stock-kpis{grid-template-columns:repeat(3,minmax(0,1fr))}}
 @media(max-width:800px){.stock-analytics{grid-template-columns:1fr}}
 @media(max-width:600px){.stock-kpis{grid-template-columns:repeat(2,minmax(0,1fr))}.stock-kpi{min-height:98px;padding:14px}.stock-kpi strong{font-size:23px}.stock-chart-card{padding:16px}.stock-bar-row{grid-template-columns:85px 1fr 25px;gap:7px}.stock-movement-item{grid-template-columns:82px 1fr 30px;gap:7px}}
@@ -213,7 +215,15 @@
                     {% if produtos %}
                         {% for produto in produtos %}
                         <tr>
-                            <td>{{ produto.nome }}</td>
+                            <td>
+                                <a
+                                    href="{{ url_for('inventory.detalhes_produto', produto_id=produto.id) }}"
+                                    class="product-detail-link"
+                                    title="Ver ficha do produto"
+                                >
+                                    {{ produto.nome }}
+                                </a>
+                            </td>
                             <td>{{ produto.categoria_nome or '—' }}</td>
                             <td>{{ produto.quantidade_atual|quantidade }}</td>
                             <td>{{ produto.unidade or '—' }}</td>

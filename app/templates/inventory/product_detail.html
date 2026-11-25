@@ -1,0 +1,631 @@
+
+{% extends "base.html" %}
+
+{% block title %}Ficha do Produto | SIAAG{% endblock %}
+
+{% block page_css %}
+<style>
+.product-detail-page {
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
+}
+
+.product-detail-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    gap: 18px;
+}
+
+.product-detail-heading h1 {
+    margin: 5px 0;
+    color: #26352b;
+    font-size: 25px;
+    font-weight: 800;
+}
+
+.product-detail-heading p {
+    margin: 0;
+    color: #849087;
+    font-size: 13px;
+}
+
+.product-detail-eyebrow {
+    color: #368a4f;
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 1.3px;
+}
+
+.product-detail-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 9px;
+}
+
+.product-detail-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 38px;
+    padding: 9px 15px;
+    border: 1px solid #dce6de;
+    border-radius: 7px;
+    background: #fff;
+    color: #31563d;
+    font-size: 12px;
+    font-weight: 700;
+    text-decoration: none;
+    cursor: pointer;
+    transition: .2s ease;
+}
+
+.product-detail-btn:hover {
+    background: #f3f8f4;
+}
+
+.product-detail-btn.primary {
+    color: #fff;
+    background: #286b43;
+    border-color: #286b43;
+}
+
+.product-detail-btn.primary:hover {
+    background: #205b38;
+}
+
+.product-detail-btn.danger {
+    color: #fff;
+    background: #b93838;
+    border-color: #b93838;
+}
+
+.product-detail-btn.danger:hover {
+    background: #982d2d;
+}
+
+.product-detail-btn:disabled {
+    opacity: .6;
+    cursor: not-allowed;
+}
+
+.product-profile {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    padding: 24px;
+    background: #fff;
+    border: 1px solid #e1e9e2;
+    border-radius: 11px;
+    box-shadow: 0 3px 12px rgba(29,65,39,.04);
+}
+
+.product-avatar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 62px;
+    height: 62px;
+    flex-shrink: 0;
+    border-radius: 12px;
+    background: #e8f2eb;
+    color: #286b43;
+    font-size: 27px;
+}
+
+.product-profile-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.product-profile-info h2 {
+    margin: 7px 0 4px;
+    color: #26352b;
+    font-size: 21px;
+    font-weight: 800;
+    overflow-wrap: anywhere;
+}
+
+.product-profile-info p {
+    margin: 0;
+    color: #849087;
+    font-size: 12px;
+}
+
+.product-profile-id {
+    text-align: right;
+}
+
+.product-profile-id span {
+    display: block;
+    color: #89938c;
+    font-size: 9px;
+    font-weight: 800;
+    letter-spacing: 1px;
+}
+
+.product-profile-id strong {
+    display: block;
+    margin-top: 5px;
+    color: #31563d;
+    font-size: 18px;
+}
+
+.product-status {
+    display: inline-flex;
+    padding: 5px 9px;
+    border-radius: 20px;
+    background: #e8f5ec;
+    color: #267443;
+    font-size: 10px;
+    font-weight: 800;
+}
+
+.product-status.inactive {
+    background: #f2eeee;
+    color: #777;
+}
+
+.product-detail-section {
+    padding: 23px;
+    background: #fff;
+    border: 1px solid #e1e9e2;
+    border-radius: 11px;
+    box-shadow: 0 3px 12px rgba(29,65,39,.035);
+}
+
+.product-section-heading {
+    margin-bottom: 20px;
+    padding-bottom: 14px;
+    border-bottom: 1px solid #edf1ed;
+}
+
+.product-section-heading span {
+    color: #368a4f;
+    font-size: 9px;
+    font-weight: 800;
+    letter-spacing: 1.2px;
+}
+
+.product-section-heading h3 {
+    margin: 5px 0;
+    color: #26352b;
+    font-size: 16px;
+    font-weight: 800;
+}
+
+.product-section-heading p {
+    margin: 0;
+    color: #849087;
+    font-size: 11px;
+}
+
+.product-detail-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 18px;
+}
+
+.product-detail-item {
+    min-width: 0;
+}
+
+.product-detail-item span {
+    display: block;
+    margin-bottom: 6px;
+    color: #89938c;
+    font-size: 10px;
+    font-weight: 650;
+}
+
+.product-detail-item strong {
+    display: block;
+    color: #34463a;
+    font-size: 13px;
+    font-weight: 750;
+    overflow-wrap: anywhere;
+}
+
+.product-description {
+    margin-top: 22px;
+    padding: 15px;
+    background: #f7faf7;
+    border-radius: 8px;
+}
+
+.product-description span {
+    display: block;
+    margin-bottom: 7px;
+    color: #778179;
+    font-size: 10px;
+    font-weight: 700;
+}
+
+.product-description p {
+    margin: 0;
+    color: #46564a;
+    font-size: 12px;
+    line-height: 1.6;
+    white-space: pre-wrap;
+}
+
+.product-delete-section {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 20px;
+    padding: 22px;
+    background: #fffafa;
+    border: 1px solid #f0dede;
+    border-radius: 11px;
+}
+
+.product-delete-content {
+    display: flex;
+    align-items: flex-start;
+    gap: 13px;
+    flex: 1;
+    min-width: 220px;
+}
+
+.product-delete-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 35px;
+    height: 35px;
+    flex-shrink: 0;
+    border-radius: 9px;
+    background: #fceaea;
+    color: #b93838;
+    font-weight: 900;
+}
+
+.product-delete-label {
+    color: #b93838;
+    font-size: 9px;
+    font-weight: 800;
+    letter-spacing: 1px;
+}
+
+.product-delete-content h3 {
+    margin: 5px 0;
+    color: #462e2e;
+    font-size: 14px;
+}
+
+.product-delete-content p {
+    max-width: 650px;
+    margin: 0;
+    color: #8a7777;
+    font-size: 11px;
+    line-height: 1.6;
+}
+
+.product-links-list {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 12px;
+}
+
+.product-link-count {
+    padding: 14px;
+    background: #f7faf7;
+    border: 1px solid #e9efe9;
+    border-radius: 8px;
+}
+
+.product-link-count span {
+    display: block;
+    color: #849087;
+    font-size: 10px;
+}
+
+.product-link-count strong {
+    display: block;
+    margin-top: 6px;
+    color: #31563d;
+    font-size: 20px;
+}
+
+.product-delete-warning {
+    width: 100%;
+    padding: 12px 14px;
+    color: #895716;
+    background: #fff7e9;
+    border: 1px solid #f4e2bd;
+    border-radius: 7px;
+    font-size: 11px;
+    line-height: 1.5;
+}
+
+.product-detail-feedback {
+    padding: 13px 15px;
+    border-radius: 8px;
+    font-size: 12px;
+    line-height: 1.5;
+}
+
+.product-detail-feedback[hidden] {
+    display: none;
+}
+
+.product-detail-feedback.info {
+    color: #245b83;
+    background: #edf6fc;
+    border: 1px solid #cfe5f4;
+}
+
+.product-detail-feedback.success {
+    color: #246b3c;
+    background: #edf8f0;
+    border: 1px solid #cce8d3;
+}
+
+.product-detail-feedback.error {
+    color: #963535;
+    background: #fff0f0;
+    border: 1px solid #f0cece;
+}
+
+@media(max-width:800px) {
+    .product-detail-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .product-links-list {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media(max-width:550px) {
+    .product-detail-section {
+        padding: 17px;
+    }
+
+    .product-profile {
+        padding: 17px;
+        flex-wrap: wrap;
+    }
+
+    .product-profile-id {
+        width: 100%;
+        text-align: left;
+    }
+
+    .product-detail-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 16px 10px;
+    }
+
+    .product-detail-actions {
+        width: 100%;
+    }
+
+    .product-detail-btn {
+        flex: 1;
+    }
+
+    .product-delete-section {
+        padding: 17px;
+    }
+
+    .product-delete-section > button {
+        width: 100%;
+    }
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<section class="product-detail-page">
+
+    <header class="product-detail-header">
+        <div class="product-detail-heading">
+            <span class="product-detail-eyebrow">GESTÃO AGROPECUÁRIA</span>
+            <h1>Ficha do Produto</h1>
+            <p>Consulte as informações cadastrais e a situação do produto.</p>
+        </div>
+
+        <div class="product-detail-actions">
+            <a
+                href="{{ url_for('inventory.index') }}"
+                class="product-detail-btn"
+            >
+                ← Voltar ao estoque
+            </a>
+
+            <a
+                href="{{ url_for('inventory.editar_produto', produto_id=produto.id) }}"
+                class="product-detail-btn primary"
+            >
+                Editar produto
+            </a>
+
+            {% if produto.controla_lote_validade %}
+            <a
+                href="{{ url_for('inventory.listar_lotes', produto_id=produto.id) }}"
+                class="product-detail-btn"
+            >
+                Consultar lotes
+            </a>
+            {% endif %}
+        </div>
+    </header>
+
+    <section class="product-profile">
+        <div class="product-avatar" aria-hidden="true">▣</div>
+
+        <div class="product-profile-info">
+            {% if produto.ativo %}
+                <span class="product-status">Produto ativo</span>
+            {% else %}
+                <span class="product-status inactive">Produto inativo</span>
+            {% endif %}
+
+            <h2>{{ produto.nome }}</h2>
+            <p>{{ produto.categoria_nome or 'Sem categoria definida' }}</p>
+        </div>
+
+        <div class="product-profile-id">
+            <span>REGISTRO</span>
+            <strong>#{{ produto.id }}</strong>
+        </div>
+    </section>
+
+    <section class="product-detail-section">
+        <div class="product-section-heading">
+            <span>INFORMAÇÕES GERAIS</span>
+            <h3>Dados cadastrais</h3>
+            <p>Informações registradas no cadastro do produto.</p>
+        </div>
+
+        <div class="product-detail-grid">
+
+            <div class="product-detail-item">
+                <span>Nome do produto</span>
+                <strong>{{ produto.nome or '—' }}</strong>
+            </div>
+
+            <div class="product-detail-item">
+                <span>Categoria</span>
+                <strong>{{ produto.categoria_nome or '—' }}</strong>
+            </div>
+
+            <div class="product-detail-item">
+                <span>Unidade de medida</span>
+                <strong>{{ produto.unidade or '—' }}</strong>
+            </div>
+
+            <div class="product-detail-item">
+                <span>Quantidade atual</span>
+                <strong>{{ produto.quantidade_atual|quantidade }} {{ produto.unidade or '' }}</strong>
+            </div>
+
+            <div class="product-detail-item">
+                <span>Estoque mínimo</span>
+                <strong>{{ produto.estoque_minimo|quantidade }} {{ produto.unidade or '' }}</strong>
+            </div>
+
+            <div class="product-detail-item">
+                <span>Controle de lote e validade</span>
+                <strong>
+                    {% if produto.controla_lote_validade %}
+                        Sim
+                    {% else %}
+                        Não
+                    {% endif %}
+                </strong>
+            </div>
+
+            <div class="product-detail-item">
+                <span>Situação</span>
+                <strong>{{ 'Ativo' if produto.ativo else 'Inativo' }}</strong>
+            </div>
+
+            <div class="product-detail-item">
+                <span>Data de cadastro</span>
+                <strong>{{ produto.criado_em or '—' }}</strong>
+            </div>
+
+            <div class="product-detail-item">
+                <span>Última atualização</span>
+                <strong>{{ produto.atualizado_em or '—' }}</strong>
+            </div>
+
+        </div>
+
+        <div class="product-description">
+            <span>Descrição</span>
+            <p>{{ produto.descricao or 'Nenhuma descrição cadastrada.' }}</p>
+        </div>
+    </section>
+
+    <section class="product-detail-section">
+        <div class="product-section-heading">
+            <span>INTEGRIDADE DOS REGISTROS</span>
+            <h3>Vínculos do produto</h3>
+            <p>Registros relacionados que impedem a exclusão definitiva.</p>
+        </div>
+
+        <div class="product-links-list">
+
+            <div class="product-link-count">
+                <span>Lotes</span>
+                <strong>{{ exclusao.lotes }}</strong>
+            </div>
+
+            <div class="product-link-count">
+                <span>Movimentações</span>
+                <strong>{{ exclusao.movimentacoes }}</strong>
+            </div>
+
+            <div class="product-link-count">
+                <span>Atividades</span>
+                <strong>{{ exclusao.atividades }}</strong>
+            </div>
+
+            <div class="product-link-count">
+                <span>Aulas práticas</span>
+                <strong>{{ exclusao.aulas }}</strong>
+            </div>
+
+        </div>
+    </section>
+
+    <section class="product-delete-section">
+        <div class="product-delete-content">
+            <div class="product-delete-icon" aria-hidden="true">!</div>
+
+            <div>
+                <span class="product-delete-label">ÁREA DE RISCO</span>
+                <h3>Exclusão definitiva do produto</h3>
+                <p>
+                    A exclusão remove permanentemente o cadastro.
+                    Produtos que possuam lotes, movimentações,
+                    atividades ou recursos de aulas vinculados
+                    não podem ser excluídos. Nesses casos,
+                    utilize a opção de inativação.
+                </p>
+            </div>
+        </div>
+
+        {% if exclusao.pode_excluir %}
+        <button
+            type="button"
+            id="btnExcluirProduto"
+            class="product-detail-btn danger"
+            data-excluir-url="{{ url_for('inventory.excluir_produto', produto_id=produto.id) }}"
+            data-redirect-url="{{ url_for('inventory.index') }}"
+        >
+            Excluir produto
+        </button>
+        {% else %}
+        <div class="product-delete-warning">
+            <strong>Exclusão bloqueada.</strong>
+            Este produto possui registros vinculados e deve ser
+            inativado caso não seja mais utilizado.
+        </div>
+        {% endif %}
+    </section>
+
+    <div
+        id="productDetailFeedback"
+        class="product-detail-feedback"
+        role="status"
+        aria-live="polite"
+        hidden
+    ></div>
+
+</section>
+{% endblock %}
+
+{% block page_js %}
+<script
+    src="{{ url_for('static', filename='js/inventory-product-detail.js') }}"
+    defer
+></script>
+{% endblock %}

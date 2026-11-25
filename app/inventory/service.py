@@ -379,6 +379,47 @@ def reativar_produto(produto_id):
 
 
 # ============================================================
+# EXCLUSÃO DE PRODUTOS
+# ============================================================
+
+def verificar_exclusao_produto(produto_id):
+    """Retorna os vínculos e informa se o produto pode ser excluído logicamente."""
+    produto_id = _validar_id(produto_id, "produto")
+    produto = buscar_produto(produto_id)
+
+    try:
+        vinculos = inventory_repository.verificar_vinculos_produto(produto_id)
+    except Exception as erro:
+        _tratar_erro_repositorio(erro)
+
+    return {
+        **vinculos,
+        "pode_excluir": int(produto["ativo"]) == 1
+    }
+
+
+def excluir_produto(produto_id, excluido_por, motivo):
+    """Registra a baixa de todo o saldo, preserva o histórico e inativa o produto."""
+    produto_id = _validar_id(produto_id, "produto")
+    excluido_por = _validar_id(excluido_por, "usuário responsável")
+    motivo = _validar_texto(motivo, "motivo da exclusão", obrigatorio=True)
+
+    if len(motivo) > 1000:
+        raise InventoryServiceError("O motivo da exclusão deve ter no máximo 1000 caracteres.")
+
+    buscar_produto(produto_id)
+
+    try:
+        return inventory_repository.excluir_produto(
+            produto_id=produto_id,
+            excluido_por=excluido_por,
+            motivo=motivo
+        )
+    except Exception as erro:
+        _tratar_erro_repositorio(erro)
+
+
+# ============================================================
 # LOTES
 # ============================================================
 

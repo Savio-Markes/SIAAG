@@ -1,4 +1,3 @@
-
 # Desenvolvido por: Fábio Barbosa
 
 from collections import Counter
@@ -120,6 +119,84 @@ def novo_produto():
         editando=False
     )
 
+
+# ============================================================
+# DETALHES DO PRODUTO
+# ============================================================
+
+@inventory_bp.route(
+    "/produtos/<int:produto_id>",
+    methods=["GET"]
+)
+@permission_required("estoque.visualizar")
+def detalhes_produto(produto_id):
+
+    try:
+        produto = service.buscar_produto(produto_id)
+
+        exclusao = service.verificar_exclusao_produto(
+            produto_id
+        )
+
+        return render_template(
+            "inventory/product_detail.html",
+            produto=produto,
+            exclusao=exclusao
+        )
+
+    except service.InventoryServiceError as erro:
+        flash(str(erro), "erro")
+        return redirect(url_for("inventory.index"))
+
+    except Exception:
+        flash(
+            "Não foi possível carregar os detalhes do produto.",
+            "erro"
+        )
+        return redirect(url_for("inventory.index"))
+
+
+# ============================================================
+# EXCLUSÃO DO PRODUTO
+# ============================================================
+
+@inventory_bp.route(
+    "/produtos/<int:produto_id>/excluir",
+    methods=["POST"]
+)
+@permission_required("estoque.criar_produto")
+def excluir_produto(produto_id):
+
+    try:
+        service.excluir_produto(
+            produto_id=produto_id,
+            excluido_por=session["usuario_id"]
+        )
+
+        return jsonify({
+            "sucesso": True,
+            "mensagem": "Produto excluído com sucesso.",
+            "redirecionamento": url_for("inventory.index")
+        }), 200
+
+    except service.InventoryServiceError as erro:
+
+        return jsonify({
+            "sucesso": False,
+            "mensagem": str(erro)
+        }), 400
+
+    except Exception:
+
+        return jsonify({
+            "sucesso": False,
+            "mensagem": "Não foi possível excluir o produto."
+        }), 500
+
+
+# ============================================================
+# EDIÇÃO DO PRODUTO
+# ============================================================
 
 @inventory_bp.route(
     "/produtos/<int:produto_id>/editar",

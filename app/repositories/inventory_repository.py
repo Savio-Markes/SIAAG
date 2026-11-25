@@ -415,6 +415,155 @@ def alterar_status_produto(produto_id, ativo):
 
 
 # ============================================================
+# EXCLUSÃO DE PRODUTOS
+# ============================================================
+
+def verificar_vinculos_produto(produto_id, cursor=None):
+    """
+    Verifica se o produto possui registros relacionados.
+
+    Produtos com histórico não podem ser excluídos.
+    Nesse caso, devem ser inativados.
+    """
+
+    conexao = get_db()
+
+    def consultar_vinculos(cursor_atual):
+        tabelas = {
+            "lotes": (
+                "SELECT COUNT(*) AS total "
+                "FROM lotes_produto WHERE produto_id = %s"
+            ),
+            "movimentacoes": (
+                "SELECT COUNT(*) AS total "
+                "FROM movimentacoes_estoque WHERE produto_id = %s"
+            ),
+            "atividades": (
+                "SELECT COUNT(*) AS total "
+                "FROM atividade_insumos WHERE produto_id = %s"
+            ),
+            "aulas": (
+                "SELECT COUNT(*) AS total "
+                "FROM recursos_aula WHERE produto_id = %s"
+            )
+        }
+
+        resultado = {}
+
+        for nome, consulta in tabelas.items():
+            cursor_atual.execute(consulta, (produto_id,))
+            resultado[nome] = cursor_atual.fetchone()["total"]
+
+        resultado["possui_vinculos"] = any(
+            quantidade > 0
+            for quantidade in resultado.values()
+        )
+
+        return resultado
+
+    if cursor is not None:
+        return consultar_vinculos(cursor)
+
+    with conexao.cursor() as cursor_atual:
+        return consultar_vinculos(cursor_atual)
+
+
+def excluir_produto(produto_id, excluido_por):
+    """
+    Exclui fisicamente um produto somente quando não possui
+    lotes, movimentações ou vínculos com atividades e aulas.
+
+    A verificação, exclusão e auditoria são executadas
+    dentro da mesma transação.
+    """
+
+    conexao = get_db()
+
+    try:
+        with conexao.cursor() as cursor:
+            # Bloqueia o produto durante a operação.
+            cursor.execute(
+                """
+                SELECT id, nome
+                FROM produtos
+                WHERE id = %s
+                FOR UPDATE
+                """,
+                (produto_id,)
+            )
+
+            produto = cursor.fetchone()
+
+            if not produto:
+                raise InventoryRepositoryError(
+                    "Produto não encontrado."
+                )
+
+            # Verifica novamente os vínculos dentro da transação.
+            vinculos = verificar_vinculos_produto(
+                produto_id,
+                cursor=cursor
+            )
+
+            if vinculos["possui_vinculos"]:
+                raise InventoryRepositoryError(
+                    "Este produto possui histórico ou vínculos "
+                    "e não pode ser excluído. Utilize a opção "
+                    "de inativar o produto."
+                )
+
+            # Exclui somente o produto sem histórico.
+            cursor.execute(
+                """
+                DELETE FROM produtos
+                WHERE id = %s
+                """,
+                (produto_id,)
+            )
+
+            if cursor.rowcount == 0:
+                raise InventoryRepositoryError(
+                    "Não foi possível excluir o produto."
+                )
+
+            # Registra a auditoria na mesma transação.
+            cursor.execute(
+                """
+                INSERT INTO logs_auditoria (
+                    usuario_id,
+                    data_hora,
+                    modulo,
+                    acao,
+                    entidade,
+                    registro_id,
+                    resultado,
+                    detalhes_resumidos
+                ) VALUES (
+                    %s, NOW(), 'estoque',
+                    'excluir_produto',
+                    'produtos',
+                    %s, 'sucesso', %s
+                )
+                """,
+                (
+                    excluido_por,
+                    produto_id,
+                    (
+                        f"Produto '{produto['nome']}' "
+                        f"(ID {produto_id}) excluído."
+                    )
+                )
+            )
+
+        conexao.commit()
+        return True
+
+    except Exception:
+        conexao.rollback()
+        raise
+
+
+# ============================================================
 # LOTES
 # ============================================================
 
@@ -975,6 +1124,8 @@ def registrar_movimentacao_atomica(dados):
     except Exception:
         conexao.rollback()
         raise
+
+
 # ============================================================
 # INDICADORES DA DASHBOARD
 # ============================================================
