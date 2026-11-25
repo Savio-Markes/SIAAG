@@ -1,4 +1,3 @@
-
 document.addEventListener("DOMContentLoaded", () => {
     inicializarDetalhesProduto();
 });
@@ -25,16 +24,20 @@ function inicializarDetalhesProduto() {
 
     botaoExcluir.addEventListener("click", async () => {
         const primeiraConfirmacao = window.confirm(
-            "ATENÇÃO: a exclusão é definitiva.\n\n" +
-            "O produto somente poderá ser removido se não possuir " +
-            "lotes, movimentações ou vínculos com atividades e aulas.\n\n" +
-            "Deseja continuar?"
+            "ATENÇÃO: a exclusão é DEFINITIVA.\n\n" +
+            "Todos os registros vinculados a este produto também serão " +
+            "removidos, incluindo lotes, movimentações, registros de " +
+            "atividades e recursos de aulas.\n\n" +
+            "O registro da exclusão permanecerá no histórico de auditoria.\n\n" +
+            "Deseja realmente continuar?"
         );
 
         if (!primeiraConfirmacao) return;
 
         const segundaConfirmacao = window.confirm(
-            "Confirme novamente a exclusão definitiva deste produto."
+            "ÚLTIMA CONFIRMAÇÃO!\n\n" +
+            "Esta operação não poderá ser desfeita.\n\n" +
+            "Confirma a exclusão definitiva do produto?"
         );
 
         if (!segundaConfirmacao) return;
@@ -43,7 +46,7 @@ function inicializarDetalhesProduto() {
         botaoExcluir.textContent = "Excluindo...";
 
         mostrarFeedback(
-            "Verificando os vínculos e processando a exclusão...",
+            "Removendo o produto e seus registros relacionados...",
             "info"
         );
 
@@ -99,7 +102,7 @@ function inicializarDetalhesProduto() {
 
 function interpretarErro(status) {
     const mensagens = {
-        400: "Não foi possível realizar a exclusão. Verifique os vínculos do produto.",
+        400: "Não foi possível realizar a exclusão. Verifique os dados do produto.",
         401: "Sua sessão expirou. Faça login novamente.",
         403: "Você não tem permissão para excluir este produto.",
         404: "Produto não encontrado.",

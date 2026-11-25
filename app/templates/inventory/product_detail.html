@@ -548,7 +548,10 @@
         <div class="product-section-heading">
             <span>INTEGRIDADE DOS REGISTROS</span>
             <h3>Vínculos do produto</h3>
-            <p>Registros relacionados que impedem a exclusão definitiva.</p>
+            <p>
+                Quantidade de registros relacionados ao produto.
+                Eles serão removidos junto com a exclusão definitiva.
+            </p>
         </div>
 
         <div class="product-links-list">
@@ -584,16 +587,17 @@
                 <span class="product-delete-label">ÁREA DE RISCO</span>
                 <h3>Exclusão definitiva do produto</h3>
                 <p>
-                    A exclusão remove permanentemente o cadastro.
-                    Produtos que possuam lotes, movimentações,
-                    atividades ou recursos de aulas vinculados
-                    não podem ser excluídos. Nesses casos,
+                    A exclusão remove permanentemente o cadastro e os
+                    registros vinculados, incluindo lotes, movimentações,
+                    registros de atividades e recursos de aulas.
+                    O evento de exclusão será preservado no histórico
+                    de auditoria, com o responsável e a data e hora.
+                    Se o produto apenas não estiver mais em uso,
                     utilize a opção de inativação.
                 </p>
             </div>
         </div>
 
-        {% if exclusao.pode_excluir %}
         <button
             type="button"
             id="btnExcluirProduto"
@@ -603,13 +607,6 @@
         >
             Excluir produto
         </button>
-        {% else %}
-        <div class="product-delete-warning">
-            <strong>Exclusão bloqueada.</strong>
-            Este produto possui registros vinculados e deve ser
-            inativado caso não seja mais utilizado.
-        </div>
-        {% endif %}
     </section>
 
     <div
