@@ -1,4 +1,3 @@
-
 # Desenvolvido por: Fábio Barbosa
 
 from decimal import Decimal, InvalidOperation
@@ -420,39 +419,76 @@ def alterar_status_produto(produto_id, ativo):
 
 def verificar_vinculos_produto(produto_id, cursor=None):
     """
-    Verifica se o produto possui registros relacionados.
+    Conta os vínculos diretos e indiretos de um produto.
 
-    Produtos com histórico não podem ser excluídos.
-    Nesse caso, devem ser inativados.
+    Os vínculos indiretos são identificados pelos lotes e pelas
+    movimentações pertencentes ao produto.
     """
 
-    conexao = get_db()
+    conexao = get_db() if cursor is None else None
 
     def consultar_vinculos(cursor_atual):
-        tabelas = {
-            "lotes": (
-                "SELECT COUNT(*) AS total "
-                "FROM lotes_produto WHERE produto_id = %s"
-            ),
-            "movimentacoes": (
-                "SELECT COUNT(*) AS total "
-                "FROM movimentacoes_estoque WHERE produto_id = %s"
-            ),
-            "atividades": (
-                "SELECT COUNT(*) AS total "
-                "FROM atividade_insumos WHERE produto_id = %s"
-            ),
-            "aulas": (
-                "SELECT COUNT(*) AS total "
-                "FROM recursos_aula WHERE produto_id = %s"
-            )
+        cursor_atual.execute(
+            """
+            SELECT COUNT(*) AS total
+            FROM lotes_produto
+            WHERE produto_id = %s
+            """,
+            (produto_id,)
+        )
+        lotes = cursor_atual.fetchone()["total"]
+
+        cursor_atual.execute(
+            """
+            SELECT COUNT(*) AS total
+            FROM movimentacoes_estoque
+            WHERE produto_id = %s
+            """,
+            (produto_id,)
+        )
+        movimentacoes = cursor_atual.fetchone()["total"]
+
+        cursor_atual.execute(
+            """
+            SELECT COUNT(DISTINCT ai.id) AS total
+            FROM atividade_insumos ai
+            WHERE ai.produto_id = %s
+               OR ai.lote_id IN (
+                    SELECT lp.id
+                    FROM lotes_produto lp
+                    WHERE lp.produto_id = %s
+               )
+               OR ai.movimentacao_id IN (
+                    SELECT me.id
+                    FROM movimentacoes_estoque me
+                    WHERE me.produto_id = %s
+               )
+            """,
+            (produto_id, produto_id, produto_id)
+        )
+        atividades = cursor_atual.fetchone()["total"]
+
+        cursor_atual.execute(
+            """
+            SELECT COUNT(DISTINCT ra.id) AS total
+            FROM recursos_aula ra
+            WHERE ra.produto_id = %s
+               OR ra.movimentacao_id IN (
+                    SELECT me.id
+                    FROM movimentacoes_estoque me
+                    WHERE me.produto_id = %s
+               )
+            """,
+            (produto_id, produto_id)
+        )
+        aulas = cursor_atual.fetchone()["total"]
+
+        resultado = {
+            "lotes": lotes,
+            "movimentacoes": movimentacoes,
+            "atividades": atividades,
+            "aulas": aulas
         }
-
-        resultado = {}
-
-        for nome, consulta in tabelas.items():
-            cursor_atual.execute(consulta, (produto_id,))
-            resultado[nome] = cursor_atual.fetchone()["total"]
 
         resultado["possui_vinculos"] = any(
             quantidade > 0
@@ -470,18 +506,24 @@ def verificar_vinculos_produto(produto_id, cursor=None):
 
 def excluir_produto(produto_id, excluido_por):
     """
-    Exclui fisicamente um produto somente quando não possui
-    lotes, movimentações ou vínculos com atividades e aulas.
+    Exclui definitivamente um produto e seus vínculos de estoque.
 
-    A verificação, exclusão e auditoria são executadas
-    dentro da mesma transação.
+    A ordem respeita as chaves estrangeiras:
+    1. Insumos vinculados a atividades;
+    2. Recursos vinculados a aulas;
+    3. Movimentações de estoque;
+    4. Lotes do produto;
+    5. Produto.
+
+    A auditoria é registrada na mesma transação. Qualquer falha
+    provoca rollback de todas as exclusões.
     """
 
     conexao = get_db()
 
     try:
         with conexao.cursor() as cursor:
-            # Bloqueia o produto durante a operação.
+            # Bloqueia o registro principal durante a exclusão.
             cursor.execute(
                 """
                 SELECT id, nome
@@ -499,20 +541,66 @@ def excluir_produto(produto_id, excluido_por):
                     "Produto não encontrado."
                 )
 
-            # Verifica novamente os vínculos dentro da transação.
+            # Confirma os vínculos dentro da mesma transação.
             vinculos = verificar_vinculos_produto(
                 produto_id,
                 cursor=cursor
             )
 
-            if vinculos["possui_vinculos"]:
-                raise InventoryRepositoryError(
-                    "Este produto possui histórico ou vínculos "
-                    "e não pode ser excluído. Utilize a opção "
-                    "de inativar o produto."
-                )
+            # Remove primeiro as tabelas associativas.
+            cursor.execute(
+                """
+                DELETE FROM atividade_insumos
+                WHERE produto_id = %s
+                   OR lote_id IN (
+                        SELECT id
+                        FROM lotes_produto
+                        WHERE produto_id = %s
+                   )
+                   OR movimentacao_id IN (
+                        SELECT id
+                        FROM movimentacoes_estoque
+                        WHERE produto_id = %s
+                   )
+                """,
+                (produto_id, produto_id, produto_id)
+            )
+            atividades_removidas = cursor.rowcount
 
-            # Exclui somente o produto sem histórico.
+            cursor.execute(
+                """
+                DELETE FROM recursos_aula
+                WHERE produto_id = %s
+                   OR movimentacao_id IN (
+                        SELECT id
+                        FROM movimentacoes_estoque
+                        WHERE produto_id = %s
+                   )
+                """,
+                (produto_id, produto_id)
+            )
+            recursos_aula_removidos = cursor.rowcount
+
+            # Movimentações apontam para lotes.
+            cursor.execute(
+                """
+                DELETE FROM movimentacoes_estoque
+                WHERE produto_id = %s
+                """,
+                (produto_id,)
+            )
+            movimentacoes_removidas = cursor.rowcount
+
+            cursor.execute(
+                """
+                DELETE FROM lotes_produto
+                WHERE produto_id = %s
+                """,
+                (produto_id,)
+            )
+            lotes_removidos = cursor.rowcount
+
+            # Remove o produto por último.
             cursor.execute(
                 """
                 DELETE FROM produtos
@@ -521,12 +609,27 @@ def excluir_produto(produto_id, excluido_por):
                 (produto_id,)
             )
 
-            if cursor.rowcount == 0:
+            if cursor.rowcount != 1:
                 raise InventoryRepositoryError(
-                    "Não foi possível excluir o produto."
+                    "Não foi possível concluir a exclusão do produto."
                 )
 
-            # Registra a auditoria na mesma transação.
+            # Registra a auditoria sem depender da existência
+            # do produto excluído.
+            detalhes = (
+                f"Produto '{produto['nome']}' (ID {produto_id}) "
+                f"excluído definitivamente. "
+                f"Vínculos identificados: {vinculos['lotes']} lote(s), "
+                f"{vinculos['movimentacoes']} movimentação(ões), "
+                f"{vinculos['atividades']} vínculo(s) com atividade(s) "
+                f"e {vinculos['aulas']} recurso(s) de aula. "
+                f"Removidos nesta operação: "
+                f"{atividades_removidas} insumo(s) de atividade, "
+                f"{recursos_aula_removidos} recurso(s) de aula, "
+                f"{movimentacoes_removidas} movimentação(ões) e "
+                f"{lotes_removidos} lote(s)."
+            )
+
             cursor.execute(
                 """
                 INSERT INTO logs_auditoria (
@@ -548,10 +651,7 @@ def excluir_produto(produto_id, excluido_por):
                 (
                     excluido_por,
                     produto_id,
-                    (
-                        f"Produto '{produto['nome']}' "
-                        f"(ID {produto_id}) excluído."
-                    )
+                    detalhes
                 )
             )
 
