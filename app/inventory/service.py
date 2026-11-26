@@ -223,9 +223,8 @@ def validar_dados_produto(dados, atualizacao=False):
                 "A configuração de controle de lote é inválida."
             )
 
-    else:
-        if not atualizacao:
-            dados["controla_lote_validade"] = 0
+    elif not atualizacao:
+        dados["controla_lote_validade"] = 0
 
     return dados
 
@@ -303,21 +302,24 @@ def editar_produto(produto_id, dados):
             produto["controla_lote_validade"]
         )
 
-        if novo_controle != controle_atual:
+        # Desativar o controle é permitido.
+        # Os lotes e movimentações antigos permanecem
+        # preservados para consulta e auditoria.
+
+        # Reativar exige conferência dos lotes históricos,
+        # pois seus saldos não acompanham movimentações
+        # realizadas enquanto o controle estava desativado.
+        if controle_atual == 0 and novo_controle == 1:
             lotes = inventory_repository.listar_lotes_produto(
                 produto_id
             )
 
-            movimentacoes = (
-                inventory_repository.contar_movimentacoes(
-                    produto_id=produto_id
-                )
-            )
-
-            if lotes or movimentacoes:
+            if lotes:
                 raise InventoryServiceError(
-                    "Não é possível alterar o controle de lote "
-                    "de um produto que possui histórico."
+                    "Não é possível reativar automaticamente "
+                    "o controle de lote porque este produto "
+                    "possui lotes históricos. Faça a conferência "
+                    "dos saldos antes de reativar o controle."
                 )
 
     try:

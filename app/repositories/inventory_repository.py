@@ -601,7 +601,8 @@ def excluir_produto(
                 str(cursor.fetchone()["saldo"] or 0)
             )
 
-            # Preserva os dados das movimentações.
+            # Preserva nome, unidade e lote das movimentações.
+            # Desvincula produto e lote antes de excluir os registros.
             cursor.execute(
                 """
                 UPDATE movimentacoes_estoque me
@@ -618,7 +619,8 @@ def excluir_produto(
                         lp.codigo_lote,
                         me.lote_codigo
                     ),
-                    me.lote_id = NULL
+                    me.lote_id = NULL,
+                    me.produto_id = NULL
                 WHERE me.produto_id = %s
                 """,
                 (nome, unidade, produto_id)
@@ -694,7 +696,6 @@ def excluir_produto(
             recursos_aula_desvinculados = cursor.rowcount
 
             # Registra o evento de exclusão.
-            # produto_id fica NULL porque o cadastro será removido.
             cursor.execute(
                 """
                 INSERT INTO movimentacoes_estoque (
