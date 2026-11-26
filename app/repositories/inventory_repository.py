@@ -1,4 +1,3 @@
-
 # Desenvolvido por: Fábio Barbosa
 
 from decimal import Decimal, InvalidOperation
@@ -421,9 +420,6 @@ def alterar_status_produto(produto_id, ativo):
 def verificar_vinculos_produto(produto_id, cursor=None):
     """
     Conta os vínculos diretos e indiretos de um produto.
-
-    Os vínculos indiretos são identificados pelos lotes e pelas
-    movimentações pertencentes ao produto.
     """
 
     conexao = get_db() if cursor is None else None
@@ -505,10 +501,27 @@ def verificar_vinculos_produto(produto_id, cursor=None):
         return consultar_vinculos(cursor_atual)
 
 
-def excluir_produto(produto_id, excluido_por):
+def excluir_produto(
+    produto_id,
+    excluido_por,
+    justificativa
+):
     """
-    Exclui definitivamente o produto, preservando seu histórico.
+    Exclui definitivamente o cadastro do produto,
+    preservando os registros históricos e sua justificativa.
     """
+
+    justificativa = str(justificativa or "").strip()
+
+    if not justificativa:
+        raise InventoryRepositoryError(
+            "Informe a justificativa da exclusão."
+        )
+
+    if len(justificativa) > 500:
+        raise InventoryRepositoryError(
+            "A justificativa deve ter no máximo 500 caracteres."
+        )
 
     conexao = get_db()
 
@@ -523,6 +536,7 @@ def excluir_produto(produto_id, excluido_por):
                 """,
                 (produto_id,)
             )
+
             produto = cursor.fetchone()
 
             if not produto:
@@ -532,6 +546,7 @@ def excluir_produto(produto_id, excluido_por):
 
             nome = produto["nome"]
             unidade = produto["unidade"]
+
             controla_lote = (
                 int(produto["controla_lote_validade"]) == 1
             )
@@ -541,7 +556,7 @@ def excluir_produto(produto_id, excluido_por):
                 cursor=cursor
             )
 
-            # Calcula o saldo antes de excluir o produto.
+            # Calcula o saldo antes da exclusão.
             if controla_lote:
                 cursor.execute(
                     """
@@ -559,14 +574,18 @@ def excluir_produto(produto_id, excluido_por):
                             CASE
                                 WHEN tipo = 'entrada'
                                     THEN quantidade
+
                                 WHEN tipo = 'saida'
                                     THEN -quantidade
+
                                 WHEN tipo = 'ajuste'
                                      AND sentido_ajuste = 'acrescimo'
                                     THEN quantidade
+
                                 WHEN tipo = 'ajuste'
                                      AND sentido_ajuste = 'reducao'
                                     THEN -quantidade
+
                                 ELSE 0
                             END
                         ),
@@ -582,7 +601,7 @@ def excluir_produto(produto_id, excluido_por):
                 str(cursor.fetchone()["saldo"] or 0)
             )
 
-            # Preserva nome, unidade e lote nas movimentações antigas.
+            # Preserva os dados das movimentações.
             cursor.execute(
                 """
                 UPDATE movimentacoes_estoque me
@@ -605,41 +624,77 @@ def excluir_produto(produto_id, excluido_por):
                 (nome, unidade, produto_id)
             )
 
-            # Preserva os registros de atividades.
+            # Preserva nome e unidade nos insumos das atividades.
             cursor.execute(
                 """
                 UPDATE atividade_insumos ai
                 LEFT JOIN lotes_produto lp
                     ON lp.id = ai.lote_id
+                LEFT JOIN movimentacoes_estoque me
+                    ON me.id = ai.movimentacao_id
                 SET
+                    ai.produto_nome = COALESCE(
+                        ai.produto_nome,
+                        me.produto_nome,
+                        %s
+                    ),
+                    ai.unidade = COALESCE(
+                        ai.unidade,
+                        me.unidade,
+                        %s
+                    ),
                     ai.produto_id = NULL,
-                    ai.lote_id = NULL
+                    ai.lote_id = NULL,
+                    ai.movimentacao_id = NULL
                 WHERE ai.produto_id = %s
                    OR lp.produto_id = %s
-                   OR ai.movimentacao_id IN (
-                        SELECT me.id
-                        FROM movimentacoes_estoque me
-                        WHERE me.produto_id = %s
-                   )
+                   OR me.produto_id = %s
                 """,
-                (produto_id, produto_id, produto_id)
+                (
+                    nome,
+                    unidade,
+                    produto_id,
+                    produto_id,
+                    produto_id
+                )
             )
 
             atividades_desvinculadas = cursor.rowcount
 
-            # Preserva os recursos das aulas.
+            # Preserva nome e unidade nos recursos das aulas.
             cursor.execute(
                 """
-                UPDATE recursos_aula
-                SET produto_id = NULL
-                WHERE produto_id = %s
+                UPDATE recursos_aula ra
+                LEFT JOIN movimentacoes_estoque me
+                    ON me.id = ra.movimentacao_id
+                SET
+                    ra.produto_nome = COALESCE(
+                        ra.produto_nome,
+                        me.produto_nome,
+                        %s
+                    ),
+                    ra.unidade = COALESCE(
+                        ra.unidade,
+                        me.unidade,
+                        %s
+                    ),
+                    ra.produto_id = NULL,
+                    ra.movimentacao_id = NULL
+                WHERE ra.produto_id = %s
+                   OR me.produto_id = %s
                 """,
-                (produto_id,)
+                (
+                    nome,
+                    unidade,
+                    produto_id,
+                    produto_id
+                )
             )
 
             recursos_aula_desvinculados = cursor.rowcount
 
-            # Registra a exclusão no histórico de movimentações.
+            # Registra o evento de exclusão.
+            # produto_id fica NULL porque o cadastro será removido.
             cursor.execute(
                 """
                 INSERT INTO movimentacoes_estoque (
@@ -655,24 +710,22 @@ def excluir_produto(produto_id, excluido_por):
                     responsavel_id,
                     motivo
                 ) VALUES (
-                    %s, NULL, %s, %s, NULL,
+                    NULL, NULL, %s, %s, NULL,
                     'exclusao', NULL, %s, NOW(), %s, %s
                 )
                 """,
                 (
-                    produto_id,
                     nome,
                     unidade,
                     saldo,
                     excluido_por,
-                    "Exclusão definitiva do produto. "
-                    "Saldo registrado no momento da exclusão."
+                    justificativa
                 )
             )
 
             movimentacao_exclusao_id = cursor.lastrowid
 
-            # Exclui os lotes após preservar os dados históricos.
+            # Remove os lotes após preservar os históricos.
             cursor.execute(
                 """
                 DELETE FROM lotes_produto
@@ -683,7 +736,7 @@ def excluir_produto(produto_id, excluido_por):
 
             lotes_removidos = cursor.rowcount
 
-            # Exclui o cadastro do produto por último.
+            # Remove o cadastro do produto por último.
             cursor.execute(
                 """
                 DELETE FROM produtos
@@ -702,12 +755,13 @@ def excluir_produto(produto_id, excluido_por):
                 f"Produto '{nome}' (ID {produto_id}) "
                 f"excluído definitivamente. "
                 f"Saldo registrado: {saldo} {unidade}. "
+                f"Justificativa: {justificativa}. "
                 f"Movimentação de exclusão: "
                 f"{movimentacao_exclusao_id}. "
                 f"Lotes removidos: {lotes_removidos}. "
-                f"Atividades preservadas/desvinculadas: "
+                f"Atividades preservadas: "
                 f"{atividades_desvinculadas}. "
-                f"Recursos de aulas desvinculados: "
+                f"Recursos de aulas preservados: "
                 f"{recursos_aula_desvinculados}. "
                 f"Movimentações históricas preservadas: "
                 f"{vinculos['movimentacoes']}."
@@ -1194,14 +1248,18 @@ def registrar_movimentacao_atomica(dados):
                             CASE
                                 WHEN tipo = 'entrada'
                                     THEN quantidade
+
                                 WHEN tipo = 'saida'
                                     THEN -quantidade
+
                                 WHEN tipo = 'ajuste'
                                      AND sentido_ajuste = 'acrescimo'
                                     THEN quantidade
+
                                 WHEN tipo = 'ajuste'
                                      AND sentido_ajuste = 'reducao'
                                     THEN -quantidade
+
                                 ELSE 0
                             END
                         ),

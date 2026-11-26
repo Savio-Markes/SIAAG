@@ -1,4 +1,3 @@
-
 {% extends "base.html" %}
 
 {% block title %}Ficha do Produto | SIAAG{% endblock %}
@@ -549,8 +548,9 @@
             <span>INTEGRIDADE DOS REGISTROS</span>
             <h3>Vínculos do produto</h3>
             <p>
-                Quantidade de registros relacionados ao produto.
-                Eles serão removidos junto com a exclusão definitiva.
+                Estes números representam os registros históricos relacionados
+                ao produto. Na exclusão definitiva, os vínculos com o cadastro
+                serão desfeitos, mas os históricos serão preservados.
             </p>
         </div>
 
@@ -587,11 +587,14 @@
                 <span class="product-delete-label">ÁREA DE RISCO</span>
                 <h3>Exclusão definitiva do produto</h3>
                 <p>
-                    A exclusão remove permanentemente o cadastro e os
-                    registros vinculados, incluindo lotes, movimentações,
-                    registros de atividades e recursos de aulas.
-                    O evento de exclusão será preservado no histórico
-                    de auditoria, com o responsável e a data e hora.
+                    O cadastro do produto e seus lotes serão excluídos.
+                    As movimentações, atividades e aulas práticas relacionadas
+                    terão seus vínculos com o produto removidos, mas seus
+                    registros históricos serão preservados com as informações
+                    disponíveis, como nome e unidade de medida.
+                    A exclusão também gerará um registro no histórico de
+                    movimentações e na auditoria, identificando o responsável,
+                    a data e a justificativa.
                     Se o produto apenas não estiver mais em uso,
                     utilize a opção de inativação.
                 </p>

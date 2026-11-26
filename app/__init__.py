@@ -49,7 +49,6 @@ def create_app():
     app.register_blueprint(inventory_bp)
 
     # ROTA TEMPORÁRIA PARA TESTE DO FORMULÁRIO DE PATRIMÔNIO
-
     @app.route("/patrimonio/novo", methods=["GET"])
     def formulario_patrimonio():
         return render_template("assets/form.html")

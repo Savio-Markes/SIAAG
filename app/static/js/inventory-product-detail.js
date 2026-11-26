@@ -25,18 +25,42 @@ function inicializarDetalhesProduto() {
     botaoExcluir.addEventListener("click", async () => {
         const primeiraConfirmacao = window.confirm(
             "ATENÇÃO: a exclusão é DEFINITIVA.\n\n" +
-            "Todos os registros vinculados a este produto também serão " +
-            "removidos, incluindo lotes, movimentações, registros de " +
-            "atividades e recursos de aulas.\n\n" +
-            "O registro da exclusão permanecerá no histórico de auditoria.\n\n" +
-            "Deseja realmente continuar?"
+            "O cadastro do produto e seus lotes serão excluídos.\n\n" +
+            "Os históricos de movimentações, atividades e aulas práticas " +
+            "serão preservados, mas deixarão de estar vinculados ao produto.\n\n" +
+            "Deseja continuar?"
         );
 
         if (!primeiraConfirmacao) return;
 
+        const justificativa = window.prompt(
+            "Informe a justificativa da exclusão (obrigatória, até 500 caracteres):"
+        );
+
+        if (justificativa === null) return;
+
+        const justificativaLimpa = justificativa.trim();
+
+        if (!justificativaLimpa) {
+            mostrarFeedback(
+                "A justificativa da exclusão é obrigatória.",
+                "error"
+            );
+            return;
+        }
+
+        if (justificativaLimpa.length > 500) {
+            mostrarFeedback(
+                "A justificativa deve ter no máximo 500 caracteres.",
+                "error"
+            );
+            return;
+        }
+
         const segundaConfirmacao = window.confirm(
             "ÚLTIMA CONFIRMAÇÃO!\n\n" +
-            "Esta operação não poderá ser desfeita.\n\n" +
+            "A exclusão não poderá ser desfeita.\n" +
+            "A justificativa será registrada no histórico.\n\n" +
             "Confirma a exclusão definitiva do produto?"
         );
 
@@ -46,7 +70,7 @@ function inicializarDetalhesProduto() {
         botaoExcluir.textContent = "Excluindo...";
 
         mostrarFeedback(
-            "Removendo o produto e seus registros relacionados...",
+            "Registrando a exclusão e preservando os históricos...",
             "info"
         );
 
@@ -54,9 +78,13 @@ function inicializarDetalhesProduto() {
             const resposta = await fetch(excluirUrl, {
                 method: "POST",
                 headers: {
-                    "Accept": "application/json"
+                    "Accept": "application/json",
+                    "Content-Type": "application/json"
                 },
-                credentials: "same-origin"
+                credentials: "same-origin",
+                body: JSON.stringify({
+                    justificativa: justificativaLimpa
+                })
             });
 
             const resultado = await resposta.json().catch(() => ({}));
@@ -102,7 +130,7 @@ function inicializarDetalhesProduto() {
 
 function interpretarErro(status) {
     const mensagens = {
-        400: "Não foi possível realizar a exclusão. Verifique os dados do produto.",
+        400: "Não foi possível realizar a exclusão. Verifique os dados informados.",
         401: "Sua sessão expirou. Faça login novamente.",
         403: "Você não tem permissão para excluir este produto.",
         404: "Produto não encontrado.",
