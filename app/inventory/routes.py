@@ -169,19 +169,29 @@ def detalhes_produto(produto_id):
 def excluir_produto(produto_id):
 
     try:
+        dados = request.get_json(silent=True)
+
+        if not isinstance(dados, dict):
+            dados = request.form.to_dict()
+
+        justificativa = dados.get("justificativa", "")
+
         service.excluir_produto(
             produto_id=produto_id,
-            excluido_por=session["usuario_id"]
+            excluido_por=session["usuario_id"],
+            justificativa=justificativa
         )
 
         return jsonify({
             "sucesso": True,
-            "mensagem": "Produto excluído com sucesso.",
+            "mensagem": (
+                "Produto excluído com sucesso. "
+                "O histórico foi preservado."
+            ),
             "redirecionamento": url_for("inventory.index")
         }), 200
 
     except service.InventoryServiceError as erro:
-
         return jsonify({
             "sucesso": False,
             "mensagem": str(erro)

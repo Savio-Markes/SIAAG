@@ -388,7 +388,7 @@ def verificar_exclusao_produto(produto_id):
     Valida o produto e retorna a quantidade de registros vinculados.
 
     A existência de vínculos não impede a exclusão definitiva:
-    o repositório será responsável por removê-los na transação.
+    o repositório será responsável por preservar os históricos.
     """
     produto_id = _validar_id(
         produto_id,
@@ -414,11 +414,14 @@ def verificar_exclusao_produto(produto_id):
     }
 
 
-def excluir_produto(produto_id, excluido_por):
+def excluir_produto(
+    produto_id,
+    excluido_por,
+    justificativa
+):
     """
-    Valida os identificadores e delega a exclusão definitiva
-    ao repositório, que deve executar a operação e a auditoria
-    dentro de uma única transação.
+    Valida os dados e delega a exclusão definitiva ao repositório,
+    preservando os históricos e registrando a justificativa.
     """
     produto_id = _validar_id(
         produto_id,
@@ -430,10 +433,22 @@ def excluir_produto(produto_id, excluido_por):
         "responsável pela exclusão"
     )
 
+    justificativa = _validar_texto(
+        justificativa,
+        "justificativa",
+        obrigatorio=True
+    )
+
+    if len(justificativa) > 500:
+        raise InventoryServiceError(
+            "A justificativa deve ter no máximo 500 caracteres."
+        )
+
     try:
         excluido = inventory_repository.excluir_produto(
             produto_id=produto_id,
-            excluido_por=excluido_por
+            excluido_por=excluido_por,
+            justificativa=justificativa
         )
     except Exception as erro:
         _tratar_erro_repositorio(erro)
