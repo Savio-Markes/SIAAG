@@ -1,3 +1,4 @@
+
 # Desenvolvido por: Fábio Barbosa
 
 from datetime import date, datetime
@@ -557,7 +558,7 @@ def listar_movimentacoes(
         )
 
     if tipo not in (
-        None, "", "entrada", "saida", "ajuste"
+        None, "", "entrada", "saida", "ajuste", "exclusao"
     ):
         raise InventoryServiceError(
             "Tipo de movimentação inválido."
@@ -579,7 +580,7 @@ def contar_movimentacoes(produto_id=None, tipo=None):
         )
 
     if tipo not in (
-        None, "", "entrada", "saida", "ajuste"
+        None, "", "entrada", "saida", "ajuste", "exclusao"
     ):
         raise InventoryServiceError(
             "Tipo de movimentação inválido."

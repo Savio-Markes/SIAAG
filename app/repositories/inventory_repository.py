@@ -1,3 +1,4 @@
+
 # Desenvolvido por: Fábio Barbosa
 
 from decimal import Decimal, InvalidOperation
@@ -506,34 +507,22 @@ def verificar_vinculos_produto(produto_id, cursor=None):
 
 def excluir_produto(produto_id, excluido_por):
     """
-    Exclui definitivamente um produto e seus vínculos de estoque.
-
-    A ordem respeita as chaves estrangeiras:
-    1. Insumos vinculados a atividades;
-    2. Recursos vinculados a aulas;
-    3. Movimentações de estoque;
-    4. Lotes do produto;
-    5. Produto.
-
-    A auditoria é registrada na mesma transação. Qualquer falha
-    provoca rollback de todas as exclusões.
+    Exclui definitivamente o produto, preservando seu histórico.
     """
 
     conexao = get_db()
 
     try:
         with conexao.cursor() as cursor:
-            # Bloqueia o registro principal durante a exclusão.
             cursor.execute(
                 """
-                SELECT id, nome
+                SELECT id, nome, unidade, controla_lote_validade
                 FROM produtos
                 WHERE id = %s
                 FOR UPDATE
                 """,
                 (produto_id,)
             )
-
             produto = cursor.fetchone()
 
             if not produto:
@@ -541,56 +530,149 @@ def excluir_produto(produto_id, excluido_por):
                     "Produto não encontrado."
                 )
 
-            # Confirma os vínculos dentro da mesma transação.
+            nome = produto["nome"]
+            unidade = produto["unidade"]
+            controla_lote = (
+                int(produto["controla_lote_validade"]) == 1
+            )
+
             vinculos = verificar_vinculos_produto(
                 produto_id,
                 cursor=cursor
             )
 
-            # Remove primeiro as tabelas associativas.
+            # Calcula o saldo antes de excluir o produto.
+            if controla_lote:
+                cursor.execute(
+                    """
+                    SELECT COALESCE(SUM(saldo_atual), 0) AS saldo
+                    FROM lotes_produto
+                    WHERE produto_id = %s
+                    """,
+                    (produto_id,)
+                )
+            else:
+                cursor.execute(
+                    """
+                    SELECT COALESCE(
+                        SUM(
+                            CASE
+                                WHEN tipo = 'entrada'
+                                    THEN quantidade
+                                WHEN tipo = 'saida'
+                                    THEN -quantidade
+                                WHEN tipo = 'ajuste'
+                                     AND sentido_ajuste = 'acrescimo'
+                                    THEN quantidade
+                                WHEN tipo = 'ajuste'
+                                     AND sentido_ajuste = 'reducao'
+                                    THEN -quantidade
+                                ELSE 0
+                            END
+                        ),
+                        0
+                    ) AS saldo
+                    FROM movimentacoes_estoque
+                    WHERE produto_id = %s
+                    """,
+                    (produto_id,)
+                )
+
+            saldo = Decimal(
+                str(cursor.fetchone()["saldo"] or 0)
+            )
+
+            # Preserva nome, unidade e lote nas movimentações antigas.
             cursor.execute(
                 """
-                DELETE FROM atividade_insumos
-                WHERE produto_id = %s
-                   OR lote_id IN (
-                        SELECT id
-                        FROM lotes_produto
-                        WHERE produto_id = %s
-                   )
-                   OR movimentacao_id IN (
-                        SELECT id
-                        FROM movimentacoes_estoque
-                        WHERE produto_id = %s
+                UPDATE movimentacoes_estoque me
+                LEFT JOIN lotes_produto lp
+                    ON lp.id = me.lote_id
+                SET
+                    me.produto_nome = COALESCE(
+                        me.produto_nome, %s
+                    ),
+                    me.unidade = COALESCE(
+                        me.unidade, %s
+                    ),
+                    me.lote_codigo = COALESCE(
+                        lp.codigo_lote,
+                        me.lote_codigo
+                    ),
+                    me.lote_id = NULL
+                WHERE me.produto_id = %s
+                """,
+                (nome, unidade, produto_id)
+            )
+
+            # Preserva os registros de atividades.
+            cursor.execute(
+                """
+                UPDATE atividade_insumos ai
+                LEFT JOIN lotes_produto lp
+                    ON lp.id = ai.lote_id
+                SET
+                    ai.produto_id = NULL,
+                    ai.lote_id = NULL
+                WHERE ai.produto_id = %s
+                   OR lp.produto_id = %s
+                   OR ai.movimentacao_id IN (
+                        SELECT me.id
+                        FROM movimentacoes_estoque me
+                        WHERE me.produto_id = %s
                    )
                 """,
                 (produto_id, produto_id, produto_id)
             )
-            atividades_removidas = cursor.rowcount
 
+            atividades_desvinculadas = cursor.rowcount
+
+            # Preserva os recursos das aulas.
             cursor.execute(
                 """
-                DELETE FROM recursos_aula
-                WHERE produto_id = %s
-                   OR movimentacao_id IN (
-                        SELECT id
-                        FROM movimentacoes_estoque
-                        WHERE produto_id = %s
-                   )
-                """,
-                (produto_id, produto_id)
-            )
-            recursos_aula_removidos = cursor.rowcount
-
-            # Movimentações apontam para lotes.
-            cursor.execute(
-                """
-                DELETE FROM movimentacoes_estoque
+                UPDATE recursos_aula
+                SET produto_id = NULL
                 WHERE produto_id = %s
                 """,
                 (produto_id,)
             )
-            movimentacoes_removidas = cursor.rowcount
 
+            recursos_aula_desvinculados = cursor.rowcount
+
+            # Registra a exclusão no histórico de movimentações.
+            cursor.execute(
+                """
+                INSERT INTO movimentacoes_estoque (
+                    produto_id,
+                    lote_id,
+                    produto_nome,
+                    unidade,
+                    lote_codigo,
+                    tipo,
+                    sentido_ajuste,
+                    quantidade,
+                    data_hora,
+                    responsavel_id,
+                    motivo
+                ) VALUES (
+                    %s, NULL, %s, %s, NULL,
+                    'exclusao', NULL, %s, NOW(), %s, %s
+                )
+                """,
+                (
+                    produto_id,
+                    nome,
+                    unidade,
+                    saldo,
+                    excluido_por,
+                    "Exclusão definitiva do produto. "
+                    "Saldo registrado no momento da exclusão."
+                )
+            )
+
+            movimentacao_exclusao_id = cursor.lastrowid
+
+            # Exclui os lotes após preservar os dados históricos.
             cursor.execute(
                 """
                 DELETE FROM lotes_produto
@@ -598,9 +680,10 @@ def excluir_produto(produto_id, excluido_por):
                 """,
                 (produto_id,)
             )
+
             lotes_removidos = cursor.rowcount
 
-            # Remove o produto por último.
+            # Exclui o cadastro do produto por último.
             cursor.execute(
                 """
                 DELETE FROM produtos
@@ -614,20 +697,20 @@ def excluir_produto(produto_id, excluido_por):
                     "Não foi possível concluir a exclusão do produto."
                 )
 
-            # Registra a auditoria sem depender da existência
-            # do produto excluído.
+            # Registra a operação na auditoria.
             detalhes = (
-                f"Produto '{produto['nome']}' (ID {produto_id}) "
+                f"Produto '{nome}' (ID {produto_id}) "
                 f"excluído definitivamente. "
-                f"Vínculos identificados: {vinculos['lotes']} lote(s), "
-                f"{vinculos['movimentacoes']} movimentação(ões), "
-                f"{vinculos['atividades']} vínculo(s) com atividade(s) "
-                f"e {vinculos['aulas']} recurso(s) de aula. "
-                f"Removidos nesta operação: "
-                f"{atividades_removidas} insumo(s) de atividade, "
-                f"{recursos_aula_removidos} recurso(s) de aula, "
-                f"{movimentacoes_removidas} movimentação(ões) e "
-                f"{lotes_removidos} lote(s)."
+                f"Saldo registrado: {saldo} {unidade}. "
+                f"Movimentação de exclusão: "
+                f"{movimentacao_exclusao_id}. "
+                f"Lotes removidos: {lotes_removidos}. "
+                f"Atividades preservadas/desvinculadas: "
+                f"{atividades_desvinculadas}. "
+                f"Recursos de aulas desvinculados: "
+                f"{recursos_aula_desvinculados}. "
+                f"Movimentações históricas preservadas: "
+                f"{vinculos['movimentacoes']}."
             )
 
             cursor.execute(
@@ -871,10 +954,19 @@ def listar_movimentacoes(
         SELECT
             me.id,
             me.produto_id,
-            p.nome AS produto_nome,
-            p.unidade AS unidade,
+            COALESCE(
+                me.produto_nome,
+                p.nome
+            ) AS produto_nome,
+            COALESCE(
+                me.unidade,
+                p.unidade
+            ) AS unidade,
             me.lote_id,
-            lp.codigo_lote AS lote_codigo,
+            COALESCE(
+                me.lote_codigo,
+                lp.codigo_lote
+            ) AS lote_codigo,
             me.tipo,
             me.sentido_ajuste,
             me.quantidade,
@@ -883,7 +975,7 @@ def listar_movimentacoes(
             u.nome AS responsavel_nome,
             me.motivo
         FROM movimentacoes_estoque me
-        INNER JOIN produtos p
+        LEFT JOIN produtos p
             ON p.id = me.produto_id
         LEFT JOIN lotes_produto lp
             ON lp.id = me.lote_id
