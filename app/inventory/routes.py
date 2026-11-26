@@ -1,10 +1,11 @@
+
 # Desenvolvido por: Fábio Barbosa
 
 from collections import Counter
 
 from flask import (
     Blueprint, render_template, request, redirect,
-    url_for, flash, session, jsonify
+    url_for, flash, session, jsonify, current_app
 )
 
 from app.permissions import permission_required
@@ -187,10 +188,14 @@ def excluir_produto(produto_id):
         }), 400
 
     except Exception:
+        current_app.logger.exception(
+            "ERRO AO EXCLUIR PRODUTO ID %s",
+            produto_id
+        )
 
         return jsonify({
             "sucesso": False,
-            "mensagem": "Não foi possível excluir o produto."
+            "mensagem": "Erro ao excluir produto. Consulte o terminal."
         }), 500
 
 
