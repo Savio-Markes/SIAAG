@@ -1,74 +1,103 @@
 
 {% extends "base.html" %}
 
-{% block title %}Detalhes da Atividade | SIAAG{% endblock %}
+{% block title %}Detalhes da atividade | SIAAG{% endblock %}
 
 {% block page_css %}
-<link rel="stylesheet" href="{{ url_for('static', filename='css/forms.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/activities.css') }}">
 {% endblock %}
 
 {% block content %}
-<section class="page-header">
-    <div>
-        <h1>Detalhes da atividade</h1>
-        <p>Informações completas da atividade agropecuária.</p>
-    </div>
+<div class="activities-page">
 
-    <div class="header-actions">
-        <a href="{{ url_for('atividades.index') }}" class="btn btn-secondary">
-            Voltar
-        </a>
-
-        <a href="{{ url_for('atividades.editar', id=atividade.id) }}"
-           class="btn btn-primary">
-            Editar atividade
-        </a>
-    </div>
-</section>
-
-<section class="content-panel">
-    <div class="panel-header">
+    <section class="page-header">
         <div>
-            <h2>{{ atividade.titulo or 'Atividade sem título' }}</h2>
-            <p>Dados gerais do registro.</p>
-        </div>
-    </div>
-
-    <div class="form-grid">
-        <div class="form-group">
-            <label>Tipo</label>
-            <p>{{ atividade.tipo or 'Não informado' }}</p>
+            <h1>Detalhes da atividade</h1>
+            <p>Consulte todas as informações do registro.</p>
         </div>
 
-        <div class="form-group">
-            <label>Responsável</label>
-            <p>{{ responsavel_nome or 'Não informado' }}</p>
+        <div class="header-actions">
+            <a href="{{ url_for('atividades.index') }}" class="btn btn-secondary">
+                Voltar
+            </a>
+
+            <a
+                href="{{ url_for('atividades.editar', id=atividade.id) }}"
+                class="btn btn-primary">
+                Editar atividade
+            </a>
+        </div>
+    </section>
+
+    <section class="content-panel">
+        <div class="panel-header">
+            <div>
+                <h2>{{ atividade.titulo or 'Atividade sem título' }}</h2>
+                <p>Informações gerais.</p>
+            </div>
         </div>
 
-        <div class="form-group">
-            <label>Data de início</label>
-            <p>{{ atividade.data_inicio or 'Não informada' }}</p>
+        <div class="form-grid">
+
+            <div class="form-group">
+                <label>Tipo de atividade</label>
+                <p>{{ atividade.tipo or 'Não informado' }}</p>
+            </div>
+
+            <div class="form-group">
+                <label>Responsável</label>
+                <p>{{ responsavel_nome or 'Não informado' }}</p>
+            </div>
+
+            <div class="form-group">
+                <label>Data e hora de início</label>
+                <p>
+                    {% if atividade.inicio_em %}
+                        {{ atividade.inicio_em.strftime('%d/%m/%Y %H:%M') if atividade.inicio_em.strftime is defined else atividade.inicio_em }}
+                    {% else %}
+                        Não informada
+                    {% endif %}
+                </p>
+            </div>
+
+            <div class="form-group">
+                <label>Situação</label>
+                <p>{{ atividade.situacao or 'Não informada' }}</p>
+            </div>
+
+            <div class="form-group">
+                <label>Área ou cultura</label>
+                <p>{{ atividade.area_cultura_local or 'Não informada' }}</p>
+            </div>
+
+            <div class="form-group">
+                <label>Local</label>
+                <p>{{ atividade.local or 'Não informado' }}</p>
+            </div>
+
+            <div class="form-group">
+                <label>Animal relacionado</label>
+                <p>{{ animal_identificacao or 'Nenhum animal relacionado' }}</p>
+            </div>
+
+            <div class="form-group">
+                <label>Lote do animal</label>
+                <p>{{ atividade.lote_animal or 'Não informado' }}</p>
+            </div>
+
+        </div>
+    </section>
+
+    <section class="content-panel">
+        <div class="panel-header">
+            <div>
+                <h2>Observações</h2>
+                <p>Informações complementares do registro.</p>
+            </div>
         </div>
 
-        <div class="form-group">
-            <label>Data de encerramento</label>
-            <p>{{ atividade.data_fim or 'Não informada' }}</p>
-        </div>
+        <p>{{ atividade.observacoes or 'Nenhuma observação cadastrada.' }}</p>
+    </section>
 
-        <div class="form-group">
-            <label>Situação</label>
-            <p>{{ atividade.situacao or 'Não informada' }}</p>
-        </div>
-    </div>
-</section>
-
-<section class="content-panel">
-    <div class="panel-header">
-        <div>
-            <h2>Descrição</h2>
-        </div>
-    </div>
-
-    <p>{{ atividade.descricao or 'Nenhuma descrição cadastrada.' }}</p>
-</section>
+</div>
 {% endblock %}

@@ -1,94 +1,124 @@
-
 {% extends "base.html" %}
 
 {% block title %}Detalhes do Atendimento | SIAAG{% endblock %}
 
+{% block page_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/forms.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/veterinary.css') }}">
+{% endblock %}
+
 {% block content %}
-<section class="page-header">
-    <div>
-        <h1>Detalhes do atendimento</h1>
-        <p>Consulte as informações do atendimento veterinário.</p>
-    </div>
+<section class="veterinary-page">
 
-    <a href="/veterinaria" class="button-secondary">
-        Voltar aos atendimentos
-    </a>
-</section>
+    <header class="veterinary-header">
+        <div>
+            <span class="veterinary-eyebrow">SAÚDE ANIMAL</span>
+            <h2>Detalhes do atendimento</h2>
+            <p>Consulte todas as informações do registro veterinário.</p>
+        </div>
 
-<section class="content-panel">
+        <a href="/veterinaria" class="btn-secondary">
+            ← Voltar aos atendimentos
+        </a>
+    </header>
 
     {% if atendimento %}
 
-    <div class="panel-header">
-        <div>
-            <h2>Registro veterinário #{{ atendimento.id }}</h2>
-            <p>Informações registradas no sistema.</p>
-        </div>
-    </div>
+    <section class="veterinary-card">
 
-    <div class="details-grid">
-
-        <div class="detail-item">
-            <span class="detail-label">Animal</span>
-            <strong>
-                {{ animal.identificacao if animal else atendimento.animal_id }}
-                {% if animal and animal.nome %}
-                    - {{ animal.nome }}
-                {% endif %}
-            </strong>
+        <div class="veterinary-card-header">
+            <span class="veterinary-eyebrow">REGISTRO VETERINÁRIO</span>
+            <h3>Atendimento #{{ atendimento.id }}</h3>
+            <p>Informações registradas no sistema SIAAG.</p>
         </div>
 
-        <div class="detail-item">
-            <span class="detail-label">Data e hora</span>
-            <strong>{{ atendimento.data_hora or 'Não informado' }}</strong>
+        <div class="details-grid">
+
+            <div class="detail-item">
+                <span class="detail-label">Animal</span>
+                <strong>
+                    {% if animal %}
+                        {{ animal.identificacao }}
+                        {% if animal.nome %} - {{ animal.nome }}{% endif %}
+                    {% else %}
+                        {{ atendimento.animal_id }}
+                    {% endif %}
+                </strong>
+            </div>
+
+            <div class="detail-item">
+                <span class="detail-label">Data e hora</span>
+                <strong>{{ atendimento.data_hora or 'Não informado' }}</strong>
+            </div>
+
+            <div class="detail-item">
+                <span class="detail-label">Responsável</span>
+                <strong>{{ responsavel.nome if responsavel else 'Não informado' }}</strong>
+            </div>
+
+            <div class="detail-item">
+                <span class="detail-label">Data de retorno</span>
+                <strong>{{ atendimento.data_retorno or 'Não informado' }}</strong>
+            </div>
+
         </div>
 
-        <div class="detail-item">
-            <span class="detail-label">Tipo de atendimento</span>
-            <strong>{{ atendimento.tipo or 'Não informado' }}</strong>
+    </section>
+
+    <section class="veterinary-card">
+
+        <div class="veterinary-card-header">
+            <h3>Informações clínicas</h3>
+            <p>Dados do atendimento e acompanhamento realizado.</p>
         </div>
 
-        <div class="detail-item">
-            <span class="detail-label">Lote</span>
-            <strong>{{ atendimento.lote_id or 'Não informado' }}</strong>
+        <div class="details-section">
+            <h3>Motivo do atendimento</h3>
+            <p>{{ atendimento.motivo or 'Não informado' }}</p>
         </div>
 
-    </div>
+        <div class="details-section">
+            <h3>Avaliação</h3>
+            <p>{{ atendimento.avaliacao or 'Não informado' }}</p>
+        </div>
 
-    <div class="details-section">
-        <h3>Motivo</h3>
-        <p>{{ atendimento.motivo or 'Não informado' }}</p>
-    </div>
+        <div class="details-section">
+            <h3>Procedimento realizado</h3>
+            <p>{{ atendimento.procedimento or 'Não informado' }}</p>
+        </div>
 
-    <div class="details-section">
-        <h3>Avaliação</h3>
-        <p>{{ atendimento.avaliacao or 'Não informado' }}</p>
-    </div>
+        <div class="details-section">
+            <h3>Tratamento informado</h3>
+            <p>{{ atendimento.tratamento_informado or 'Não informado' }}</p>
+        </div>
 
-    <div class="details-section">
-        <h3>Procedimento realizado</h3>
-        <p>{{ atendimento.procedimento or 'Não informado' }}</p>
-    </div>
+        <div class="details-section">
+            <h3>Recomendações</h3>
+            <p>{{ atendimento.recomendacao or 'Não informado' }}</p>
+        </div>
 
-    <div class="details-section">
-        <h3>Observações</h3>
-        <p>{{ atendimento.observacoes or 'Não informado' }}</p>
-    </div>
+        <div class="details-section">
+            <h3>Observações</h3>
+            <p>{{ atendimento.observacoes or 'Não informado' }}</p>
+        </div>
+
+    </section>
 
     {% else %}
 
-    <div class="empty-state">
-        <h3>Atendimento não encontrado</h3>
-        <p>Não foi possível localizar esse registro veterinário.</p>
-    </div>
+    <section class="veterinary-card">
+        <div class="empty-state">
+            <span class="empty-state-icon">🩺</span>
+            <h3>Atendimento não encontrado</h3>
+            <p>Não foi possível localizar esse registro veterinário.</p>
+
+            <a href="/veterinaria" class="btn-primary">
+                Voltar aos atendimentos
+            </a>
+        </div>
+    </section>
 
     {% endif %}
-
-    <div class="form-actions">
-        <a href="/veterinaria" class="button-secondary">
-            Voltar
-        </a>
-    </div>
 
 </section>
 {% endblock %}

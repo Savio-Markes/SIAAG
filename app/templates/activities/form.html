@@ -4,105 +4,157 @@
 {% block title %}{{ 'Editar atividade' if atividade else 'Nova atividade' }} | SIAAG{% endblock %}
 
 {% block page_css %}
-<link rel="stylesheet" href="{{ url_for('static', filename='css/forms.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/activities.css') }}">
 {% endblock %}
 
 {% block content %}
-<section class="page-header">
-    <div>
-        <h1>{{ 'Editar atividade' if atividade else 'Cadastrar atividade' }}</h1>
-        <p>Registre e organize uma atividade agropecuária.</p>
-    </div>
-</section>
+<div class="activities-page">
 
-<section class="content-panel">
-    <form method="POST" action="{{ request.url }}" class="form-grid">
+    <section class="page-header">
+        <div>
+            <h1>{{ 'Editar atividade' if atividade else 'Cadastrar atividade' }}</h1>
+            <p>Registre e organize uma atividade agropecuária.</p>
+        </div>
+    </section>
 
-        <div class="form-group form-group-full">
-            <label for="titulo">Título da atividade *</label>
-            <input
-                type="text"
-                id="titulo"
-                name="titulo"
-                maxlength="150"
-                value="{{ atividade.titulo if atividade else '' }}"
-                placeholder="Digite o título da atividade"
-                required>
+    <section class="content-panel">
+        <div class="panel-header">
+            <div>
+                <h2>Informações da atividade</h2>
+                <p>Preencha os dados do registro.</p>
+            </div>
         </div>
 
-        <div class="form-group">
-            <label for="tipo">Tipo de atividade</label>
-            <input
-                type="text"
-                id="tipo"
-                name="tipo"
-                maxlength="100"
-                value="{{ atividade.tipo if atividade else '' }}"
-                placeholder="Informe o tipo">
-        </div>
+        <form method="POST" action="{{ request.url }}" class="form-grid">
 
-        <div class="form-group">
-            <label for="responsavel_id">Responsável</label>
-            <select id="responsavel_id" name="responsavel_id">
-                <option value="">Selecione o responsável</option>
-                {% for responsavel in responsaveis %}
-                <option
-                    value="{{ responsavel.id }}"
-                    {% if atividade and atividade.responsavel_id == responsavel.id %}selected{% endif %}>
-                    {{ responsavel.nome }}
-                </option>
-                {% endfor %}
-            </select>
-        </div>
+            <div class="form-group form-group-full">
+                <label for="titulo">Título da atividade *</label>
+                <input
+                    type="text"
+                    id="titulo"
+                    name="titulo"
+                    maxlength="150"
+                    value="{{ atividade.titulo if atividade else '' }}"
+                    placeholder="Ex.: Limpeza da área de cultivo"
+                    required>
+            </div>
 
-        <div class="form-group">
-            <label for="data_inicio">Data de início</label>
-            <input
-                type="date"
-                id="data_inicio"
-                name="data_inicio"
-                value="{{ atividade.data_inicio if atividade and atividade.data_inicio else '' }}">
-        </div>
+            <div class="form-group">
+                <label for="tipo">Tipo de atividade</label>
+                <input
+                    type="text"
+                    id="tipo"
+                    name="tipo"
+                    maxlength="80"
+                    value="{{ atividade.tipo if atividade else '' }}"
+                    placeholder="Ex.: Plantio, manejo, limpeza">
+            </div>
 
-        <div class="form-group">
-            <label for="data_fim">Data de encerramento</label>
-            <input
-                type="date"
-                id="data_fim"
-                name="data_fim"
-                value="{{ atividade.data_fim if atividade and atividade.data_fim else '' }}">
-        </div>
+            <div class="form-group">
+                <label for="responsavel_id">Responsável</label>
+                <select id="responsavel_id" name="responsavel_id">
+                    <option value="">Selecione o responsável</option>
+                    {% for responsavel in responsaveis %}
+                    <option
+                        value="{{ responsavel.id }}"
+                        {% if atividade and atividade.responsavel_id|string == responsavel.id|string %}selected{% endif %}>
+                        {{ responsavel.nome }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
 
-        <div class="form-group">
-            <label for="situacao">Situação</label>
-            <input
-                type="text"
-                id="situacao"
-                name="situacao"
-                maxlength="50"
-                value="{{ atividade.situacao if atividade else '' }}"
-                placeholder="Informe a situação">
-        </div>
+            <div class="form-group">
+                <label for="inicio_em">Data e hora de início</label>
+                <input
+                    type="datetime-local"
+                    id="inicio_em"
+                    name="inicio_em"
+                    value="{{ atividade.inicio_em.strftime('%Y-%m-%dT%H:%M') if atividade and atividade.inicio_em and atividade.inicio_em.strftime is defined else (atividade.inicio_em if atividade and atividade.inicio_em else '') }}">
+            </div>
 
-        <div class="form-group form-group-full">
-            <label for="descricao">Descrição</label>
-            <textarea
-                id="descricao"
-                name="descricao"
-                rows="5"
-                placeholder="Descreva a atividade">{{ atividade.descricao if atividade else '' }}</textarea>
-        </div>
+            <div class="form-group">
+                <label for="situacao">Situação</label>
+                <select id="situacao" name="situacao">
+                    <option value="">Selecione</option>
+                    {% for status in ['Pendente', 'Em andamento', 'Concluída'] %}
+                    <option value="{{ status }}"
+                        {% if atividade and atividade.situacao == status %}selected{% endif %}>
+                        {{ status }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
 
-        <div class="form-actions form-group-full">
-            <a href="{{ url_for('atividades.index') }}" class="btn btn-secondary">
-                Cancelar
-            </a>
+            <div class="form-group">
+                <label for="area_cultura_local">Área ou cultura</label>
+                <input
+                    type="text"
+                    id="area_cultura_local"
+                    name="area_cultura_local"
+                    maxlength="150"
+                    value="{{ atividade.area_cultura_local if atividade else '' }}"
+                    placeholder="Informe a área ou cultura">
+            </div>
 
-            <button type="submit" class="btn btn-primary">
-                {{ 'Salvar alterações' if atividade else 'Cadastrar atividade' }}
-            </button>
-        </div>
-    </form>
-</section>
+            <div class="form-group">
+                <label for="local">Local da atividade</label>
+                <input
+                    type="text"
+                    id="local"
+                    name="local"
+                    maxlength="150"
+                    value="{{ atividade.local if atividade else '' }}"
+                    placeholder="Informe o local">
+            </div>
+
+            <div class="form-group">
+                <label for="animal_id">Animal relacionado</label>
+                <select id="animal_id" name="animal_id">
+                    <option value="">Nenhum animal relacionado</option>
+                    {% for animal in animais %}
+                    <option
+                        value="{{ animal.id }}"
+                        {% if atividade and atividade.animal_id|string == animal.id|string %}selected{% endif %}>
+                        {{ animal.identificacao }}
+                        {% if animal.nome %} - {{ animal.nome }}{% endif %}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="lote_animal">Lote do animal</label>
+                <input
+                    type="text"
+                    id="lote_animal"
+                    name="lote_animal"
+                    maxlength="100"
+                    value="{{ atividade.lote_animal if atividade else '' }}"
+                    placeholder="Informe o lote, se houver">
+            </div>
+
+            <div class="form-group form-group-full">
+                <label for="observacoes">Observações</label>
+                <textarea
+                    id="observacoes"
+                    name="observacoes"
+                    rows="5"
+                    placeholder="Adicione informações complementares">{{ atividade.observacoes if atividade else '' }}</textarea>
+            </div>
+
+            <div class="form-actions form-group-full">
+                <a href="{{ url_for('atividades.index') }}" class="btn btn-secondary">
+                    Cancelar
+                </a>
+
+                <button type="submit" class="btn btn-primary">
+                    {{ 'Salvar alterações' if atividade else 'Cadastrar atividade' }}
+                </button>
+            </div>
+
+        </form>
+    </section>
+
+</div>
 {% endblock %}
-

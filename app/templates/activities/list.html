@@ -1,0 +1,148 @@
+
+{% extends "base.html" %}
+
+{% block title %}Atividades Agropecuárias | SIAAG{% endblock %}
+
+{% block page_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/forms.css') }}">
+{% endblock %}
+
+{% block content %}
+
+<section class="page-header">
+    <div>
+        <h1>Atividades Agropecuárias</h1>
+        <p>Gerencie e acompanhe as atividades da Fazenda Escola.</p>
+    </div>
+
+    <div class="header-actions">
+        <a href="{{ url_for('atividades.nova') }}" class="btn btn-primary">
+            + Nova atividade
+        </a>
+    </div>
+</section>
+
+<section class="content-panel">
+
+    <div class="panel-header">
+        <div>
+            <h2>Atividades cadastradas</h2>
+            <p>Consulte os registros das atividades agropecuárias.</p>
+        </div>
+    </div>
+
+    <form method="GET" action="{{ url_for('atividades.index') }}"
+          class="form-grid">
+
+        <div class="form-group">
+            <label for="busca">Pesquisar atividade</label>
+            <input
+                type="search"
+                id="busca"
+                name="busca"
+                value="{{ request.args.get('busca', '') }}"
+                placeholder="Digite o título da atividade">
+        </div>
+
+        <div class="form-group">
+            <label for="situacao">Situação</label>
+            <select id="situacao" name="situacao">
+                <option value="">Todas as situações</option>
+                <option value="Pendente"
+                    {% if request.args.get('situacao') == 'Pendente' %}selected{% endif %}>
+                    Pendente
+                </option>
+                <option value="Em andamento"
+                    {% if request.args.get('situacao') == 'Em andamento' %}selected{% endif %}>
+                    Em andamento
+                </option>
+                <option value="Concluída"
+                    {% if request.args.get('situacao') == 'Concluída' %}selected{% endif %}>
+                    Concluída
+                </option>
+            </select>
+        </div>
+
+        <div class="form-actions form-group-full">
+            <button type="submit" class="btn btn-primary">
+                Pesquisar
+            </button>
+
+            <a href="{{ url_for('atividades.index') }}"
+               class="btn btn-secondary">
+                Limpar filtros
+            </a>
+        </div>
+    </form>
+
+</section>
+
+<section class="content-panel">
+
+    {% if atividades %}
+
+    <div class="table-responsive">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Título</th>
+                    <th>Tipo</th>
+                    <th>Área / Cultura</th>
+                    <th>Local</th>
+                    <th>Início</th>
+                    <th>Situação</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for atividade in atividades %}
+                <tr>
+                    <td>{{ atividade.titulo }}</td>
+                    <td>{{ atividade.tipo or 'Não informado' }}</td>
+                    <td>{{ atividade.area_cultura_local or 'Não informado' }}</td>
+                    <td>{{ atividade.local or 'Não informado' }}</td>
+
+                    <td>
+                        {% if atividade.inicio_em %}
+                            {{ atividade.inicio_em }}
+                        {% else %}
+                            Não informada
+                        {% endif %}
+                    </td>
+
+                    <td>{{ atividade.situacao or 'Não informada' }}</td>
+
+                    <td>
+                        <a
+                            href="{{ url_for('atividades.detalhe', id=atividade.id) }}"
+                            class="btn btn-secondary">
+                            Visualizar
+                        </a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    {% else %}
+
+    <div class="empty-state">
+        <h3>Nenhuma atividade encontrada</h3>
+        <p>
+            Ainda não existem atividades cadastradas ou
+            nenhum registro corresponde à sua pesquisa.
+        </p>
+
+        <a href="{{ url_for('atividades.nova') }}"
+           class="btn btn-primary">
+            Cadastrar atividade
+        </a>
+    </div>
+
+    {% endif %}
+
+</section>
+
+{% endblock %}

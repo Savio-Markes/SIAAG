@@ -1,0 +1,131 @@
+
+{% extends "base.html" %}
+
+{% block title %}Usuários cadastrados | SIAAG{% endblock %}
+
+{% block page_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/users.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="users-page">
+
+    <header class="users-header">
+        <div class="users-header__text">
+            <h1>Usuários cadastrados</h1>
+            <p>Consulte os usuários registrados no sistema SIAAG.</p>
+        </div>
+
+        <a href="{{ url_for('users.painel') }}"
+           class="users-button users-button--secondary">
+            Voltar ao gerenciamento
+        </a>
+    </header>
+
+    <section class="users-panel">
+
+        <div class="users-panel__header">
+            <div>
+                <h2>Lista de usuários</h2>
+                <p>Informações dos usuários cadastrados.</p>
+            </div>
+        </div>
+
+        <div class="users-toolbar">
+            <div class="users-search">
+                <label for="pesquisaUsuario">Pesquisar usuário</label>
+
+                <div class="users-search__input">
+                    <span aria-hidden="true">⌕</span>
+                    <input
+                        type="search"
+                        id="pesquisaUsuario"
+                        placeholder="Digite o nome ou login..."
+                        autocomplete="off">
+                </div>
+            </div>
+        </div>
+
+        <div class="users-table-container">
+            <table class="users-table">
+                <thead>
+                    <tr>
+                        <th>Nome</th>
+                        <th>Login</th>
+                        <th>Função</th>
+                        <th>Situação</th>
+                    </tr>
+                </thead>
+
+                <tbody id="listaUsuarios">
+                    {% if usuarios %}
+                        {% for usuario in usuarios %}
+                        <tr>
+                            <td class="user-name">
+                                {{ usuario.nome }}
+                            </td>
+
+                            <td class="user-login">
+                                {{ usuario.login }}
+                            </td>
+
+                            <td>
+                                {{ usuario.funcao_referencia or 'Não informada' }}
+                            </td>
+
+                            <td>
+                                {% if usuario.ativo %}
+                                    <span class="user-status user-status--active">
+                                        Ativo
+                                    </span>
+                                {% else %}
+                                    <span class="user-status user-status--blocked">
+                                        Inativo
+                                    </span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    {% else %}
+                        <tr>
+                            <td colspan="4" class="empty-state">
+                                Nenhum usuário cadastrado.
+                            </td>
+                        </tr>
+                    {% endif %}
+                </tbody>
+            </table>
+        </div>
+
+    </section>
+
+</div>
+{% endblock %}
+
+{% block page_js %}
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+    const pesquisa = document.getElementById("pesquisaUsuario");
+    const linhas = document.querySelectorAll("#listaUsuarios tr");
+
+    pesquisa.addEventListener("input", function () {
+
+        const termo = pesquisa.value
+            .trim()
+            .toLocaleLowerCase("pt-BR");
+
+        linhas.forEach(function (linha) {
+
+            const texto = linha.textContent
+                .toLocaleLowerCase("pt-BR");
+
+            linha.hidden = !texto.includes(termo);
+
+        });
+
+    });
+
+});
+</script>
+{% endblock %}

@@ -1,173 +1,225 @@
-
 {% extends "base.html" %}
 
 {% block title %}Novo Atendimento Veterinário | SIAAG{% endblock %}
 
+{% block page_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/forms.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/veterinary.css') }}">
+{% endblock %}
+
 {% block content %}
-<section class="page-header">
-    <div>
-        <h1>Novo atendimento veterinário</h1>
-        <p>Registre o atendimento e o acompanhamento veterinário do animal.</p>
-    </div>
+<section class="veterinary-page">
 
-    <a href="/veterinaria" class="button-secondary">
-        Voltar
-    </a>
-</section>
-
-<section class="content-panel">
-
-    <div class="panel-header">
+    <header class="veterinary-header">
         <div>
-            <h2>Dados do atendimento</h2>
-            <p>Preencha as informações do atendimento veterinário.</p>
+            <span class="veterinary-eyebrow">SAÚDE ANIMAL</span>
+            <h2>Novo atendimento</h2>
+            <p>Registre as informações do acompanhamento veterinário.</p>
         </div>
-    </div>
 
-    <div
-        id="atendimentoFeedback"
-        class="form-feedback"
-        role="status"
-        aria-live="polite"
-    ></div>
+        <a href="/veterinaria" class="btn-secondary">
+            ← Voltar
+        </a>
+    </header>
 
     <form
         id="atendimentoForm"
-        class="data-form"
+        class="veterinary-form"
         method="POST"
         action=""
     >
 
+        <div
+            id="atendimentoFeedback"
+            class="form-feedback"
+            role="status"
+            aria-live="polite"
+            hidden
+        ></div>
+
         <fieldset class="form-section">
-            <legend>1. Identificação</legend>
 
-            <div class="form-field">
-                <label for="animal_id">Animal</label>
-                <select id="animal_id" name="animal_id" required>
-                    <option value="">Selecione o animal</option>
-
-                    {% if animais is defined %}
-                        {% for animal in animais %}
-                        <option value="{{ animal.id }}">
-                            {{ animal.identificacao }} - {{ animal.nome }}
-                        </option>
-                        {% endfor %}
-                    {% endif %}
-                </select>
+            <div class="form-section-header">
+                <h3>01. Identificação</h3>
+                <p>Informe o animal e o responsável pelo atendimento.</p>
             </div>
 
-            <div class="form-field">
-                <label for="data_hora">Data e hora do atendimento</label>
-                <input
-                    type="datetime-local"
-                    id="data_hora"
-                    name="data_hora"
-                    required
-                >
-            </div>
+            <div class="form-grid">
 
-            <div class="form-field">
-                <label for="responsavel_id">Responsável pelo atendimento</label>
-                <select
-                    id="responsavel_id"
-                    name="responsavel_id"
-                    required
-                >
-                    <option value="">Selecione o responsável</option>
+                <div class="form-field">
+                    <label for="animal_id">
+                        Animal <span class="required">*</span>
+                    </label>
 
-                    {% if responsaveis is defined %}
-                        {% for responsavel in responsaveis %}
-                        <option value="{{ responsavel.id }}">
-                            {{ responsavel.nome }}
-                        </option>
-                        {% endfor %}
-                    {% endif %}
-                </select>
+                    <select id="animal_id" name="animal_id" required>
+                        <option value="">Selecione o animal</option>
+
+                        {% if animais is defined %}
+                            {% for animal in animais %}
+                            <option value="{{ animal.id }}">
+                                {{ animal.identificacao }}{% if animal.nome %} - {{ animal.nome }}{% endif %}
+                            </option>
+                            {% endfor %}
+                        {% endif %}
+                    </select>
+                </div>
+
+                <div class="form-field">
+                    <label for="data_hora">
+                        Data e hora <span class="required">*</span>
+                    </label>
+
+                    <input
+                        type="datetime-local"
+                        id="data_hora"
+                        name="data_hora"
+                        required
+                    >
+                </div>
+
+                <div class="form-field form-field-full">
+                    <label for="responsavel_id">
+                        Responsável pelo atendimento
+                        <span class="required">*</span>
+                    </label>
+
+                    <select
+                        id="responsavel_id"
+                        name="responsavel_id"
+                        required
+                    >
+                        <option value="">Selecione o responsável</option>
+
+                        {% if responsaveis is defined %}
+                            {% for responsavel in responsaveis %}
+                            <option value="{{ responsavel.id }}">
+                                {{ responsavel.nome }}
+                            </option>
+                            {% endfor %}
+                        {% endif %}
+                    </select>
+                </div>
+
             </div>
         </fieldset>
 
         <fieldset class="form-section">
-            <legend>2. Informações clínicas</legend>
 
-            <div class="form-field">
-                <label for="motivo">Motivo do atendimento</label>
-                <textarea
-                    id="motivo"
-                    name="motivo"
-                    rows="3"
-                    required
-                ></textarea>
+            <div class="form-section-header">
+                <h3>02. Informações clínicas</h3>
+                <p>Registre o motivo, a avaliação e os procedimentos realizados.</p>
             </div>
 
-            <div class="form-field">
-                <label for="avaliacao">Avaliação</label>
-                <textarea
-                    id="avaliacao"
-                    name="avaliacao"
-                    rows="4"
-                ></textarea>
-            </div>
+            <div class="form-grid">
 
-            <div class="form-field">
-                <label for="procedimento">Procedimento realizado</label>
-                <textarea
-                    id="procedimento"
-                    name="procedimento"
-                    rows="4"
-                ></textarea>
-            </div>
+                <div class="form-field form-field-full">
+                    <label for="motivo">
+                        Motivo do atendimento
+                        <span class="required">*</span>
+                    </label>
 
-            <div class="form-field">
-                <label for="tratamento_informado">Tratamento informado</label>
-                <textarea
-                    id="tratamento_informado"
-                    name="tratamento_informado"
-                    rows="4"
-                ></textarea>
-            </div>
+                    <textarea
+                        id="motivo"
+                        name="motivo"
+                        rows="3"
+                        placeholder="Descreva o motivo do atendimento..."
+                        required
+                    ></textarea>
+                </div>
 
-            <div class="form-field">
-                <label for="recomendacao">Recomendações</label>
-                <textarea
-                    id="recomendacao"
-                    name="recomendacao"
-                    rows="4"
-                ></textarea>
+                <div class="form-field form-field-full">
+                    <label for="avaliacao">Avaliação</label>
+
+                    <textarea
+                        id="avaliacao"
+                        name="avaliacao"
+                        rows="4"
+                        placeholder="Registre as informações da avaliação..."
+                    ></textarea>
+                </div>
+
+                <div class="form-field form-field-full">
+                    <label for="procedimento">Procedimento realizado</label>
+
+                    <textarea
+                        id="procedimento"
+                        name="procedimento"
+                        rows="4"
+                        placeholder="Descreva os procedimentos realizados..."
+                    ></textarea>
+                </div>
+
+                <div class="form-field form-field-full">
+                    <label for="tratamento_informado">
+                        Tratamento informado
+                    </label>
+
+                    <textarea
+                        id="tratamento_informado"
+                        name="tratamento_informado"
+                        rows="3"
+                        placeholder="Registre o tratamento informado pelo responsável técnico..."
+                    ></textarea>
+                </div>
+
+                <div class="form-field form-field-full">
+                    <label for="recomendacao">Recomendações</label>
+
+                    <textarea
+                        id="recomendacao"
+                        name="recomendacao"
+                        rows="3"
+                        placeholder="Informe as recomendações para o acompanhamento..."
+                    ></textarea>
+                </div>
+
             </div>
         </fieldset>
 
         <fieldset class="form-section">
-            <legend>3. Retorno e observações</legend>
 
-            <div class="form-field">
-                <label for="data_retorno">Data de retorno</label>
-                <input
-                    type="date"
-                    id="data_retorno"
-                    name="data_retorno"
-                >
+            <div class="form-section-header">
+                <h3>03. Retorno e observações</h3>
+                <p>Finalize o registro com as informações complementares.</p>
             </div>
 
-            <div class="form-field">
-                <label for="observacoes">Observações</label>
-                <textarea
-                    id="observacoes"
-                    name="observacoes"
-                    rows="4"
-                ></textarea>
+            <div class="form-grid">
+
+                <div class="form-field">
+                    <label for="data_retorno">Data de retorno</label>
+
+                    <input
+                        type="date"
+                        id="data_retorno"
+                        name="data_retorno"
+                    >
+                </div>
+
+                <div class="form-field form-field-full">
+                    <label for="observacoes">Observações</label>
+
+                    <textarea
+                        id="observacoes"
+                        name="observacoes"
+                        rows="4"
+                        placeholder="Informações adicionais..."
+                    ></textarea>
+                </div>
+
             </div>
         </fieldset>
 
         <div class="form-actions">
-            <a href="/veterinaria" class="button-secondary">
+            <a href="/veterinaria" class="btn-secondary">
                 Cancelar
             </a>
 
-            <button type="submit" class="button-primary">
+            <button type="submit" class="btn-primary">
                 Salvar atendimento
             </button>
         </div>
 
     </form>
+
 </section>
 {% endblock %}

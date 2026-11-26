@@ -1,0 +1,161 @@
+{% extends "base.html" %}
+
+{% block title %}Saúde animal | SIAAG{% endblock %}
+
+{% block page_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/forms.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/veterinary.css') }}">
+{% endblock %}
+
+{% block content %}
+<section class="veterinary-page">
+
+    <header class="veterinary-header">
+        <div>
+            <span class="veterinary-eyebrow">GESTÃO AGROPECUÁRIA</span>
+            <h2>Saúde animal</h2>
+            <p>Gerencie os atendimentos e acompanhe o histórico veterinário dos animais.</p>
+        </div>
+
+        <a href="/veterinaria/novo" class="btn-primary">
+            + Novo atendimento
+        </a>
+    </header>
+
+    <section class="veterinary-indicators">
+
+        <article class="veterinary-indicator">
+            <span>Total de atendimentos</span>
+            <strong>{{ total_atendimentos|default('—') }}</strong>
+            <small>Registros cadastrados</small>
+        </article>
+
+        <article class="veterinary-indicator">
+            <span>Retornos previstos</span>
+            <strong>{{ retornos_previstos|default('—') }}</strong>
+            <small>Atendimentos com data de retorno</small>
+        </article>
+
+        <article class="veterinary-indicator">
+            <span>Animais atendidos</span>
+            <strong>{{ animais_atendidos|default('—') }}</strong>
+            <small>Animais com registro veterinário</small>
+        </article>
+
+    </section>
+
+    <section class="veterinary-card">
+
+        <div class="veterinary-card-header">
+            <div>
+                <span class="veterinary-eyebrow">ACOMPANHAMENTO</span>
+                <h3>Atendimentos veterinários</h3>
+                <p>Consulte os registros realizados na Fazenda Escola.</p>
+            </div>
+        </div>
+
+        <form method="GET" action="/veterinaria" class="veterinary-filters">
+
+            <div class="form-field">
+                <label for="buscaAnimal">Animal</label>
+                <input
+                    type="search"
+                    id="buscaAnimal"
+                    name="animal"
+                    value="{{ request.args.get('animal', '') }}"
+                    placeholder="Buscar por identificação..."
+                >
+            </div>
+
+            <div class="form-field">
+                <label for="dataAtendimento">Data do atendimento</label>
+                <input
+                    type="date"
+                    id="dataAtendimento"
+                    name="data"
+                    value="{{ request.args.get('data', '') }}"
+                >
+            </div>
+
+            <div class="veterinary-filter-action">
+                <button type="submit" class="btn-primary">
+                    Buscar
+                </button>
+
+                <a href="/veterinaria" class="btn-secondary">
+                    Limpar
+                </a>
+            </div>
+
+        </form>
+
+        {% if atendimentos %}
+
+        <div class="veterinary-table-wrapper">
+            <table class="veterinary-table">
+                <thead>
+                    <tr>
+                        <th>Animal</th>
+                        <th>Data e hora</th>
+                        <th>Motivo</th>
+                        <th>Responsável</th>
+                        <th>Retorno</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for atendimento in atendimentos %}
+                    <tr>
+                        <td>
+                            <strong>
+                                {{ atendimento.identificacao or atendimento.animal_id }}
+                            </strong>
+                            {% if atendimento.nome_animal %}
+                                <small>{{ atendimento.nome_animal }}</small>
+                            {% endif %}
+                        </td>
+
+                        <td>{{ atendimento.data_hora or '—' }}</td>
+
+                        <td>{{ atendimento.motivo or 'Não informado' }}</td>
+
+                        <td>{{ atendimento.responsavel_nome or '—' }}</td>
+
+                        <td>{{ atendimento.data_retorno or '—' }}</td>
+
+                        <td>
+                            <a
+                                href="/veterinaria/{{ atendimento.id }}"
+                                class="veterinary-action-link"
+                            >
+                                Ver detalhes
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        {% else %}
+
+        <div class="empty-state">
+            <span class="empty-state-icon">🩺</span>
+            <h3>Nenhum atendimento encontrado</h3>
+            <p>
+                Os atendimentos veterinários cadastrados aparecerão
+                nesta área.
+            </p>
+
+            <a href="/veterinaria/novo" class="btn-primary">
+                Registrar atendimento
+            </a>
+        </div>
+
+        {% endif %}
+
+    </section>
+
+</section>
+{% endblock %}

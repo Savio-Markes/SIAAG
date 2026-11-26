@@ -1,0 +1,302 @@
+/* ==========================================
+   SIAAG — MÓDULO SAÚDE ANIMAL
+   IFPI — Campus Paulistana
+   ========================================== */
+
+.veterinary-page {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    width: 100%;
+}
+
+/* CABEÇALHO */
+
+.veterinary-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+}
+
+.veterinary-header h2 {
+    margin: 7px 0;
+    color: #193d29;
+    font-size: 1.75rem;
+    font-weight: 750;
+}
+
+.veterinary-header p {
+    margin: 0;
+    color: #66756a;
+    font-size: 0.92rem;
+    line-height: 1.5;
+}
+
+.veterinary-eyebrow {
+    color: #43835a;
+    font-size: 0.7rem;
+    font-weight: 800;
+    letter-spacing: 1.2px;
+}
+
+/* INDICADORES */
+
+.veterinary-indicators {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 16px;
+}
+
+.veterinary-indicator {
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    gap: 9px;
+    min-height: 125px;
+    padding: 21px;
+    background: #fff;
+    border: 1px solid #e2eae3;
+    border-radius: 12px;
+    box-shadow: 0 3px 12px rgba(29, 65, 39, 0.04);
+}
+
+.veterinary-indicator::after {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 3px;
+    background: #28834b;
+    content: "";
+}
+
+.veterinary-indicator span {
+    color: #68766c;
+    font-size: 0.82rem;
+    font-weight: 600;
+}
+
+.veterinary-indicator strong {
+    color: #24583a;
+    font-size: 1.9rem;
+    font-weight: 800;
+    line-height: 1;
+}
+
+.veterinary-indicator small {
+    color: #929b94;
+    font-size: 0.75rem;
+}
+
+/* CARTÃO PRINCIPAL */
+
+.veterinary-card {
+    min-width: 0;
+    padding: 24px;
+    background: #fff;
+    border: 1px solid #e2eae3;
+    border-radius: 12px;
+    box-shadow: 0 3px 12px rgba(29, 65, 39, 0.04);
+}
+
+.veterinary-card-header {
+    margin-bottom: 22px;
+}
+
+.veterinary-card-header h3 {
+    margin: 7px 0;
+    color: #26392c;
+    font-size: 1.2rem;
+    font-weight: 750;
+}
+
+.veterinary-card-header p {
+    margin: 0;
+    color: #829087;
+    font-size: 0.85rem;
+}
+
+/* FILTROS */
+
+.veterinary-filters {
+    display: grid;
+    grid-template-columns: minmax(180px, 1.4fr) minmax(170px, 1fr) auto;
+    align-items: end;
+    gap: 16px;
+    margin-bottom: 24px;
+    padding: 18px;
+    background: #f8faf8;
+    border: 1px solid #edf1ed;
+    border-radius: 10px;
+}
+
+.veterinary-filter-action {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 9px;
+}
+
+.veterinary-filter-action button,
+.veterinary-filter-action a {
+    min-height: 43px;
+}
+
+/* TABELA */
+
+.veterinary-table-wrapper {
+    width: 100%;
+    overflow-x: auto;
+    border: 1px solid #e8ede9;
+    border-radius: 9px;
+}
+
+.veterinary-table {
+    width: 100%;
+    min-width: 760px;
+    border-collapse: collapse;
+    text-align: left;
+}
+
+.veterinary-table thead {
+    background: #f4f8f4;
+}
+
+.veterinary-table th {
+    padding: 15px 16px;
+    color: #53675a;
+    font-size: 0.76rem;
+    font-weight: 750;
+    white-space: nowrap;
+}
+
+.veterinary-table td {
+    padding: 16px;
+    color: #526157;
+    border-top: 1px solid #edf1ed;
+    font-size: 0.82rem;
+    vertical-align: middle;
+}
+
+.veterinary-table tbody tr {
+    transition: background 0.2s ease;
+}
+
+.veterinary-table tbody tr:hover {
+    background: #f8fbf8;
+}
+
+.veterinary-table td strong {
+    display: block;
+    color: #26392c;
+    font-size: 0.85rem;
+}
+
+.veterinary-table td small {
+    display: block;
+    margin-top: 4px;
+    color: #89948c;
+    font-size: 0.74rem;
+}
+
+/* LINK DE AÇÃO */
+
+.veterinary-action-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 7px 11px;
+    color: #247044;
+    background: #edf6ef;
+    border: 1px solid #d8e9dc;
+    border-radius: 7px;
+    font-size: 0.76rem;
+    font-weight: 700;
+    text-decoration: none;
+    white-space: nowrap;
+    transition: 0.2s ease;
+}
+
+.veterinary-action-link:hover {
+    color: #fff;
+    background: #247044;
+    border-color: #247044;
+}
+
+/* ESTADO VAZIO */
+
+.veterinary-card .empty-state {
+    padding: 45px 20px;
+}
+
+.veterinary-card .empty-state-icon {
+    font-size: 2.2rem;
+}
+
+.veterinary-card .empty-state h3 {
+    color: #304638;
+    font-size: 1.05rem;
+}
+
+.veterinary-card .empty-state p {
+    color: #87928a;
+    font-size: 0.85rem;
+}
+
+/* RESPONSIVIDADE */
+
+@media (max-width: 900px) {
+    .veterinary-filters {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .veterinary-filter-action {
+        grid-column: 1 / -1;
+    }
+}
+
+@media (max-width: 650px) {
+    .veterinary-header {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .veterinary-header .btn-primary {
+        width: 100%;
+    }
+
+    .veterinary-indicators {
+        grid-template-columns: 1fr;
+    }
+
+    .veterinary-indicator {
+        min-height: 105px;
+    }
+
+    .veterinary-card {
+        padding: 16px;
+    }
+
+    .veterinary-filters {
+        grid-template-columns: 1fr;
+        padding: 14px;
+    }
+
+    .veterinary-filter-action {
+        grid-column: auto;
+        flex-direction: column;
+    }
+
+    .veterinary-filter-action button,
+    .veterinary-filter-action a {
+        width: 100%;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .veterinary-table tbody tr,
+    .veterinary-action-link {
+        transition: none;
+    }
+}

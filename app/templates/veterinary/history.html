@@ -1,132 +1,169 @@
-
 {% extends "base.html" %}
 
 {% block title %}Histórico Veterinário | SIAAG{% endblock %}
 
 {% block page_css %}
 <link rel="stylesheet" href="{{ url_for('static', filename='css/forms.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/veterinary.css') }}">
 {% endblock %}
 
 {% block content %}
-<section class="page-header">
-    <div>
-        <h1>Histórico veterinário</h1>
-        <p>Acompanhamento dos registros e da evolução do animal.</p>
-    </div>
+<section class="veterinary-page">
 
-    <a href="{{ url_for('animals.index') }}" class="btn btn-secondary">
-        Voltar
-    </a>
-</section>
-
-<section class="content-panel">
-    <div class="panel-header">
+    <header class="veterinary-header">
         <div>
-            <h2>Identificação do animal</h2>
-            <p>Dados do animal selecionado.</p>
-        </div>
-    </div>
-
-    <div class="form-grid">
-        <div class="form-group">
-            <label>Identificação</label>
-            <p>{{ animal.identificacao or 'Não informado' }}</p>
+            <span class="veterinary-eyebrow">SAÚDE ANIMAL</span>
+            <h2>Histórico veterinário</h2>
+            <p>Acompanhe os registros de saúde e a evolução do animal.</p>
         </div>
 
-        <div class="form-group">
-            <label>Nome</label>
-            <p>{{ animal.nome or 'Não informado' }}</p>
+        <a href="/animais/painel" class="btn-secondary">
+            ← Voltar aos animais
+        </a>
+    </header>
+
+    {% if animal %}
+
+    <section class="veterinary-card">
+        <div class="veterinary-card-header">
+            <span class="veterinary-eyebrow">IDENTIFICAÇÃO</span>
+            <h3>Dados do animal</h3>
+            <p>Informações cadastrais do animal selecionado.</p>
         </div>
 
-        <div class="form-group">
-            <label>Espécie</label>
-            <p>{{ animal.especie or 'Não informado' }}</p>
-        </div>
+        <div class="details-grid">
 
-        <div class="form-group">
-            <label>Raça</label>
-            <p>{{ animal.raca or 'Não informado' }}</p>
-        </div>
-    </div>
-</section>
+            <div class="detail-item">
+                <span class="detail-label">Identificação</span>
+                <strong>{{ animal.identificacao or '—' }}</strong>
+            </div>
 
-<section class="content-panel">
-    <div class="panel-header">
-        <div>
-            <h2>Atendimentos veterinários</h2>
+            <div class="detail-item">
+                <span class="detail-label">Nome</span>
+                <strong>{{ animal.nome or 'Sem nome cadastrado' }}</strong>
+            </div>
+
+            <div class="detail-item">
+                <span class="detail-label">Espécie</span>
+                <strong>{{ animal.especie or '—' }}</strong>
+            </div>
+
+            <div class="detail-item">
+                <span class="detail-label">Raça</span>
+                <strong>{{ animal.raca or '—' }}</strong>
+            </div>
+
+        </div>
+    </section>
+
+    <section class="veterinary-card">
+
+        <div class="veterinary-card-header">
+            <span class="veterinary-eyebrow">ACOMPANHAMENTO CLÍNICO</span>
+            <h3>Atendimentos veterinários</h3>
             <p>Registros de avaliações e procedimentos realizados.</p>
         </div>
-    </div>
 
-    {% if atendimentos %}
-    <div class="table-responsive">
-        <table class="data-table">
-            <thead>
-                <tr>
-                    <th>Data e hora</th>
-                    <th>Motivo</th>
-                    <th>Avaliação</th>
-                    <th>Procedimento</th>
-                    <th>Recomendação</th>
-                </tr>
-            </thead>
+        {% if atendimentos %}
 
-            <tbody>
-                {% for atendimento in atendimentos %}
-                <tr>
-                    <td>{{ atendimento.data_hora or '—' }}</td>
-                    <td>{{ atendimento.motivo or '—' }}</td>
-                    <td>{{ atendimento.avaliacao or '—' }}</td>
-                    <td>{{ atendimento.procedimento or '—' }}</td>
-                    <td>{{ atendimento.recomendacao or '—' }}</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </div>
-    {% else %}
-    <div class="empty-state">
-        <h3>Nenhum atendimento encontrado</h3>
-        <p>Ainda não existem atendimentos veterinários registrados para este animal.</p>
-    </div>
-    {% endif %}
-</section>
+        <div class="veterinary-table-wrapper">
+            <table class="veterinary-table">
+                <thead>
+                    <tr>
+                        <th>Data e hora</th>
+                        <th>Motivo</th>
+                        <th>Avaliação</th>
+                        <th>Procedimento</th>
+                        <th>Recomendação</th>
+                        <th>Retorno</th>
+                    </tr>
+                </thead>
 
-<section class="content-panel">
-    <div class="panel-header">
-        <div>
-            <h2>Histórico de pesagens</h2>
-            <p>Acompanhamento dos registros de peso do animal.</p>
+                <tbody>
+                    {% for atendimento in atendimentos %}
+                    <tr>
+                        <td>{{ atendimento.data_hora or '—' }}</td>
+                        <td>{{ atendimento.motivo or '—' }}</td>
+                        <td>{{ atendimento.avaliacao or '—' }}</td>
+                        <td>{{ atendimento.procedimento or '—' }}</td>
+                        <td>{{ atendimento.recomendacao or '—' }}</td>
+                        <td>{{ atendimento.data_retorno or '—' }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
         </div>
-    </div>
 
-    {% if pesagens %}
-    <div class="table-responsive">
-        <table class="data-table">
-            <thead>
-                <tr>
-                    <th>Data da pesagem</th>
-                    <th>Peso (kg)</th>
-                    <th>Observação</th>
-                </tr>
-            </thead>
+        {% else %}
 
-            <tbody>
-                {% for pesagem in pesagens %}
-                <tr>
-                    <td>{{ pesagem.data_pesagem or '—' }}</td>
-                    <td>{{ pesagem.peso_kg or '—' }}</td>
-                    <td>{{ pesagem.observacao or '—' }}</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </div>
+        <div class="empty-state">
+            <span class="empty-state-icon">🩺</span>
+            <h3>Nenhum atendimento registrado</h3>
+            <p>Os atendimentos veterinários deste animal aparecerão aqui.</p>
+        </div>
+
+        {% endif %}
+
+    </section>
+
+    <section class="veterinary-card">
+
+        <div class="veterinary-card-header">
+            <span class="veterinary-eyebrow">DESENVOLVIMENTO ANIMAL</span>
+            <h3>Histórico de pesagens</h3>
+            <p>Acompanhe os registros de peso do animal.</p>
+        </div>
+
+        {% if pesagens %}
+
+        <div class="veterinary-table-wrapper">
+            <table class="veterinary-table">
+                <thead>
+                    <tr>
+                        <th>Data da pesagem</th>
+                        <th>Peso (kg)</th>
+                        <th>Observação</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for pesagem in pesagens %}
+                    <tr>
+                        <td>{{ pesagem.data_pesagem or '—' }}</td>
+                        <td>{{ pesagem.peso_kg or '—' }}</td>
+                        <td>{{ pesagem.observacao or '—' }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        {% else %}
+
+        <div class="empty-state">
+            <span class="empty-state-icon">⚖️</span>
+            <h3>Nenhuma pesagem registrada</h3>
+            <p>Os registros de pesagem deste animal aparecerão aqui.</p>
+        </div>
+
+        {% endif %}
+
+    </section>
+
     {% else %}
-    <div class="empty-state">
-        <h3>Nenhuma pesagem encontrada</h3>
-        <p>As pesagens registradas para este animal aparecerão nesta seção.</p>
-    </div>
+
+    <section class="veterinary-card">
+        <div class="empty-state">
+            <h3>Animal não encontrado</h3>
+            <p>Não foi possível localizar os dados do animal.</p>
+
+            <a href="/animais/painel" class="btn-primary">
+                Voltar aos animais
+            </a>
+        </div>
+    </section>
+
     {% endif %}
+
 </section>
 {% endblock %}

@@ -1,0 +1,212 @@
+
+/* ========================================
+   SIAAG - MÓDULO DE ATIVIDADES
+======================================== */
+
+.activities-page {
+    width: 100%;
+}
+
+/* Cabeçalho */
+
+.activities-page .page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 16px;
+    margin-bottom: 24px;
+}
+
+.activities-page .page-header h1 {
+    margin: 0 0 6px;
+    font-size: 1.7rem;
+}
+
+.activities-page .page-header p {
+    margin: 0;
+    color: var(--text-secondary, #6b7280);
+}
+
+/* Painéis */
+
+.activities-page .content-panel {
+    background: var(--surface, #ffffff);
+    border: 1px solid var(--border-color, #e5e7eb);
+    border-radius: 12px;
+    padding: 22px;
+    margin-bottom: 22px;
+}
+
+.activities-page .panel-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+.activities-page .panel-header h2 {
+    margin: 0 0 5px;
+    font-size: 1.15rem;
+}
+
+.activities-page .panel-header p {
+    margin: 0;
+    color: var(--text-secondary, #6b7280);
+    font-size: 0.9rem;
+}
+
+/* Formulários */
+
+.activities-page .form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 18px;
+}
+
+.activities-page .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+    min-width: 0;
+}
+
+.activities-page .form-group-full {
+    grid-column: 1 / -1;
+}
+
+.activities-page .form-group label {
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+.activities-page .form-group input,
+.activities-page .form-group select,
+.activities-page .form-group textarea {
+    width: 100%;
+    padding: 11px 12px;
+    border: 1px solid var(--border-color, #d1d5db);
+    border-radius: 8px;
+    background: var(--input-background, #ffffff);
+    color: var(--text-color, #1f2937);
+    font: inherit;
+    box-sizing: border-box;
+}
+
+.activities-page .form-group textarea {
+    resize: vertical;
+    min-height: 110px;
+}
+
+.activities-page .form-group input:focus,
+.activities-page .form-group select:focus,
+.activities-page .form-group textarea:focus {
+    outline: 2px solid var(--primary-color, #287a43);
+    outline-offset: 1px;
+}
+
+.activities-page .form-actions {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 8px;
+}
+
+/* Tabela */
+
+.activities-page .table-responsive {
+    width: 100%;
+    overflow-x: auto;
+}
+
+.activities-page .data-table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 720px;
+}
+
+.activities-page .data-table th,
+.activities-page .data-table td {
+    padding: 13px 12px;
+    text-align: left;
+    border-bottom: 1px solid var(--border-color, #e5e7eb);
+    font-size: 0.9rem;
+}
+
+.activities-page .data-table th {
+    font-weight: 700;
+    background: var(--table-header, #f8faf9);
+}
+
+.activities-page .data-table tbody tr:hover {
+    background: var(--hover-background, #f9fafb);
+}
+
+/* Situação */
+
+.activities-page .status-badge {
+    display: inline-block;
+    padding: 5px 10px;
+    border-radius: 20px;
+    background: #eef5ef;
+    color: #276738;
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+/* Estado vazio */
+
+.activities-page .empty-state {
+    text-align: center;
+    padding: 38px 18px;
+}
+
+.activities-page .empty-state h3 {
+    margin: 0 0 8px;
+}
+
+.activities-page .empty-state p {
+    color: var(--text-secondary, #6b7280);
+    margin-bottom: 18px;
+}
+
+/* Detalhes */
+
+.activities-page .form-group > p {
+    margin: 0;
+    padding: 10px 0;
+    color: var(--text-color, #374151);
+    overflow-wrap: anywhere;
+}
+
+/* Responsividade */
+
+@media (max-width: 768px) {
+    .activities-page .form-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .activities-page .form-group-full {
+        grid-column: auto;
+    }
+
+    .activities-page .content-panel {
+        padding: 16px;
+    }
+
+    .activities-page .page-header {
+        align-items: flex-start;
+    }
+
+    .activities-page .form-actions {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .activities-page .form-actions .btn {
+        width: 100%;
+        text-align: center;
+    }
+}
